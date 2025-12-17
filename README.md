@@ -1,4 +1,4 @@
-# The Journalism Library
+# The Journalism Library (dataviz functions)
 
 Useful TypeScript functions for journalism projects. This library focuses on
 data visualization. It's part of the
