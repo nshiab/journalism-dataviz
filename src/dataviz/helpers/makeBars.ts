@@ -1,4 +1,4 @@
-import formatNumber from "../../format/formatNumber.ts";
+import { formatNumber } from "@nshiab/journalism-format";
 
 /**
  * Generates the bar chart data as an array of strings, ready for console logging.

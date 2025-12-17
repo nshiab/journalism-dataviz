@@ -2,8 +2,7 @@ import { max, min, type Numeric } from "d3-array";
 import getColors from "./getColors.ts";
 import drawChart from "./drawChart.ts";
 import validateDataTypes from "./validateDataTypes.ts";
-import formatDate from "../../format/formatDate.ts";
-import formatNumber from "../../format/formatNumber.ts";
+import { formatDate, formatNumber } from "@nshiab/journalism-format";
 
 export default function prepChart(
   type: "line" | "dot",

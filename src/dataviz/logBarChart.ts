@@ -1,4 +1,4 @@
-import formatNumber from "../format/formatNumber.ts";
+import { formatNumber } from "@nshiab/journalism-format";
 import makeBars from "./helpers/makeBars.ts";
 
 /**

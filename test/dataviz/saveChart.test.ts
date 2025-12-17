@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import saveChart from "../../src/dataviz/saveChart.ts";
 import type { Data } from "@observablehq/plot";
 import { dot, geo, line, plot } from "@observablehq/plot";
-import rewind from "../../src/geo/rewind.ts";
+import rewind from "../../src/dataviz/rewind.ts";
 
 Deno.test("should save an Observable chart as png", async () => {
   const data = JSON.parse(

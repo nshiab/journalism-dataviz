@@ -1,7 +1,7 @@
 import { assertEquals } from "jsr:@std/assert";
 import logBarChart from "../../src/dataviz/logBarChart.ts";
 import { readFileSync } from "node:fs";
-import formatNumber from "../../src/format/formatNumber.ts";
+import { formatNumber } from "@nshiab/journalism-format";
 
 Deno.test("should create a bar chart", () => {
   const data = JSON.parse(

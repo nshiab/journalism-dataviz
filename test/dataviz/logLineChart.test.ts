@@ -1,8 +1,7 @@
 import { assertEquals } from "jsr:@std/assert";
 import logLineChart from "../../src/dataviz/logLineChart.ts";
 import { readFileSync } from "node:fs";
-import formatDate from "../../src/format/formatDate.ts";
-import formatNumber from "../../src/format/formatNumber.ts";
+import { formatDate, formatNumber } from "@nshiab/journalism-format";
 import { csvParse } from "d3-dsv";
 
 Deno.test("should create a line chart", () => {

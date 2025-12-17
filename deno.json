@@ -22,6 +22,13 @@
   },
   "nodeModulesDir": "auto",
   "imports": {
+    "@nshiab/journalism-format": "jsr:@nshiab/journalism-format@^1.0.2",
+    "@observablehq/plot": "npm:@observablehq/plot@^0.6.17",
+    "@std/dotenv": "jsr:@std/dotenv@^0.225.5",
+    "d3-array": "npm:d3-array@^3.2.4",
+    "d3-dsv": "npm:d3-dsv@^3.0.1",
+    "d3-geo": "npm:d3-geo@^3.1.1",
+    "playwright-chromium": "npm:playwright-chromium@^1.57.0"
   },
   "fmt": {
     "exclude": [
@@ -42,5 +49,6 @@
     "exclude": [
       "src/dataviz/imports"
     ]
-  }
+  },
+  "allowScripts": ["npm:playwright-chromium@1"]
 }
