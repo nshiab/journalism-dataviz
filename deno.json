@@ -2,7 +2,8 @@
   "name": "@nshiab/journalism-dataviz",
   "version": "1.0.0",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./web": "./src/web.ts"
   },
   "tasks": {
     "all-tests": "deno install --allow-scripts=npm:playwright-chromium && deno fmt --check && deno lint && deno check src/index.ts && deno doc --lint src/index.ts && deno publish --allow-dirty --dry-run && TZ=America/Toronto deno test -A --fail-fast && deno task llm",
