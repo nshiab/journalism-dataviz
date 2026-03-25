@@ -36,34 +36,34 @@ function logBarChart<T extends Record<string, unknown>>(
 
 ### Parameters
 
-- **`data`**: - An array of objects, where each object represents a bar in the
+- **`data`**: An array of objects, where each object represents a bar in the
   chart. Each object should contain keys corresponding to the `labels` and
   `values` parameters.
-- **`labels`**: - The key in the data objects whose values will be used as
-  textual labels for each bar (e.g., 'category', 'name', 'country').
-- **`values`**: - The key in the data objects whose numerical values will
+- **`labels`**: The key in the data objects whose values will be used as textual
+  labels for each bar (e.g., 'category', 'name', 'country').
+- **`values`**: The key in the data objects whose numerical values will
   determine the length of each bar and be displayed alongside the labels (e.g.,
   'sales', 'count', 'percentage').
-- **`options`**: - Optional configuration for customizing the appearance and
+- **`options`**: Optional configuration for customizing the appearance and
   behavior of the chart.
-- **`options.formatLabels`**: - A function to format the labels displayed on the
+- **`options.formatLabels`**: A function to format the labels displayed on the
   chart. It receives the raw label value as input and should return a string.
   Defaults to converting the label to a string.
-- **`options.formatValues`**: - A function to format the numerical values
+- **`options.formatValues`**: A function to format the numerical values
   displayed next to the bars. It receives the raw numerical value as input and
   should return a string. Defaults to formatting the number using `formatNumber`
   (which adds commas for thousands, etc.).
-- **`options.width`**: - The maximum width of the bars in characters. The bars
+- **`options.width`**: The maximum width of the bars in characters. The bars
   will scale proportionally to this width. A larger width allows for more
   detailed visualization. Defaults to `40`.
-- **`options.title`**: - An optional title to display above the chart. If not
+- **`options.title`**: An optional title to display above the chart. If not
   provided, a default title based on `labels` and `values` keys will be
   generated.
-- **`options.totalLabel`**: - An optional label to display for the total sum of
+- **`options.totalLabel`**: An optional label to display for the total sum of
   all values at the bottom of the chart. If provided, the sum of all `values`
   will be calculated and displayed next to this label.
-- **`options.compact`**: - If `true`, the chart will be rendered in a more
-  compact format, reducing vertical spacing between bars. Defaults to `false`.
+- **`options.compact`**: If `true`, the chart will be rendered in a more compact
+  format, reducing vertical spacing between bars. Defaults to `false`.
 
 ### Examples
 
@@ -133,36 +133,35 @@ function logDotChart<T extends Record<string, unknown>>(
 
 ### Parameters
 
-- **`data`**: - An array of objects representing the data to be visualized. Each
+- **`data`**: An array of objects representing the data to be visualized. Each
   object should contain keys corresponding to the `x` and `y` parameters.
-- **`x`**: - The key in the data objects whose values will be plotted on the
+- **`x`**: The key in the data objects whose values will be plotted on the
   x-axis. Values must be numbers or Date objects.
-- **`y`**: - The key in the data objects whose values will be plotted on the
+- **`y`**: The key in the data objects whose values will be plotted on the
   y-axis. Values must be numbers.
-- **`options`**: - An optional object to customize the chart's appearance and
+- **`options`**: An optional object to customize the chart's appearance and
   behavior.
-- **`options.formatX`**: - A function to format the x-axis values for display.
-  It receives the raw x-value as input and should return a string. If the first
+- **`options.formatX`**: A function to format the x-axis values for display. It
+  receives the raw x-value as input and should return a string. If the first
   data point's x value is a Date, it defaults to formatting the date as
   "YYYY-MM-DD".
-- **`options.formatY`**: - A function to format the y-axis values for display.
-  It receives the raw y-value as input and should return a string.
-- **`options.smallMultiples`**: - A key in the data objects to create small
+- **`options.formatY`**: A function to format the y-axis values for display. It
+  receives the raw y-value as input and should return a string.
+- **`options.smallMultiples`**: A key in the data objects to create small
   multiples (separate charts) for each unique value of this key. This is useful
   for comparing trends across different categories.
-- **`options.fixedScales`**: - If `true` and `smallMultiples` is used, all small
+- **`options.fixedScales`**: If `true` and `smallMultiples` is used, all small
   multiple charts will share the same x and y scales, allowing for direct
   comparison of magnitudes. If `false`, each small multiple will have its own
   independent scales. Defaults to `false`.
-- **`options.smallMultiplesPerRow`**: - The number of small multiples to display
+- **`options.smallMultiplesPerRow`**: The number of small multiples to display
   per row when `smallMultiples` is used. Defaults to `3`.
-- **`options.width`**: - The width of the chart in characters. This affects the
+- **`options.width`**: The width of the chart in characters. This affects the
   horizontal resolution of the chart. Defaults to `60`.
-- **`options.height`**: - The height of the chart in lines. This affects the
+- **`options.height`**: The height of the chart in lines. This affects the
   vertical resolution of the chart. Defaults to `20`.
-- **`options.title`**: - The title of the chart. If not provided, a default
-  title based on `x`, `y`, and `smallMultiples` (if applicable) will be
-  generated.
+- **`options.title`**: The title of the chart. If not provided, a default title
+  based on `x`, `y`, and `smallMultiples` (if applicable) will be generated.
 
 ### Examples
 
@@ -248,36 +247,35 @@ function logLineChart<T extends Record<string, unknown>>(
 
 ### Parameters
 
-- **`data`**: - An array of objects representing the data to be visualized. Each
+- **`data`**: An array of objects representing the data to be visualized. Each
   object should contain keys corresponding to the `x` and `y` parameters.
-- **`x`**: - The key in the data objects whose values will be plotted on the
+- **`x`**: The key in the data objects whose values will be plotted on the
   x-axis. Values must be numbers or Date objects.
-- **`y`**: - The key in the data objects whose values will be plotted on the
+- **`y`**: The key in the data objects whose values will be plotted on the
   y-axis. Values must be numbers.
-- **`options`**: - An optional object to customize the chart's appearance and
+- **`options`**: An optional object to customize the chart's appearance and
   behavior.
-- **`options.formatX`**: - A function to format the x-axis values for display.
-  It receives the raw x-value as input and should return a string. If the first
+- **`options.formatX`**: A function to format the x-axis values for display. It
+  receives the raw x-value as input and should return a string. If the first
   data point's x value is a Date, it defaults to formatting the date as
   "YYYY-MM-DD".
-- **`options.formatY`**: - A function to format the y-axis values for display.
-  It receives the raw y-value as input and should return a string.
-- **`options.smallMultiples`**: - A key in the data objects to create small
+- **`options.formatY`**: A function to format the y-axis values for display. It
+  receives the raw y-value as input and should return a string.
+- **`options.smallMultiples`**: A key in the data objects to create small
   multiples (separate charts) for each unique value of this key. This is useful
   for comparing trends across different categories.
-- **`options.fixedScales`**: - If `true` and `smallMultiples` is used, all small
+- **`options.fixedScales`**: If `true` and `smallMultiples` is used, all small
   multiple charts will share the same x and y scales, allowing for direct
   comparison of magnitudes. If `false`, each small multiple will have its own
   independent scales. Defaults to `false`.
-- **`options.smallMultiplesPerRow`**: - The number of small multiples to display
+- **`options.smallMultiplesPerRow`**: The number of small multiples to display
   per row when `smallMultiples` is used. Defaults to `3`.
-- **`options.width`**: - The width of the chart in characters. This affects the
+- **`options.width`**: The width of the chart in characters. This affects the
   horizontal resolution of the chart. Defaults to `60`.
-- **`options.height`**: - The height of the chart in lines. This affects the
+- **`options.height`**: The height of the chart in lines. This affects the
   vertical resolution of the chart. Defaults to `20`.
-- **`options.title`**: - The title of the chart. If not provided, a default
-  title based on `x`, `y`, and `smallMultiples` (if applicable) will be
-  generated.
+- **`options.title`**: The title of the chart. If not provided, a default title
+  based on `x`, `y`, and `smallMultiples` (if applicable) will be generated.
 
 ### Examples
 
@@ -338,13 +336,13 @@ async function publishChartDW(
 
 ### Parameters
 
-- **`chartId`**: - The unique ID of the Datawrapper chart, table, or map to be
+- **`chartId`**: The unique ID of the Datawrapper chart, table, or map to be
   published. This ID can be found in the Datawrapper URL or dashboard.
-- **`options`**: - Optional parameters to configure the publishing process.
-- **`options.apiKey`**: - The name of the environment variable that stores your
+- **`options`**: Optional parameters to configure the publishing process.
+- **`options.apiKey`**: The name of the environment variable that stores your
   Datawrapper API key (e.g., `"DATAWRAPPER_KEY"`). If not provided, the function
   defaults to looking for the `DATAWRAPPER_KEY` environment variable.
-- **`options.returnResponse`**: - If `true`, the function will return the full
+- **`options.returnResponse`**: If `true`, the function will return the full
   `Response` object from the Datawrapper API call. This can be useful for
   debugging or for more detailed handling of the API response. Defaults to
   `false`.
@@ -387,12 +385,12 @@ based on the D3-geo library's winding order conventions.
 ### Signature
 
 ```typescript
-function rewind(object: GeoPermissibleObjects): GeoPermissibleObjects;
+function rewind(object: any): any;
 ```
 
 ### Parameters
 
-- **`object`**: - The GeoJSON object to rewind.
+- **`object`**: The GeoJSON object to rewind.
 
 ### Returns
 
@@ -443,8 +441,8 @@ When saving as an SVG, only the SVG elements will be captured.
 
 ```typescript
 async function saveChart(
-  data: Data,
-  chart: (data: Data) => SVGSVGElement | HTMLElement,
+  data: Iterable<any> | ArrayLike<any>,
+  chart: (data: Iterable<any> | ArrayLike<any>) => SVGSVGElement | HTMLElement,
   path: string,
   options?: { style?: string; dark?: boolean },
 ): Promise<void>;
@@ -452,19 +450,19 @@ async function saveChart(
 
 ### Parameters
 
-- **`data`**: - An array of data objects that your Observable Plot chart
-  function expects.
-- **`chart`**: - A function that takes the `data` array and returns an SVG or
-  HTML element representing the chart. This function should typically be a
-  direct call to `Plot.plot()` or a similar Observable Plot constructor.
-- **`path`**: - The file path where the image or SVG will be saved. The file
+- **`data`**: An array of data objects that your Observable Plot chart function
+  expects.
+- **`chart`**: A function that takes the `data` array and returns an SVG or HTML
+  element representing the chart. This function should typically be a direct
+  call to `Plot.plot()` or a similar Observable Plot constructor.
+- **`path`**: The file path where the image or SVG will be saved. The file
   extension (`.png`, `.jpeg`, or `.svg`) determines the output format.
-- **`options`**: - Optional settings to customize the chart's appearance and
+- **`options`**: Optional settings to customize the chart's appearance and
   behavior.
-- **`options.style`**: - A CSS string to apply custom styles to the chart's
+- **`options.style`**: A CSS string to apply custom styles to the chart's
   container `div` (which has the ID `chart`). This is useful for fine-tuning the
   visual presentation beyond what Observable Plot's `style` option offers.
-- **`options.dark`**: - If `true`, the chart will be rendered with a dark mode
+- **`options.dark`**: If `true`, the chart will be rendered with a dark mode
   theme. This adjusts background and text colors for better visibility in dark
   environments. Defaults to `false`.
 
@@ -577,70 +575,69 @@ async function updateAnnotationsDW(
 
 ### Parameters
 
-- **`chartId`**: - The ID of the Datawrapper chart to update. This ID can be
-  found in the Datawrapper URL or dashboard.
-- **`annotations`**: - An array of annotation objects. Each object defines a
+- **`chartId`**: The ID of the Datawrapper chart to update. This ID can be found
+  in the Datawrapper URL or dashboard.
+- **`annotations`**: An array of annotation objects. Each object defines a
   single annotation with its properties. Required properties for each annotation
   are `x`, `y`, and `text`.
-- **`annotations.x`**: - The x-coordinate of the annotation's position on the
+- **`annotations.x`**: The x-coordinate of the annotation's position on the
   chart.
-- **`annotations.y`**: - The y-coordinate of the annotation's position on the
+- **`annotations.y`**: The y-coordinate of the annotation's position on the
   chart.
-- **`annotations.text`**: - The text content of the annotation.
-- **`annotations.bg`**: - If `true`, the annotation text will have a background.
+- **`annotations.text`**: The text content of the annotation.
+- **`annotations.bg`**: If `true`, the annotation text will have a background.
   Defaults to `false`.
-- **`annotations.dx`**: - The horizontal offset of the annotation text from its
+- **`annotations.dx`**: The horizontal offset of the annotation text from its
   `x` coordinate, in pixels. Defaults to `0`.
-- **`annotations.dy`**: - The vertical offset of the annotation text from its
-  `y` coordinate, in pixels. Defaults to `0`.
-- **`annotations.bold`**: - If `true`, the annotation text will be bold.
-  Defaults to `false`.
-- **`annotations.size`**: - The font size of the annotation text in pixels.
+- **`annotations.dy`**: The vertical offset of the annotation text from its `y`
+  coordinate, in pixels. Defaults to `0`.
+- **`annotations.bold`**: If `true`, the annotation text will be bold. Defaults
+  to `false`.
+- **`annotations.size`**: The font size of the annotation text in pixels.
   Defaults to `12`.
-- **`annotations.align`**: - The alignment of the annotation text relative to
-  its `x` and `y` coordinates. Can be `"tl"` (top-left), `"tc"` (top-center),
-  `"tr"` (top-right), `"ml"` (middle-left), `"mc"` (middle-center), `"mr"`
+- **`annotations.align`**: The alignment of the annotation text relative to its
+  `x` and `y` coordinates. Can be `"tl"` (top-left), `"tc"` (top-center), `"tr"`
+  (top-right), `"ml"` (middle-left), `"mc"` (middle-center), `"mr"`
   (middle-right), `"bl"` (bottom-left), `"bc"` (bottom-center), or `"br"`
   (bottom-right). Defaults to `"mr"`.
-- **`annotations.color`**: - The color of the annotation text (e.g.,
-  `"#FF0000"`, `"red"`). Defaults to `"#8C8C8C"`.
-- **`annotations.width`**: - The maximum width of the annotation text box in
+- **`annotations.color`**: The color of the annotation text (e.g., `"#FF0000"`,
+  `"red"`). Defaults to `"#8C8C8C"`.
+- **`annotations.width`**: The maximum width of the annotation text box in
   pixels. Text will wrap if it exceeds this width. Defaults to `20`.
-- **`annotations.italic`**: - If `true`, the annotation text will be italic.
+- **`annotations.italic`**: If `true`, the annotation text will be italic.
   Defaults to `false`.
-- **`annotations.underline`**: - If `true`, the annotation text will be
+- **`annotations.underline`**: If `true`, the annotation text will be
   underlined. Defaults to `false`.
-- **`annotations.showMobile`**: - If `true`, the annotation will be visible on
+- **`annotations.showMobile`**: If `true`, the annotation will be visible on
   mobile devices. Defaults to `true`.
-- **`annotations.showDesktop`**: - If `true`, the annotation will be visible on
+- **`annotations.showDesktop`**: If `true`, the annotation will be visible on
   desktop devices. Defaults to `true`.
-- **`annotations.mobileFallback`**: - If `true`, the annotation will be
-  displayed as a simple text label on mobile if it's too complex. Defaults to
-  `false`.
-- **`annotations.connectorLine`**: - An object defining the properties of a
+- **`annotations.mobileFallback`**: If `true`, the annotation will be displayed
+  as a simple text label on mobile if it's too complex. Defaults to `false`.
+- **`annotations.connectorLine`**: An object defining the properties of a
   connector line from the annotation to a data point.
-- **`annotations.connectorLine.type`**: - The type of the connector line. Can be
+- **`annotations.connectorLine.type`**: The type of the connector line. Can be
   `"straight"`, `"curveRight"`, or `"curveLeft"`. Defaults to `"straight"`.
-- **`annotations.connectorLine.circle`**: - If `true`, a circle will be drawn at
+- **`annotations.connectorLine.circle`**: If `true`, a circle will be drawn at
   the end of the connector line. Defaults to `false`.
-- **`annotations.connectorLine.stroke`**: - The stroke width of the connector
+- **`annotations.connectorLine.stroke`**: The stroke width of the connector
   line. Can be `1`, `2`, or `3`. Defaults to `1`.
-- **`annotations.connectorLine.enabled`**: - If `true`, the connector line will
-  be drawn. Defaults to `false`.
-- **`annotations.connectorLine.arrowHead`**: - The style of the arrowhead. Can
-  be `"lines"`, `"triangle"`, or `false` (no arrowhead). Defaults to `"lines"`.
-- **`annotations.connectorLine.circleStyle`**: - The style of the circle at the
+- **`annotations.connectorLine.enabled`**: If `true`, the connector line will be
+  drawn. Defaults to `false`.
+- **`annotations.connectorLine.arrowHead`**: The style of the arrowhead. Can be
+  `"lines"`, `"triangle"`, or `false` (no arrowhead). Defaults to `"lines"`.
+- **`annotations.connectorLine.circleStyle`**: The style of the circle at the
   end of the connector line. Defaults to `"solid"`.
-- **`annotations.connectorLine.circleRadius`**: - The radius of the circle at
-  the end of the connector line. Defaults to `10`.
-- **`annotations.connectorLine.inheritColor`**: - If `true`, the connector line
+- **`annotations.connectorLine.circleRadius`**: The radius of the circle at the
+  end of the connector line. Defaults to `10`.
+- **`annotations.connectorLine.inheritColor`**: If `true`, the connector line
   will inherit the annotation's text color. Defaults to `false`.
-- **`annotations.connectorLine.targetPadding`**: - The padding between the end
-  of the connector line and the target data point. Defaults to `4`.
-- **`options.apiKey`**: - The name of the environment variable that stores your
+- **`annotations.connectorLine.targetPadding`**: The padding between the end of
+  the connector line and the target data point. Defaults to `4`.
+- **`options.apiKey`**: The name of the environment variable that stores your
   Datawrapper API key. If not provided, the function defaults to looking for
   `DATAWRAPPER_KEY`.
-- **`options.returnResponse`**: - If `true`, the function will return the full
+- **`options.returnResponse`**: If `true`, the function will return the full
   `Response` object from the Datawrapper API call. This can be useful for
   debugging or for more detailed handling of the API response. Defaults to
   `false`.
@@ -723,17 +720,17 @@ async function updateDataDW(
 
 ### Parameters
 
-- **`chartId`**: - The unique ID of the Datawrapper chart, table, or map to
+- **`chartId`**: The unique ID of the Datawrapper chart, table, or map to
   update. This ID can be found in the Datawrapper URL or dashboard.
-- **`data`**: - The data to update the chart, table, or map with. For standard
+- **`data`**: The data to update the chart, table, or map with. For standard
   charts and tables, this should be a CSV formatted string. For locator maps,
   this should be a JSON string representing the map's data (e.g., markers,
   areas).
-- **`options`**: - Optional parameters to configure the data update process.
-- **`options.apiKey`**: - The name of the environment variable that stores your
+- **`options`**: Optional parameters to configure the data update process.
+- **`options.apiKey`**: The name of the environment variable that stores your
   Datawrapper API key (e.g., `"DATAWRAPPER_KEY"`). If not provided, the function
   defaults to looking for `process.env.DATAWRAPPER_KEY`.
-- **`options.returnResponse`**: - If `true`, the function will return the full
+- **`options.returnResponse`**: If `true`, the function will return the full
   `Response` object from the Datawrapper API call. This can be useful for
   debugging or for more detailed handling of the API response. Defaults to
   `false`.
@@ -876,14 +873,14 @@ async function updateNotesDW(
 
 ### Parameters
 
-- **`chartId`**: - The unique ID of the Datawrapper chart, table, or map to
+- **`chartId`**: The unique ID of the Datawrapper chart, table, or map to
   update. This ID can be found in the Datawrapper URL or dashboard.
-- **`note`**: - The string content to update the chart's notes field with.
-- **`options`**: - Optional parameters to configure the notes update process.
-- **`options.apiKey`**: - The name of the environment variable that stores your
+- **`note`**: The string content to update the chart's notes field with.
+- **`options`**: Optional parameters to configure the notes update process.
+- **`options.apiKey`**: The name of the environment variable that stores your
   Datawrapper API key (e.g., `"DATAWRAPPER_KEY"`). If not provided, the function
   defaults to looking for the `DATAWRAPPER_KEY` environment variable.
-- **`options.returnResponse`**: - If `true`, the function will return the full
+- **`options.returnResponse`**: If `true`, the function will return the full
   `Response` object from the Datawrapper API call. This can be useful for
   debugging or for more detailed handling of the API response. Defaults to
   `false`.

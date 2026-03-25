@@ -1,5 +1,4 @@
 import { chromium } from "playwright-chromium";
-import type { Data } from "@observablehq/plot";
 import { writeFileSync } from "node:fs";
 
 /**
@@ -58,8 +57,10 @@ import { writeFileSync } from "node:fs";
  */
 
 export default async function saveChart(
-  data: Data,
-  chart: (data: Data) => SVGSVGElement | HTMLElement,
+  // deno-lint-ignore no-explicit-any
+  data: Iterable<any> | ArrayLike<any>,
+  // deno-lint-ignore no-explicit-any
+  chart: (data: Iterable<any> | ArrayLike<any>) => SVGSVGElement | HTMLElement,
   path: string,
   options: { style?: string; dark?: boolean } = {},
 ): Promise<void> {
