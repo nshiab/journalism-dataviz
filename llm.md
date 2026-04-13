@@ -454,7 +454,10 @@ async function saveChart(
   expects.
 - **`chart`**: A function that takes the `data` array and returns an SVG or HTML
   element representing the chart. This function should typically be a direct
-  call to `Plot.plot()` or a similar Observable Plot constructor.
+  call to `Plot.plot()` or a similar Observable Plot constructor. Inside this
+  function, `d3`, `Plot`, and `journalismFormat` globals are available, with
+  their members destructured (e.g. `formatNumber`, `formatDate`, `round` from
+  journalism-format; `min`, `max`, `mean`, etc. from d3; and all Plot marks).
 - **`path`**: The file path where the image or SVG will be saved. The file
   extension (`.png`, `.jpeg`, or `.svg`) determines the output format.
 - **`options`**: Optional settings to customize the chart's appearance and
