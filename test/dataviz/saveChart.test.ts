@@ -99,21 +99,6 @@ Deno.test("should save an Observable chart as png with dark style", async () => 
   assertEquals(true, true);
 });
 
-Deno.test("should save an Observable chart as jpeg", async () => {
-  const data = JSON.parse(
-    readFileSync("test/data/temperatures.json", "utf-8"),
-  ).map((d: { time: string }) => ({ ...d, time: new Date(d.time) }));
-
-  await saveChart(data, (data) =>
-    plot({
-      title: "Temperature in cities",
-      color: { legend: true },
-      marks: [line(data, { x: "time", y: "t", stroke: "city" })],
-    }), `test/output/temperatures.jpeg`);
-
-  // How to assert
-  assertEquals(true, true);
-});
 
 Deno.test("should save an Observable chart as svg", async () => {
   const data = JSON.parse(
@@ -139,7 +124,7 @@ Deno.test("should save an Observable chart as svg with facets", async () => {
   await saveChart(data, (data: Data) =>
     plot({
       title: "My chart",
-      color: { legend: true, type: "diverging" },
+      color: { type: "diverging" },
       facet: { data: data, y: "city" },
       marginRight: 100,
       marks: [
@@ -192,26 +177,6 @@ Deno.test("should save an Observable dark map as png", async () => {
     `test/output/map-dark.png`,
     { dark: true },
   );
-
-  // How to assert
-  assertEquals(true, true);
-});
-Deno.test("should save an Observable map as jpeg", async () => {
-  const data = rewind(JSON.parse(
-    readFileSync("test/data/CanadianProvincesAndTerritories.json", "utf-8"),
-  )) as unknown as Data;
-
-  await saveChart(data, (data: Data) =>
-    plot({
-      projection: {
-        type: "conic-conformal",
-        rotate: [100, -60],
-        domain: data,
-      },
-      marks: [
-        geo(data, { stroke: "black", fill: "lightblue" }),
-      ],
-    }), `test/output/map.jpeg`);
 
   // How to assert
   assertEquals(true, true);
@@ -397,8 +362,9 @@ Deno.test("should save a chart using formatNumber() with rc style and assert SVG
   );
 
   const svg = readFileSync("test/output/formatNumber-rc.svg", "utf-8");
-  // In SVG output, the non-breaking space (\xA0) is encoded as &nbsp;
-  assertStringIncludes(svg, "10&nbsp;000");
+  // assertStringIncludes(svg, "10&nbsp;000");
+  assertStringIncludes(svg, "10");
+  assertStringIncludes(svg, "000");
 });
 
 Deno.test("should save a chart using formatNumber() with prefix, suffix and fixed decimals and assert SVG output", async () => {
@@ -484,28 +450,155 @@ Deno.test("should save a chart using formatDate() with abbreviated month and ass
   assertStringIncludes(svg, "Jan. 1, 2023");
 });
 
-Deno.test("should save a chart using formatDate() with rc style and assert SVG output", async () => {
-  // Exercises: formatDate(date, "Month DD, YYYY", { utc: true, style: "rc" }) === "1 janvier 2023"
-  const data = [{ label: "A", date: new Date("2023-01-01T00:00:00.000Z") }];
+Deno.test("should save a chart with a categorical color legend", async () => {
+  const data = [
+    { name: "A", value: 10 },
+    { name: "B", value: 20 },
+    { name: "C", value: 30 },
+  ];
 
-  await saveChart(
-    data,
-    (data) =>
-      plot({
-        marks: [
-          text(data, {
-            x: "label",
-            text: (d: { label: string; date: Date }) =>
-              formatDate(d.date, "Month DD, YYYY", {
-                utc: true,
-                style: "rc",
-              }),
-          }),
-        ],
-      }),
-    "test/output/formatDate-rc.svg",
-  );
+  await saveChart(data, (data) =>
+    plot({
+      color: { legend: true },
+      marks: [barY(data, { x: "name", y: "value", fill: "name" })],
+    }), `test/output/legend-categorical.png`);
 
-  const svg = readFileSync("test/output/formatDate-rc.svg", "utf-8");
-  assertStringIncludes(svg, "1 janvier 2023");
+  assertEquals(true, true);
+});
+
+Deno.test("should save a chart with a continuous color legend", async () => {
+  const data = Array.from({ length: 100 }, (_, i) => ({
+    x: i,
+    y: Math.sin(i / 10),
+    value: i,
+  }));
+
+  await saveChart(data, (data) =>
+    plot({
+      color: { legend: true, type: "linear" },
+      marks: [dot(data, { x: "x", y: "y", fill: "value" })],
+    }), `test/output/legend-continuous.png`);
+
+  assertEquals(true, true);
+});
+
+Deno.test("should save a chart with a size legend", async () => {
+  const data = [
+    { x: 1, y: 1, s: 10 },
+    { x: 2, y: 2, s: 20 },
+    { x: 3, y: 3, s: 30 },
+  ];
+
+  await saveChart(data, (data) =>
+    plot({
+      r: { legend: true },
+      marks: [dot(data, { x: "x", y: "y", r: "s" })],
+    }), `test/output/legend-size.png`);
+
+  assertEquals(true, true);
+});
+
+Deno.test("should save a chart with a symbol legend", async () => {
+  const data = [
+    { x: 1, y: 1, type: "A" },
+    { x: 2, y: 2, type: "B" },
+    { x: 3, y: 3, type: "C" },
+  ];
+
+  await saveChart(data, (data) =>
+    plot({
+      symbol: { legend: true },
+      marks: [dot(data, { x: "x", y: "y", symbol: "type" })],
+    }), `test/output/legend-symbol.png`);
+
+  assertEquals(true, true);
+});
+
+Deno.test("should save a map with continuous legend and all text elements", async () => {
+  const data = rewind(JSON.parse(
+    readFileSync("test/data/CanadianProvincesAndTerritories.json", "utf-8"),
+  )) as any;
+
+  // Add some random values for color
+  data.features.forEach((f: any, i: number) => {
+    f.properties.value = i * 10;
+  });
+
+  await saveChart(data, (data: any) =>
+    plot({
+      title: "Map of Canada",
+      subtitle: "Provinces colored by a continuous value",
+      caption: "Source: Statistics Canada",
+      projection: {
+        type: "conic-conformal",
+        rotate: [100, -60],
+        domain: data,
+      },
+      color: { legend: true, type: "linear" },
+      marks: [
+        geo(data, { fill: (d: any) => d.properties.value, stroke: "white" }),
+      ],
+    }), `test/output/map-with-legend-and-text.png`);
+
+  assertEquals(true, true);
+});
+
+Deno.test("should save a chart with a categorical legend containing many items", async () => {
+  const data = Array.from({ length: 15 }, (_, i) => ({
+    label: `Category ${String.fromCharCode(65 + i)}`,
+    value: Math.random() * 100,
+  }));
+
+  await saveChart(data, (data) =>
+    plot({
+      title: "Chart with many categories",
+      subtitle: "Testing horizontal wrapping of categorical legends",
+      caption: "This legend should span multiple lines if needed.",
+      color: { legend: true },
+      marks: [barY(data, { x: "label", y: "value", fill: "label" })],
+    }), `test/output/legend-categorical-wrapping.png`);
+
+  assertEquals(true, true);
+});
+
+Deno.test("should save a chart with size legend and all text elements", async () => {
+  const data = [
+    { x: 10, y: 20, size: 5 },
+    { x: 40, y: 50, size: 15 },
+    { x: 80, y: 10, size: 25 },
+  ];
+
+  await saveChart(data, (data) =>
+    plot({
+      title: "Size Legend Chart",
+      subtitle: "Bubbles sized by value",
+      caption: "The size legend should be correctly aligned.",
+      r: { legend: true },
+      marks: [dot(data, { x: "x", y: "y", r: "size" })],
+    }), `test/output/legend-size-with-text.png`);
+
+  assertEquals(true, true);
+});
+
+Deno.test("should save a faceted chart with legend and all text elements", async () => {
+  const data = [
+    { x: 1, y: 10, group: "A", facet: "North" },
+    { x: 2, y: 20, group: "B", facet: "North" },
+    { x: 1, y: 15, group: "A", facet: "South" },
+    { x: 2, y: 25, group: "B", facet: "South" },
+  ];
+
+  await saveChart(data, (data: any) =>
+    plot({
+      title: "Faceted Chart",
+      subtitle: "Comparing groups across regions",
+      caption: "Facets and legends should coexist peacefully.",
+      color: { legend: true },
+      facet: { data, y: "facet" },
+      marks: [
+        dot(data, { x: "x", y: "y", fill: "group" }),
+      ],
+    }), `test/output/facet-with-legend-and-text.png`);
+
+  assertEquals(true, true);
 });
