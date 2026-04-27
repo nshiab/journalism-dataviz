@@ -508,6 +508,28 @@ Deno.test("should save a chart with a continuous color legend in dark mode", asy
   assertStringIncludes(svg, "fill: #B0B0B0;");
 });
 
+Deno.test("should save a chart with a continuous color legend in dark mode as png", async () => {
+  const data = Array.from({ length: 100 }, (_, i) => ({
+    x: i,
+    y: Math.sin(i / 10),
+    value: i,
+  }));
+
+  const path = `test/output/legend-continuous-dark.png`;
+  await saveChart(
+    data,
+    (data) =>
+      plot({
+        color: { legend: true, type: "linear" },
+        marks: [dot(data, { x: "x", y: "y", fill: "value" })],
+      }),
+    path,
+    { dark: true },
+  );
+
+  assertEquals(true, true);
+});
+
 Deno.test("should save a chart with a size legend", async () => {
   const data = [
     { x: 1, y: 1, s: 10 },
@@ -565,6 +587,35 @@ Deno.test("should save a map with continuous legend and all text elements", asyn
         geo(data, { fill: (d: any) => d.properties.value, stroke: "white" }),
       ],
     }), `test/output/map-with-legend-and-text.png`);
+
+  assertEquals(true, true);
+});
+
+Deno.test("should save a map with continuous legend and all text elements as svg", async () => {
+  const data = rewind(JSON.parse(
+    readFileSync("test/data/CanadianProvincesAndTerritories.json", "utf-8"),
+  )) as any;
+
+  // Add some random values for color
+  data.features.forEach((f: any, i: number) => {
+    f.properties.value = i * 10;
+  });
+
+  await saveChart(data, (data: any) =>
+    plot({
+      title: "Map of Canada",
+      subtitle: "Provinces colored by a continuous value",
+      caption: "Source: Statistics Canada",
+      projection: {
+        type: "conic-conformal",
+        rotate: [100, -60],
+        domain: data,
+      },
+      color: { legend: true, type: "linear" },
+      marks: [
+        geo(data, { fill: (d: any) => d.properties.value, stroke: "white" }),
+      ],
+    }), `test/output/map-with-legend-and-text.svg`);
 
   assertEquals(true, true);
 });

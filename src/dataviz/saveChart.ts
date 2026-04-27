@@ -381,7 +381,7 @@ export default async function saveChart(
               Math.ceil(items.length / 5) * 20 + 10
             }">`;
 
-            let currentX = 20; // Match title/subtitle x padding
+            let currentX = 0; // The legend wrapper itself will be offset by 20px later
             let currentY = 0;
 
             items.forEach((item) => {
@@ -392,7 +392,7 @@ export default async function saveChart(
               const itemWidth = 20 + (text.length * 8) + 15;
 
               if (currentX + itemWidth > chartWidth) {
-                currentX = 20; // Match title/subtitle x padding
+                currentX = 0; // Reset to 0 for next line
                 currentY += 20;
               }
 
@@ -473,10 +473,9 @@ export default async function saveChart(
       html: string;
       type: "text" | "svg";
       fontSize?: number;
-      fontWeight?: string;
       fill?: string;
       anchor?: string;
-      fontStyle?: string;
+      className?: string;
     }[] = [];
 
     let currentY = 20;
@@ -487,9 +486,9 @@ export default async function saveChart(
         html: title,
         type: "text",
         fontSize: 20,
-        fontWeight: "600",
         fill: options.dark ? "#F0F0F0" : "rgb(60, 60, 67)",
         anchor: "start",
+        className: "chart-title",
       });
       currentY += 40;
     }
@@ -502,6 +501,7 @@ export default async function saveChart(
         fontSize: 14,
         fill: options.dark ? "#B0B0B0" : "rgb(60, 60, 67)",
         anchor: "start",
+        className: "chart-subtitle",
       });
       currentY += 30;
     }
@@ -524,9 +524,9 @@ export default async function saveChart(
         html: caption,
         type: "text",
         fontSize: 12,
-        fontStyle: "italic",
         fill: options.dark ? "#888" : "rgb(103, 103, 108)",
         anchor: "start",
+        className: "chart-caption",
       });
       currentY += 25;
     }
@@ -535,27 +535,34 @@ export default async function saveChart(
 
     const styleTag = `
       <style>
-        text { font-family: Inter, -apple-system, "system-ui", "avenir next", avenir, helvetica, "helvetica neue", ubuntu, roboto, noto, "segoe ui", arial, sans-serif; }
+        text { font-family: Inter, -apple-system, "system-ui", "Avenir Next", Avenir, Helvetica, "Helvetica Neue", Ubuntu, Roboto, Noto, "Segoe UI", Arial, sans-serif; }
+        .chart-title { font-weight: bold; }
+        .chart-caption { font-style: italic; }
         ${
       options.dark
         ? `
-        svg { color-scheme: dark; }
-        g[aria-label="y-axis tick"] text,
-        g[aria-label="x-axis tick"] text,
-        g[aria-label="y-axis label"] text,
-        g[aria-label="x-axis label"] text,
+        svg { color-scheme: dark; color: #B0B0B0; }
+        [aria-label*="axis"] text,
+        [aria-label="legend"] text,
         [class*="-ramp"] text,
-        [aria-label="legend"] text {
+        [class*="-legend"] text,
+        [class*="-swatches"] text {
           fill: #B0B0B0;
         }
-        g[aria-label="y-axis tick"] line,
-        g[aria-label="x-axis tick"] line,
+        [aria-label*="axis"] line,
+        [aria-label*="axis"] path,
+        [aria-label="legend"] line,
+        [aria-label="legend"] path,
         [class*="-ramp"] line,
-        [aria-label="legend"] line {
+        [class*="-ramp"] path,
+        [class*="-legend"] line,
+        [class*="-legend"] path,
+        [class*="-swatches"] line,
+        [class*="-swatches"] path {
           stroke: #707070;
         }
-        g[aria-label="x-grid"] > line,
-        g[aria-label="y-grid"] > line {
+        [aria-label*="grid"] line,
+        [aria-label*="grid"] path {
           stroke: #505050;
           stroke-opacity: 0.3;
         }
@@ -579,11 +586,9 @@ export default async function saveChart(
       if (comp.type === "text") {
         const x = 20;
         masterSvg +=
-          `<text x="${x}" y="${comp.y}" text-anchor="${comp.anchor}" font-size="${comp.fontSize}" ${
-            comp.fontWeight ? `font-weight="${comp.fontWeight}"` : ""
-          } ${
-            comp.fontStyle ? `font-style="${comp.fontStyle}"` : ""
-          } fill="${comp.fill}">${comp.html}</text>`;
+          `<text x="${x}" y="${comp.y}" font-size="${comp.fontSize}" fill="${comp.fill}" text-anchor="${comp.anchor}" ${
+            comp.className ? `class="${comp.className}"` : ""
+          }>${comp.html}</text>`;
       } else {
         const xOffset = 20;
         masterSvg += comp.html.replace(
@@ -595,17 +600,21 @@ export default async function saveChart(
 
     masterSvg += `</svg>`;
 
+    masterSvg = masterSvg.replaceAll("xlink:href", "href");
+
     const extension = path.split(".").pop()?.toLowerCase();
 
     if (extension === "svg") {
-      writeFileSync(
-        path,
-        masterSvg.replaceAll("xlink:href", "href"),
-      );
+      writeFileSync(path, masterSvg);
     } else if (extension === "png") {
       const resvg = new Resvg(masterSvg, {
         fitTo: { mode: "width", value: chartWidth * 2 },
-        font: { loadSystemFonts: true },
+        font: {
+          loadSystemFonts: true,
+          defaultFontFamily: "Arial",
+          sansSerifFamily: "Arial",
+          serifFamily: "Times New Roman",
+        },
       });
       const pngBuffer = resvg.render().asPng();
       writeFileSync(path, pngBuffer);
