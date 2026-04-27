@@ -433,9 +433,7 @@ console.log(rewoundFeature);
 ## saveChart
 
 Saves an [Observable Plot](https://github.com/observablehq/plot) chart as an
-image file (`.png` or `.jpeg`) or an SVG file (`.svg`).
-
-When saving as an SVG, only the SVG elements will be captured.
+image file (`.png`) or an SVG file (`.svg`).
 
 ### Signature
 
@@ -453,21 +451,17 @@ async function saveChart(
 - **`data`**: An array of data objects that your Observable Plot chart function
   expects.
 - **`chart`**: A function that takes the `data` array and returns an SVG or HTML
-  element representing the chart. This function should typically be a direct
-  call to `Plot.plot()` or a similar Observable Plot constructor. Inside this
-  function, `d3`, `Plot`, and `journalismFormat` globals are available, with
-  their members destructured (e.g. `formatNumber`, `formatDate`, `round` from
-  journalism-format; `min`, `max`, `mean`, etc. from d3; and all Plot marks).
+  element representing the chart. Inside this function, `d3`, `Plot`, and
+  `journalismFormat` globals are available, with their members destructured
+  (e.g. `formatNumber`, `formatDate`, `round` from journalism-format; `min`,
+  `max`, `mean`, etc. from d3; and all Plot marks).
 - **`path`**: The file path where the image or SVG will be saved. The file
-  extension (`.png`, `.jpeg`, or `.svg`) determines the output format.
+  extension (`.png` or `.svg`) determines the output format.
 - **`options`**: Optional settings to customize the chart's appearance and
   behavior.
-- **`options.style`**: A CSS string to apply custom styles to the chart's
-  container `div` (which has the ID `chart`). This is useful for fine-tuning the
-  visual presentation beyond what Observable Plot's `style` option offers.
+- **`options.style`**: A CSS string to apply custom styles to the chart.
 - **`options.dark`**: If `true`, the chart will be rendered with a dark mode
-  theme. This adjusts background and text colors for better visibility in dark
-  environments. Defaults to `false`.
+  theme. Defaults to `false`.
 
 ### Returns
 
@@ -504,22 +498,6 @@ await saveChart(dataForSvg, chartForSvg, svgPath, {
   style: "background-color: #f0f0f0;",
 });
 console.log(`Chart saved to ${svgPath}`);
-```
-
-```ts
-// Save a line chart in dark mode.
-import { line, plot } from "@observablehq/plot";
-
-const dataForDark = [{ month: "Jan", temp: 5 }, { month: "Feb", temp: 7 }, {
-  month: "Mar",
-  temp: 10,
-}];
-const chartForDark = (d) =>
-  plot({ marks: [line(d, { x: "month", y: "temp" })] });
-const darkPath = "output/line-chart-dark.jpeg";
-
-await saveChart(dataForDark, chartForDark, darkPath, { dark: true });
-console.log(`Chart saved to ${darkPath}`);
 ```
 
 ## updateAnnotationsDW
