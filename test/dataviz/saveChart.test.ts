@@ -472,13 +472,35 @@ Deno.test("should save a chart with a continuous color legend", async () => {
     value: i,
   }));
 
+  const path = `test/output/legend-continuous.svg`;
   await saveChart(data, (data) =>
     plot({
       color: { legend: true, type: "linear" },
       marks: [dot(data, { x: "x", y: "y", fill: "value" })],
-    }), `test/output/legend-continuous.png`);
+    }), path);
 
+  const svg = readFileSync(path, "utf-8");
+  assertStringIncludes(svg, 'overflow="visible"');
   assertEquals(true, true);
+});
+
+Deno.test("should save a chart with a continuous color legend in dark mode", async () => {
+  const data = Array.from({ length: 100 }, (_, i) => ({
+    x: i,
+    y: Math.sin(i / 10),
+    value: i,
+  }));
+
+  const path = `test/output/legend-continuous-dark.svg`;
+  await saveChart(data, (data) =>
+    plot({
+      color: { legend: true, type: "linear" },
+      marks: [dot(data, { x: "x", y: "y", fill: "value" })],
+    }), path, { dark: true });
+
+  const svg = readFileSync(path, "utf-8");
+  assertStringIncludes(svg, '[class*="-ramp"] text');
+  assertStringIncludes(svg, 'fill: #B0B0B0;');
 });
 
 Deno.test("should save a chart with a size legend", async () => {

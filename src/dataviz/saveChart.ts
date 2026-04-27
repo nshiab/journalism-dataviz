@@ -341,7 +341,7 @@ export default async function saveChart(
       if (figcaption) caption = figcaption.textContent || "";
 
       // Try to find the main chart width first
-      let maxChildWidth = 640;
+      let maxChildWidth = 0;
       for (const svg of element.querySelectorAll("svg")) {
         const widthMatch = svg.outerHTML.match(/width="([\d.]+)"/);
         if (widthMatch) {
@@ -349,7 +349,7 @@ export default async function saveChart(
           if (w > 100) maxChildWidth = Math.max(maxChildWidth, w);
         }
       }
-      chartWidth = maxChildWidth;
+      chartWidth = maxChildWidth || 640;
 
       // Extract SVGs and Canvases (legends)
       const children = Array.from(element.children);
@@ -458,12 +458,15 @@ export default async function saveChart(
     for (const svgHtml of svgStrings) {
       const widthMatch = svgHtml.match(/width="([\d.]+)"/);
       const heightMatch = svgHtml.match(/height="([\d.]+)"/);
-      if (widthMatch) maxWidth = Math.max(maxWidth, parseFloat(widthMatch[1]));
+      if (widthMatch) {
+        const w = parseFloat(widthMatch[1]);
+        maxWidth = Math.max(maxWidth, w);
+      }
       if (heightMatch) svgHeights.push(parseFloat(heightMatch[1]));
       else svgHeights.push(400);
     }
 
-    chartWidth = maxWidth;
+    chartWidth = (maxWidth || 640) + 40;
 
     const components: {
       y: number;
@@ -538,11 +541,17 @@ export default async function saveChart(
         ? `
         svg { color-scheme: dark; }
         g[aria-label="y-axis tick"] text,
-        g[aria-label="x-axis tick"] text {
+        g[aria-label="x-axis tick"] text,
+        g[aria-label="y-axis label"] text,
+        g[aria-label="x-axis label"] text,
+        [class*="-ramp"] text,
+        [aria-label="legend"] text {
           fill: #B0B0B0;
         }
         g[aria-label="y-axis tick"] line,
-        g[aria-label="x-axis tick"] line {
+        g[aria-label="x-axis tick"] line,
+        [class*="-ramp"] line,
+        [aria-label="legend"] line {
           stroke: #707070;
         }
         g[aria-label="x-grid"] > line,
@@ -576,14 +585,10 @@ export default async function saveChart(
             comp.fontStyle ? `font-style="${comp.fontStyle}"` : ""
           } fill="${comp.fill}">${comp.html}</text>`;
       } else {
-        // Shift continuous legends (and other smaller SVGs) to match the 20px text margin
-        // Categorical legends and canvas fallbacks are built with width="chartWidth" and internal padding.
-        const isRampOrSmallLegend = comp.html.includes("-ramp") ||
-          !comp.html.includes(`width="${chartWidth}"`);
-        const xOffset = isRampOrSmallLegend ? 20 : 0;
+        const xOffset = 20;
         masterSvg += comp.html.replace(
           /<svg/i,
-          `<svg x="${xOffset}" y="${comp.y}"`,
+          `<svg x="${xOffset}" y="${comp.y}" overflow="visible"`,
         );
       }
     }
