@@ -99,7 +99,6 @@ Deno.test("should save an Observable chart as png with dark style", async () => 
   assertEquals(true, true);
 });
 
-
 Deno.test("should save an Observable chart as svg", async () => {
   const data = JSON.parse(
     readFileSync("test/data/temperatures.json", "utf-8"),
