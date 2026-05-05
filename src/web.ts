@@ -1,12 +1,22 @@
 /**
- * This module provides a collection of functions to be used in web applications.
+ * @module
+ *
+ * The Journalism library (dataviz functions) - Web entry point
+ *
+ * To install the library with Deno, use:
+ * ```bash
+ * deno add jsr:@nshiab/journalism-dataviz
+ * ```
+ *
+ * To install the library with Node.js, use:
+ * ```bash
+ * npm i @nshiab/journalism-dataviz
+ * ```
  *
  * To import a function, use:
  * ```ts
  * import { functionName } from "@nshiab/journalism-dataviz/web";
  * ```
- *
- * @module
  */
 
 import rewind from "./dataviz/rewind.ts";

@@ -1,3 +1,29 @@
+/**
+ * @module
+ *
+ * The Journalism library (dataviz functions)
+ *
+ * To install the library with Deno, use:
+ * ```bash
+ * deno add jsr:@nshiab/journalism-dataviz
+ * ```
+ *
+ * To install the library with Node.js, use:
+ * ```bash
+ * npm i @nshiab/journalism-dataviz
+ * ```
+ *
+ * To import a function, use:
+ * ```ts
+ * import { functionName } from "@nshiab/journalism-dataviz";
+ * ```
+ *
+ * To import a function from the web entry point, use:
+ * ```ts
+ * import { functionName } from "@nshiab/journalism-dataviz/web";
+ * ```
+ */
+
 import updateDataDW from "./dataviz/updateDataDW.ts";
 import updateAnnotationsDW from "./dataviz/updateAnnotationsDW.ts";
 import updateNotesDW from "./dataviz/updateNotesDW.ts";
