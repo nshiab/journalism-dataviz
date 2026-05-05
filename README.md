@@ -5,7 +5,8 @@ data visualization. It's part of the
 [journalism library](https://github.com/nshiab/journalism).
 
 The library is available on [JSR](https://jsr.io/@nshiab/journalism-dataviz)
-with its [documentation](https://jsr.io/@nshiab/journalism-dataviz/doc).
+with its [documentation](https://jsr.io/@nshiab/journalism-dataviz/doc) and on
+[NPM](https://www.npmjs.com/package/@nshiab/journalism-dataviz).
 
 The documentation is also available as the markdown file
 [llm.md](https://github.com/nshiab/journalism-dataviz/blob/main/llm.md), which
@@ -26,15 +27,30 @@ journalist and senior data producer for [CBC News](https://www.cbc.ca/news).
 To install the library, you can use the following commands:
 
 ```bash
-# DENO
-deno install jsr:@nshiab/journalism-dataviz
+# Deno
+deno add jsr:@nshiab/journalism-dataviz
 
-# NODE.JS
-npx jsr add @nshiab/journalism-dataviz
+# Node
+npm i @nshiab/journalism-dataviz
 
-# BUN
-bunx jsr add @nshiab/journalism-dataviz
+# Bun
+bun add @nshiab/journalism-dataviz
+```
+
+To quickly set up a data project with essential folders, configurations, and
+documentation for AI agents, you can use
+[@nshiab/setup-data-project](https://github.com/nshiab/setup-data-project).
+
+```bash
+# Deno
+deno run -A jsr:@nshiab/setup-data-project
+
+# Node
+npx @nshiab/setup-data-project
+
+# Bun
+bunx @nshiab/setup-data-project
 ```
 
 If you wish to contribute, please check the
-[guidelines](https://github.com/nshiab/journalism/blob/main/CONTRIBUTING.md).
+[guidelines](https://github.com/nshiab/journalism-web-scraping/blob/main/CONTRIBUTING.md).

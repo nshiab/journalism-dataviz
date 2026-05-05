@@ -1,6 +1,9 @@
 {
   "name": "@nshiab/journalism-dataviz",
-  "version": "1.0.10",
+  "version": "1.0.11",
+  "description": "Useful TypeScript functions for journalism projects. This library focuses on data visualization.",
+  "repository": "https://github.com/nshiab/journalism-dataviz",
+  "license": "MIT",
   "exports": {
     ".": "./src/index.ts",
     "./web": "./src/web.ts"
@@ -10,17 +13,18 @@
     "llm": "deno doc --json src/index.ts > docs.json && deno run -A src/generateLlmMd.ts && deno fmt llm.md",
     "bundle-journalism-format": "deno bundle --platform=browser --minify src/dataviz/imports/buildJournalismFormat.ts -o src/dataviz/imports/journalism-format.js",
     "test-coverage": "deno test -A --fail-fast --coverage=cov_profile && deno coverage cov_profile",
-    "patch-no-tests": "deno run -A src/incrementVersion.ts patch",
-    "minor-no-tests": "deno run -A src/incrementVersion.ts minor",
-    "patch": "deno task all-tests && deno run -A src/incrementVersion.ts patch",
-    "minor": "deno task all-tests && deno run -A src/incrementVersion.ts minor",
-    "major": "deno task all-tests && deno run -A src/incrementVersion.ts major"
+    "patch": "deno task all-tests && deno run -A jsr:@nshiab/bump-version patch",
+    "minor": "deno task all-tests && deno run -A jsr:@nshiab/bump-version minor",
+    "major": "deno task all-tests && deno run -A jsr:@nshiab/bump-version major"
   },
+  "exclude": [
+    "npm/"
+  ],
   "publish": {
     "exclude": [
       "test",
       ".github",
-      "src/dataviz/imports/buildJournalismFormat.ts"
+      "npm"
     ]
   },
   "nodeModulesDir": "auto",
