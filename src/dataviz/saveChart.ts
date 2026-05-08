@@ -4,7 +4,8 @@ import { formatDate, formatNumber, round } from "@nshiab/journalism-format";
 import { createCanvas } from "@napi-rs/canvas";
 import { parseHTML } from "linkedom";
 import { Resvg } from "@resvg/resvg-js";
-import { writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { dirname } from "node:path";
 
 /**
  * Saves an [Observable Plot](https://github.com/observablehq/plot) chart as an image file (`.png`) or an SVG file (`.svg`).
@@ -620,6 +621,9 @@ export default async function saveChart(
     const extension = path.split(".").pop()?.toLowerCase();
 
     if (extension === "svg") {
+      if (!existsSync(dirname(path))) {
+        mkdirSync(dirname(path), { recursive: true });
+      }
       writeFileSync(path, masterSvg);
     } else if (extension === "png") {
       const resvg = new Resvg(masterSvg, {
@@ -632,6 +636,9 @@ export default async function saveChart(
         },
       });
       const pngBuffer = resvg.render().asPng();
+      if (!existsSync(dirname(path))) {
+        mkdirSync(dirname(path), { recursive: true });
+      }
       writeFileSync(path, pngBuffer);
     } else {
       throw new Error(`Unsupported file extension: .${extension}`);
