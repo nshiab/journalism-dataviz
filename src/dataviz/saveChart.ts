@@ -4,7 +4,8 @@ import { formatDate, formatNumber, round } from "@nshiab/journalism-format";
 import { createCanvas } from "@napi-rs/canvas";
 import { parseHTML } from "linkedom";
 import { Resvg } from "@resvg/resvg-js";
-import { writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { dirname } from "node:path";
 
 /**
  * Saves an [Observable Plot](https://github.com/observablehq/plot) chart as an image file (`.png`) or an SVG file (`.svg`).
@@ -290,9 +291,22 @@ export default async function saveChart(
     // @ts-ignore: setting globals
     globalThis.CustomEvent = CustomEvent;
     // @ts-ignore: setting globals
-    globalThis.Canvas = class {};
+    globalThis.Canvas = class {
+      width = 0;
+      height = 0;
+      getContext() {
+        return null;
+      }
+      toDataURL() {
+        return "";
+      }
+    };
     // @ts-ignore: setting globals
-    globalThis.Image = class {};
+    globalThis.Image = class {
+      onload = null;
+      onerror = null;
+      src = "";
+    };
     // @ts-ignore: setting globals
     globalThis.Plot = Plot;
     // @ts-ignore: setting globals
@@ -316,12 +330,14 @@ export default async function saveChart(
     }
 
     // @ts-ignore: setup canvas
-    document.createElement = ((orig) => (tagName: string) => {
+    const originalCreateElement = document.createElement;
+    // @ts-ignore: setup canvas
+    document.createElement = (tagName: string) => {
       if (tagName.toLowerCase() === "canvas") {
         return createCanvas(1, 1);
       }
-      return orig.call(document, tagName);
-    })(document.createElement);
+      return originalCreateElement.call(document, tagName);
+    };
 
     const element = chart(data);
 
@@ -605,6 +621,9 @@ export default async function saveChart(
     const extension = path.split(".").pop()?.toLowerCase();
 
     if (extension === "svg") {
+      if (!existsSync(dirname(path))) {
+        mkdirSync(dirname(path), { recursive: true });
+      }
       writeFileSync(path, masterSvg);
     } else if (extension === "png") {
       const resvg = new Resvg(masterSvg, {
@@ -617,6 +636,9 @@ export default async function saveChart(
         },
       });
       const pngBuffer = resvg.render().asPng();
+      if (!existsSync(dirname(path))) {
+        mkdirSync(dirname(path), { recursive: true });
+      }
       writeFileSync(path, pngBuffer);
     } else {
       throw new Error(`Unsupported file extension: .${extension}`);
