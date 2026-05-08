@@ -290,9 +290,22 @@ export default async function saveChart(
     // @ts-ignore: setting globals
     globalThis.CustomEvent = CustomEvent;
     // @ts-ignore: setting globals
-    globalThis.Canvas = class {};
+    globalThis.Canvas = class {
+      width = 0;
+      height = 0;
+      getContext() {
+        return null;
+      }
+      toDataURL() {
+        return "";
+      }
+    };
     // @ts-ignore: setting globals
-    globalThis.Image = class {};
+    globalThis.Image = class {
+      onload = null;
+      onerror = null;
+      src = "";
+    };
     // @ts-ignore: setting globals
     globalThis.Plot = Plot;
     // @ts-ignore: setting globals
@@ -316,12 +329,14 @@ export default async function saveChart(
     }
 
     // @ts-ignore: setup canvas
-    document.createElement = ((orig) => (tagName: string) => {
+    const originalCreateElement = document.createElement;
+    // @ts-ignore: setup canvas
+    document.createElement = (tagName: string) => {
       if (tagName.toLowerCase() === "canvas") {
         return createCanvas(1, 1);
       }
-      return orig.call(document, tagName);
-    })(document.createElement);
+      return originalCreateElement.call(document, tagName);
+    };
 
     const element = chart(data);
 
