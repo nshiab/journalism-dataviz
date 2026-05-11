@@ -40,7 +40,7 @@ export default function drawChart(
     yMin: number;
     yMax: number;
     formatX: (d: unknown) => string;
-    formatY: (d: unknown) => string;
+    formatY: (d: number) => string;
   },
 ): { chart: string[][]; xLabels: string[] } {
   // Convert numeric min/max back to original format for formatting

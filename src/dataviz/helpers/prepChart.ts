@@ -23,7 +23,7 @@ export default function prepChart(
   ) => void,
   options: {
     formatX?: (d: unknown) => string;
-    formatY?: (d: unknown) => string;
+    formatY?: (d: number) => string;
     smallMultiples?: string;
     fixedScales?: boolean;
     smallMultiplesPerRow?: number;
@@ -42,7 +42,7 @@ export default function prepChart(
     };
   const formatY = options.formatY
     ? options.formatY
-    : (d: unknown) => formatNumber(d as number);
+    : (d: number) => formatNumber(d);
 
   const width = options.width ?? 75;
   const height = options.height ?? 15;

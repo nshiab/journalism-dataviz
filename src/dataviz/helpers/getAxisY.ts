@@ -6,7 +6,7 @@
 export default function getAxisY(
   options: {
     height: number;
-    formatY: (d: unknown) => string;
+    formatY: (d: number) => string;
     yMin: number;
     yMax: number;
   },
