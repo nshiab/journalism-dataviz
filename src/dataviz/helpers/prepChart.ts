@@ -162,7 +162,7 @@ export default function prepChart(
       allChartsRows.push([""]);
     }
 
-    let chartString = allChartsRows.map((d) => d.join("")).join("\n");
+    const chartString = allChartsRows.map((d) => d.join("")).join("\n");
 
     console.log(`\n${chartString}\n`);
   } else {
@@ -198,7 +198,7 @@ export default function prepChart(
       }
     }
 
-    const { chart, xLabels } = drawChart(
+    const { chart } = drawChart(
       type,
       drawFunction,
       data,
@@ -217,7 +217,7 @@ export default function prepChart(
       },
     );
 
-    let chartString = chart.map((d) => d.join("")).join("\n");
+    const chartString = chart.map((d) => d.join("")).join("\n");
 
     console.log(`${chartString}`);
   }
