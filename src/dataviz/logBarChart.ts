@@ -11,7 +11,7 @@ import makeBars from "./helpers/makeBars.ts";
  * @param values - The key in the data objects whose numerical values will determine the length of each bar and be displayed alongside the labels (e.g., 'sales', 'count', 'percentage').
  * @param options - Optional configuration for customizing the appearance and behavior of the chart.
  * @param options.formatLabels - A function to format the labels displayed on the chart. It receives the raw label value as input and should return a string. Defaults to converting the label to a string.
- * @param options.formatValues - A function to format the numerical values displayed next to the bars. It receives the raw numerical value as input and should return a string. Defaults to formatting the number using `formatNumber` (which adds commas for thousands, etc.).
+ * @param options.formatValues - A function to format the numerical values displayed next to the bars. It receives the numerical value as input and should return a string. Defaults to formatting the number using `formatNumber` (which adds commas for thousands, etc.).
  * @param options.width - The maximum width of the bars in characters. The bars will scale proportionally to this width. A larger width allows for more detailed visualization. Defaults to `40`.
  * @param options.title - An optional title to display above the chart. If not provided, a default title based on `labels` and `values` keys will be generated.
  * @param options.totalLabel - An optional label to display for the total sum of all values at the bottom of the chart. If provided, the sum of all `values` will be calculated and displayed next to this label.
@@ -52,7 +52,7 @@ export default function logBarChart<T extends Record<string, unknown>>(
   values: keyof T,
   options: {
     formatLabels?: (d: T[typeof labels]) => string;
-    formatValues?: (d: T[typeof values]) => string;
+    formatValues?: (d: number) => string;
     width?: number;
     title?: string;
     totalLabel?: string;
@@ -70,8 +70,8 @@ export default function logBarChart<T extends Record<string, unknown>>(
       return String(d);
     };
   const formatValues = options.formatValues ??
-    function (d: T[typeof values]) {
-      return formatNumber(d as number);
+    function (d: number) {
+      return formatNumber(d);
     };
   const width = options.width ?? 40;
 
@@ -81,7 +81,7 @@ export default function logBarChart<T extends Record<string, unknown>>(
     String(labels),
     String(values),
     (d: unknown) => formatLabels(d as T[typeof labels]),
-    (d: number) => formatValues(d as T[typeof values]),
+    formatValues,
     width,
     options.compact ?? false,
     options.totalLabel,

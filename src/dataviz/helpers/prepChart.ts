@@ -23,7 +23,7 @@ export default function prepChart(
   ) => void,
   options: {
     formatX?: (d: unknown) => string;
-    formatY?: (d: unknown) => string;
+    formatY?: (d: number) => string;
     smallMultiples?: string;
     fixedScales?: boolean;
     smallMultiplesPerRow?: number;
@@ -42,7 +42,7 @@ export default function prepChart(
     };
   const formatY = options.formatY
     ? options.formatY
-    : (d: unknown) => formatNumber(d as number);
+    : (d: number) => formatNumber(d);
 
   const width = options.width ?? 75;
   const height = options.height ?? 15;
@@ -159,19 +159,10 @@ export default function prepChart(
         }
       }
       allChartsRows.push(...combinedRows);
-      allChartsRows.push(" ".repeat(combinedRows[0].length).split(""));
+      allChartsRows.push([""]);
     }
 
-    let chartString = allChartsRows.map((d) => d.join("")).join("\n");
-
-    const allLabelsXUnique = Array.from(new Set(allLabelsX));
-    for (let i = 0; i < allLabelsXUnique.length; i++) {
-      const regex = new RegExp(allLabelsXUnique[i], "g");
-      chartString = chartString.replace(
-        regex,
-        `\x1b[90m${allLabelsXUnique[i]}\x1b[0m`,
-      );
-    }
+    const chartString = allChartsRows.map((d) => d.join("")).join("\n");
 
     console.log(`\n${chartString}\n`);
   } else {
@@ -207,7 +198,7 @@ export default function prepChart(
       }
     }
 
-    const { chart, xLabels } = drawChart(
+    const { chart } = drawChart(
       type,
       drawFunction,
       data,
@@ -226,16 +217,7 @@ export default function prepChart(
       },
     );
 
-    let chartString = chart.map((d) => d.join("")).join("\n");
-
-    const allLabelsXUnique = Array.from(new Set(xLabels));
-    for (let i = 0; i < allLabelsXUnique.length; i++) {
-      const regex = new RegExp(allLabelsXUnique[i], "g");
-      chartString = chartString.replace(
-        regex,
-        `\x1b[90m${allLabelsXUnique[i]}\x1b[0m`,
-      );
-    }
+    const chartString = chart.map((d) => d.join("")).join("\n");
 
     console.log(`${chartString}`);
   }

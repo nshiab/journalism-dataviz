@@ -1,3 +1,4 @@
+import { formatNumber } from "@nshiab/journalism-format";
 import addLines from "./helpers/addLines.ts";
 import prepChart from "./helpers/prepChart.ts";
 
@@ -13,10 +14,11 @@ import prepChart from "./helpers/prepChart.ts";
  *
  * @param data - An array of objects representing the data to be visualized. Each object should contain keys corresponding to the `x` and `y` parameters.
  * @param x - The key in the data objects whose values will be plotted on the x-axis. Values must be numbers or Date objects.
+ * @param labels - The key for labels in the data.
  * @param y - The key in the data objects whose values will be plotted on the y-axis. Values must be numbers.
  * @param options - An optional object to customize the chart's appearance and behavior.
  * @param options.formatX - A function to format the x-axis values for display. It receives the raw x-value as input and should return a string. If the first data point's x value is a Date, it defaults to formatting the date as "YYYY-MM-DD".
- * @param options.formatY - A function to format the y-axis values for display. It receives the raw y-value as input and should return a string.
+ * @param options.formatY - A function to format the y-axis values for display. It receives the numerical y-value as input and should return a string.
  * @param options.smallMultiples - A key in the data objects to create small multiples (separate charts) for each unique value of this key. This is useful for comparing trends across different categories.
  * @param options.fixedScales - If `true` and `smallMultiples` is used, all small multiple charts will share the same x and y scales, allowing for direct comparison of magnitudes. If `false`, each small multiple will have its own independent scales. Defaults to `false`.
  * @param options.smallMultiplesPerRow - The number of small multiples to display per row when `smallMultiples` is used. Defaults to `3`.
@@ -56,7 +58,7 @@ import prepChart from "./helpers/prepChart.ts";
  *
  * logLineChart(multiCategoryData, "date", "value", {
  *     formatX: (d) => (d as Date).toLocaleDateString(),
- *     formatY: (d) => "$" + (d as number).toString(),
+ *     formatY: (d) => "$" + d.toString(),
  *     smallMultiples: "category",
  *     smallMultiplesPerRow: 2,
  *     fixedScales: true,
@@ -73,7 +75,7 @@ export default function logLineChart<T extends Record<string, unknown>>(
   y: keyof T,
   options: {
     formatX?: (d: T[typeof x]) => string;
-    formatY?: (d: T[typeof y]) => string;
+    formatY?: (d: number) => string;
     smallMultiples?: keyof T;
     fixedScales?: boolean;
     smallMultiplesPerRow?: number;
@@ -99,9 +101,7 @@ export default function logLineChart<T extends Record<string, unknown>>(
     formatX: options.formatX
       ? (d: unknown) => options.formatX!(d as T[typeof x])
       : undefined,
-    formatY: options.formatY
-      ? (d: unknown) => options.formatY!(d as T[typeof y])
-      : undefined,
+    formatY: options.formatY ?? ((d: number) => formatNumber(d)),
     smallMultiples: options.smallMultiples
       ? String(options.smallMultiples)
       : undefined,
