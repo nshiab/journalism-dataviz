@@ -54,6 +54,8 @@ function logBarChart<T extends Record<string, unknown>>(
     title?: string;
     totalLabel?: string;
     compact?: boolean;
+    showPercentages?: boolean;
+    showTotal?: boolean;
   },
 ): void;
 ```
@@ -85,9 +87,14 @@ function logBarChart<T extends Record<string, unknown>>(
   generated.
 - **`options.totalLabel`**: An optional label to display for the total sum of
   all values at the bottom of the chart. If provided, the sum of all `values`
-  will be calculated and displayed next to this label.
+  will be calculated and displayed next to this label. This also enables the
+  display of the total row.
 - **`options.compact`**: If `true`, the chart will be rendered in a more compact
   format, reducing vertical spacing between bars. Defaults to `false`.
+- **`options.showPercentages`**: If `true`, the percentage of the total for each
+  bar will be displayed next to its value. Defaults to `false`.
+- **`options.showTotal`**: If `true`, the total sum of all values will be
+  displayed above the chart. Defaults to `false`.
 
 ### Examples
 
@@ -103,7 +110,7 @@ logBarChart(salesData, "region", "sales", { title: "Regional Sales Overview" });
 ```
 
 ```ts
-// Display product popularity with custom value formatting and a compact layout.
+// Display product popularity with custom value formatting, a compact layout, and show percentages.
 const productPopularity = [
   { product: "Laptop", views: 5000 },
   { product: "Mouse", views: 1500 },
@@ -114,6 +121,7 @@ logBarChart(productPopularity, "product", "views", {
   width: 30,
   compact: true,
   totalLabel: "Total Views",
+  showPercentages: true,
 });
 ```
 
