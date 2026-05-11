@@ -379,7 +379,7 @@ export default async function saveChart(
           const height = canvas.height;
           const dataUrl = canvas.toDataURL();
           svgStrings.push(
-            `<svg width="${chartWidth}" height="${height}" viewBox="0 0 ${chartWidth} ${height}"><image x="20" href="${dataUrl}" width="${width}" height="${height}" /></svg>`,
+            `<svg width="${chartWidth}" height="${height}" viewBox="0 0 ${chartWidth} ${height}"><image x="20" xlink:href="${dataUrl}" width="${width}" height="${height}" /></svg>`,
           );
         } else if (
           child.classList.contains("plot-legend") ||
@@ -442,7 +442,7 @@ export default async function saveChart(
               const height = canvas.height;
               const dataUrl = canvas.toDataURL();
               svgStrings.push(
-                `<svg width="${chartWidth}" height="${height}" viewBox="0 0 ${chartWidth} ${height}"><image x="20" href="${dataUrl}" width="${width}" height="${height}" /></svg>`,
+                `<svg width="${chartWidth}" height="${height}" viewBox="0 0 ${chartWidth} ${height}"><image x="20" xlink:href="${dataUrl}" width="${width}" height="${height}" /></svg>`,
               );
             }
           }
