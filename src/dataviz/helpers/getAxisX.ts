@@ -31,9 +31,11 @@ export default function getAxisX(
   const xAxis = [];
   for (let i = 0; i < options.width; i++) {
     if (i < xLabelFirst.length) {
-      xAxis.push(xLabelFirst[i]);
+      xAxis.push(`\x1b[90m${xLabelFirst[i]}\x1b[0m`);
     } else if (i >= options.width - xLabelLast.length) {
-      xAxis.push(xLabelLast[i - (options.width - xLabelLast.length)]);
+      xAxis.push(
+        `\x1b[90m${xLabelLast[i - (options.width - xLabelLast.length)]}\x1b[0m`,
+      );
     } else {
       xAxis.push(" ");
     }

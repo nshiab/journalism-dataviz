@@ -159,19 +159,10 @@ export default function prepChart(
         }
       }
       allChartsRows.push(...combinedRows);
-      allChartsRows.push(" ".repeat(combinedRows[0].length).split(""));
+      allChartsRows.push([""]);
     }
 
     let chartString = allChartsRows.map((d) => d.join("")).join("\n");
-
-    const allLabelsXUnique = Array.from(new Set(allLabelsX));
-    for (let i = 0; i < allLabelsXUnique.length; i++) {
-      const regex = new RegExp(allLabelsXUnique[i], "g");
-      chartString = chartString.replace(
-        regex,
-        `\x1b[90m${allLabelsXUnique[i]}\x1b[0m`,
-      );
-    }
 
     console.log(`\n${chartString}\n`);
   } else {
@@ -227,15 +218,6 @@ export default function prepChart(
     );
 
     let chartString = chart.map((d) => d.join("")).join("\n");
-
-    const allLabelsXUnique = Array.from(new Set(xLabels));
-    for (let i = 0; i < allLabelsXUnique.length; i++) {
-      const regex = new RegExp(allLabelsXUnique[i], "g");
-      chartString = chartString.replace(
-        regex,
-        `\x1b[90m${allLabelsXUnique[i]}\x1b[0m`,
-      );
-    }
 
     console.log(`${chartString}`);
   }
