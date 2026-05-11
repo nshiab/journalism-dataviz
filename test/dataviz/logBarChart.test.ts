@@ -51,3 +51,39 @@ Deno.test("should create a bar chart with custom title and compact format", () =
   // How to assert
   assertEquals(true, true);
 });
+
+Deno.test("should create a bar chart and show percentages", () => {
+  const data = [
+    { category: "A", value: 10 },
+    { category: "B", value: 20 },
+  ];
+
+  logBarChart(data, "category", "value", { showPercentages: true });
+  // How to assert
+  assertEquals(true, true);
+});
+
+Deno.test("should create a bar chart and show total", () => {
+  const data = [
+    { category: "A", value: 10 },
+    { category: "B", value: 20 },
+  ];
+
+  logBarChart(data, "category", "value", { showTotal: true });
+  // How to assert
+  assertEquals(true, true);
+});
+
+Deno.test("should create a bar chart and show total and percentages", () => {
+  const data = [
+    { category: "A", value: 10 },
+    { category: "B", value: 20 },
+  ];
+
+  logBarChart(data, "category", "value", {
+    showTotal: true,
+    showPercentages: true,
+  });
+  // How to assert
+  assertEquals(true, true);
+});

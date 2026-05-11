@@ -11,6 +11,8 @@ import { formatNumber } from "@nshiab/journalism-format";
  * @param width The width of the bars.
  * @param compact If true, the chart will be compact.
  * @param totalLabel An optional label for the total sum.
+ * @param showPercentages If true, show the percentage of the total for each bar.
+ * @param showTotal If true, show the total sum of all values.
  * @returns An array of strings representing the bar chart.
  */
 export default function makeBars(
@@ -23,6 +25,8 @@ export default function makeBars(
   width: number,
   compact: boolean,
   totalLabel?: string,
+  showPercentages?: boolean,
+  showTotal?: boolean,
 ) {
   const chartData = [];
 
@@ -43,45 +47,52 @@ export default function makeBars(
   const grey = "\x1b[90m";
   const reset = "\x1b[0m";
 
+  if (showTotal || totalLabel) {
+    const total = totalLabel
+      ? `${totalLabel}: ${formatValues(sumVal)}`
+      : `Total "${values}": ${formatValues(sumVal)}`;
+    console.log(
+      `\n${
+        " ".repeat(Math.round(maxLength + 1 + width / 2 - total.length / 2))
+      }${grey}${total}${reset}`,
+    );
+  }
+
   for (let i = 0; i < labelsData.length; i++) {
     if (i === 0) {
       chartData.push(" ".repeat(maxLength) + grey + " ┌" + reset);
     }
 
     const nbCharacters = Math.round((valuesData[i] / maxVal) * width);
-    chartData.push(
-      labelsData[i] +
-        grey +
-        " ┤" +
-        reset +
-        color +
-        "█".repeat(nbCharacters) +
-        reset +
-        " " +
-        formatValues(valuesData[i]) +
-        " " +
+
+    let line = labelsData[i] +
+      grey +
+      " ┤" +
+      reset +
+      color +
+      "█".repeat(nbCharacters) +
+      reset +
+      " " +
+      formatValues(valuesData[i]);
+
+    if (showPercentages) {
+      line += " " +
         grey +
         formatNumber((valuesData[i] / sumVal) * 100, {
           decimals: 2,
           suffix: "%",
         }) +
-        reset,
-    );
+        reset;
+    }
+
+    chartData.push(line);
+
     if (i === labelsData.length - 1) {
       chartData.push(" ".repeat(maxLength) + grey + " └" + reset);
     } else if (!compact) {
       chartData.push(" ".repeat(maxLength) + grey + " │" + reset);
     }
   }
-
-  const total = totalLabel
-    ? `${totalLabel}: ${formatValues(sumVal)}`
-    : `Total "${values}": ${formatValues(sumVal)}`;
-  console.log(
-    `\n${
-      " ".repeat(Math.round(maxLength + 1 + width / 2 - total.length / 2))
-    }${grey}${total}${reset}`,
-  );
 
   return chartData;
 }
