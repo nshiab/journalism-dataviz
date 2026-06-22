@@ -183,8 +183,6 @@ export default async function updateAnnotationsDW(
       }),
     },
   );
-  await response.json();
-
   // if returning a response, do it before the response.status checks
   if (options.returnResponse === true) {
     return response;

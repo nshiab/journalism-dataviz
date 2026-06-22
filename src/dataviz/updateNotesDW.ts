@@ -63,7 +63,6 @@ export default async function updateNotesDW(
     },
   );
 
-  await response.json();
   // if returning a response, do it before the response.status checks
   if (options.returnResponse === true) {
     return response;
