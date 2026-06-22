@@ -24,6 +24,7 @@
  * ```
  */
 
+import getDataDW from "./dataviz/getDataDW.ts";
 import updateDataDW from "./dataviz/updateDataDW.ts";
 import updateAnnotationsDW from "./dataviz/updateAnnotationsDW.ts";
 import updateNotesDW from "./dataviz/updateNotesDW.ts";
@@ -35,6 +36,7 @@ import saveChart from "./dataviz/saveChart.ts";
 import rewind from "./dataviz/rewind.ts";
 
 export {
+  getDataDW,
   logBarChart,
   logDotChart,
   logLineChart,
