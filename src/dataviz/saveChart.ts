@@ -6,6 +6,7 @@ import { parseHTML } from "linkedom";
 import { Resvg } from "@resvg/resvg-js";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
+import escapeXmlTest from "../helpers/escapeXmlTest.ts";
 
 /**
  * Saves an [Observable Plot](https://github.com/observablehq/plot) chart as an image file (`.png`) or an SVG file (`.svg`).
@@ -422,7 +423,7 @@ export default async function saveChart(
                 currentY + 12
               }" font-size="12" fill="${
                 options.dark ? "#B0B0B0" : "currentColor"
-              }">${text}</text>`;
+              }">${escapeXmlTest(text)}</text>`;
 
               currentX += itemWidth;
             });
@@ -604,7 +605,7 @@ export default async function saveChart(
         masterSvg +=
           `<text x="${x}" y="${comp.y}" font-size="${comp.fontSize}" fill="${comp.fill}" text-anchor="${comp.anchor}" ${
             comp.className ? `class="${comp.className}"` : ""
-          }>${comp.html}</text>`;
+          }>${escapeXmlTest(comp.html)}</text>`;
       } else {
         const xOffset = 20;
         masterSvg += comp.html.replace(
