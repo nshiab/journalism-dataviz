@@ -1,6 +1,3 @@
-import * as Plot from "@observablehq/plot";
-import * as d3 from "d3-array";
-import { formatDate, formatNumber, round } from "@nshiab/journalism-format";
 import { createCanvas } from "@napi-rs/canvas";
 import { parseHTML } from "linkedom";
 import { Resvg } from "@resvg/resvg-js";
@@ -12,7 +9,7 @@ import escapeXmlTest from "../helpers/escapeXmlTest.ts";
  * Saves an [Observable Plot](https://github.com/observablehq/plot) chart as an image file (`.png`) or an SVG file (`.svg`).
  *
  * @param data - An array of data objects that your Observable Plot chart function expects.
- * @param chart - A function that takes the `data` array and returns an SVG or HTML element representing the chart. Inside this function, `d3`, `Plot`, and `journalismFormat` globals are available, with their members destructured (e.g. `formatNumber`, `formatDate`, `round` from journalism-format; `min`, `max`, `mean`, etc. from d3; and all Plot marks).
+ * @param chart - A function that takes the `data` array and returns an SVG or HTML element representing the chart.
  * @param path - The file path where the image or SVG will be saved. The file extension (`.png` or `.svg`) determines the output format.
  * @param options - Optional settings to customize the chart's appearance and behavior.
  *   @param options.style - A CSS string to apply custom styles to the chart.
@@ -70,183 +67,6 @@ export default async function saveChart(
     "<!DOCTYPE html><html><body></body></html>",
   );
 
-  const plotMarks = [
-    "Area",
-    "Arrow",
-    "BarX",
-    "BarY",
-    "Cell",
-    "Contour",
-    "Density",
-    "Dot",
-    "Frame",
-    "Geo",
-    "Hexgrid",
-    "Image",
-    "Line",
-    "Link",
-    "Mark",
-    "Raster",
-    "Rect",
-    "RuleX",
-    "RuleY",
-    "Text",
-    "TickX",
-    "TickY",
-    "Tip",
-    "Vector",
-    "WaffleX",
-    "WaffleY",
-    "area",
-    "areaX",
-    "areaY",
-    "arrow",
-    "auto",
-    "autoSpec",
-    "axisFx",
-    "axisFy",
-    "axisX",
-    "axisY",
-    "barX",
-    "barY",
-    "bin",
-    "binX",
-    "binY",
-    "bollinger",
-    "bollingerX",
-    "bollingerY",
-    "boxX",
-    "boxY",
-    "cell",
-    "cellX",
-    "cellY",
-    "centroid",
-    "circle",
-    "cluster",
-    "column",
-    "contour",
-    "crosshair",
-    "crosshairX",
-    "crosshairY",
-    "delaunayLink",
-    "delaunayMesh",
-    "density",
-    "differenceX",
-    "differenceY",
-    "dodgeX",
-    "dodgeY",
-    "dot",
-    "dotX",
-    "dotY",
-    "filter",
-    "find",
-    "formatIsoDate",
-    "formatMonth",
-    "formatWeekday",
-    "frame",
-    "geo",
-    "geoCentroid",
-    "graticule",
-    "gridFx",
-    "gridFy",
-    "gridX",
-    "gridY",
-    "group",
-    "groupX",
-    "groupY",
-    "groupZ",
-    "hexagon",
-    "hexbin",
-    "hexgrid",
-    "hull",
-    "identity",
-    "image",
-    "indexOf",
-    "initializer",
-    "interpolateNearest",
-    "interpolateNone",
-    "interpolatorBarycentric",
-    "interpolatorRandomWalk",
-    "legend",
-    "line",
-    "lineX",
-    "lineY",
-    "linearRegressionX",
-    "linearRegressionY",
-    "link",
-    "map",
-    "mapX",
-    "mapY",
-    "marks",
-    "normalize",
-    "normalizeX",
-    "normalizeY",
-    "numberInterval",
-    "plot",
-    "pointer",
-    "pointerX",
-    "pointerY",
-    "raster",
-    "rect",
-    "rectX",
-    "rectY",
-    "reverse",
-    "ruleX",
-    "ruleY",
-    "scale",
-    "select",
-    "selectFirst",
-    "selectLast",
-    "selectMaxX",
-    "selectMaxY",
-    "selectMinX",
-    "selectMinY",
-    "shiftX",
-    "shiftY",
-    "shuffle",
-    "sort",
-    "sphere",
-    "spike",
-    "stackX",
-    "stackX1",
-    "stackX2",
-    "stackY",
-    "stackY1",
-    "stackY2",
-    "text",
-    "textX",
-    "textY",
-    "tickX",
-    "tickY",
-    "timeInterval",
-    "tip",
-    "transform",
-    "tree",
-    "treeLink",
-    "treeNode",
-    "utcInterval",
-    "valueof",
-    "vector",
-    "vectorX",
-    "vectorY",
-    "voronoi",
-    "voronoiMesh",
-    "waffleX",
-    "waffleY",
-    "windowX",
-    "windowY",
-  ];
-  const d3Functions = [
-    "min",
-    "minIndex",
-    "max",
-    "maxIndex",
-    "mean",
-    "median",
-    "medianIndex",
-    "extent",
-  ];
-
   const keysToSet = [
     "document",
     "window",
@@ -257,14 +77,6 @@ export default async function saveChart(
     "CustomEvent",
     "Canvas",
     "Image",
-    "Plot",
-    "d3",
-    "journalismFormat",
-    "formatDate",
-    "formatNumber",
-    "round",
-    ...plotMarks,
-    ...d3Functions,
   ];
 
   // deno-lint-ignore no-explicit-any
@@ -276,7 +88,7 @@ export default async function saveChart(
   }
 
   try {
-    // Setup globals for the chart function and Plot
+    // Set up the DOM globals that Observable Plot needs for server-side rendering.
     // @ts-ignore: setting globals
     globalThis.document = document;
     // @ts-ignore: setting globals
@@ -308,28 +120,6 @@ export default async function saveChart(
       onerror = null;
       src = "";
     };
-    // @ts-ignore: setting globals
-    globalThis.Plot = Plot;
-    // @ts-ignore: setting globals
-    globalThis.d3 = d3;
-    // @ts-ignore: setting globals
-    globalThis.journalismFormat = { formatDate, formatNumber, round };
-    // @ts-ignore: setting globals
-    globalThis.formatDate = formatDate;
-    // @ts-ignore: setting globals
-    globalThis.formatNumber = formatNumber;
-    // @ts-ignore: setting globals
-    globalThis.round = round;
-
-    for (const key of plotMarks) {
-      // @ts-ignore: setting globals
-      globalThis[key] = Plot[key as keyof typeof Plot];
-    }
-    for (const key of d3Functions) {
-      // @ts-ignore: setting globals
-      globalThis[key] = d3[key as keyof typeof d3];
-    }
-
     // @ts-ignore: setup canvas
     const originalCreateElement = document.createElement;
     // @ts-ignore: setup canvas

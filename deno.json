@@ -11,7 +11,6 @@
   "tasks": {
     "all-tests": "deno fmt --check && deno lint && deno check src/index.ts && deno doc --lint src/index.ts && deno publish --allow-dirty --dry-run && TZ=America/Toronto deno test -A --fail-fast && deno task llm",
     "llm": "deno run -A jsr:@nshiab/deno-docs-to-md && deno fmt llm.md",
-    "bundle-journalism-format": "deno bundle --platform=browser --minify src/dataviz/imports/buildJournalismFormat.ts -o src/dataviz/imports/journalism-format.js",
     "test-coverage": "deno test -A --fail-fast --coverage=cov_profile && deno coverage cov_profile",
     "patch": "deno task all-tests && deno run -A jsr:@nshiab/bump-version patch",
     "minor": "deno task all-tests && deno run -A jsr:@nshiab/bump-version minor",
