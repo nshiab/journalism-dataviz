@@ -23,6 +23,70 @@ Deno.test("should save an Observable chart as png", async () => {
   // How to assert
   assertEquals(true, true);
 });
+
+Deno.test("should save a chart with an ampersand in the title", async () => {
+  const data = [{ label: "A", value: 1 }];
+  const path = "test/output/title-with-ampersand.png";
+
+  await saveChart(data, (data) =>
+    plot({
+      title: "Research & development",
+      marks: [barY(data, { x: "label", y: "value" })],
+    }), path);
+
+  assertEquals(
+    Array.from(readFileSync(path).subarray(0, 8)),
+    [137, 80, 78, 71, 13, 10, 26, 10],
+  );
+});
+
+Deno.test("should save a chart with an ampersand in the subtitle", async () => {
+  const data = [{ label: "A", value: 1 }];
+  const path = "test/output/subtitle-with-ampersand.png";
+
+  await saveChart(data, (data) =>
+    plot({
+      subtitle: "Research & development",
+      marks: [barY(data, { x: "label", y: "value" })],
+    }), path);
+
+  assertEquals(
+    Array.from(readFileSync(path).subarray(0, 8)),
+    [137, 80, 78, 71, 13, 10, 26, 10],
+  );
+});
+
+Deno.test("should save a chart with an ampersand in the caption", async () => {
+  const data = [{ label: "A", value: 1 }];
+  const path = "test/output/caption-with-ampersand.png";
+
+  await saveChart(data, (data) =>
+    plot({
+      caption: "Research & development",
+      marks: [barY(data, { x: "label", y: "value" })],
+    }), path);
+
+  assertEquals(
+    Array.from(readFileSync(path).subarray(0, 8)),
+    [137, 80, 78, 71, 13, 10, 26, 10],
+  );
+});
+
+Deno.test("should save a chart with an ampersand in a text mark", async () => {
+  const data = [{ x: 1, y: 1, label: "Research & development" }];
+  const path = "test/output/text-mark-with-ampersand.png";
+
+  await saveChart(data, (data) =>
+    plot({
+      marks: [text(data, { x: "x", y: "y", text: "label" })],
+    }), path);
+
+  assertEquals(
+    Array.from(readFileSync(path).subarray(0, 8)),
+    [137, 80, 78, 71, 13, 10, 26, 10],
+  );
+});
+
 Deno.test("should save an Observable chart as png with style options", async () => {
   const data = JSON.parse(
     readFileSync("test/data/temperatures.json", "utf-8"),
@@ -463,6 +527,25 @@ Deno.test("should save a chart with a categorical color legend", async () => {
     }), `test/output/legend-categorical.png`);
 
   assertEquals(true, true);
+});
+
+Deno.test("should save a chart with an ampersand in a categorical legend", async () => {
+  const data = [
+    { name: "Research & development", value: 10 },
+    { name: "Operations", value: 20 },
+  ];
+  const path = "test/output/legend-with-ampersand.png";
+
+  await saveChart(data, (data) =>
+    plot({
+      color: { legend: true },
+      marks: [barY(data, { x: "name", y: "value", fill: "name" })],
+    }), path);
+
+  assertEquals(
+    Array.from(readFileSync(path).subarray(0, 8)),
+    [137, 80, 78, 71, 13, 10, 26, 10],
+  );
 });
 
 Deno.test("should save a chart with a continuous color legend", async () => {
