@@ -1,5 +1,5 @@
-import { formatNumber } from "@nshiab/journalism-format";
 import addDots from "./helpers/addDots.ts";
+import { formatNumber } from "./helpers/format.ts";
 import prepChart from "./helpers/prepChart.ts";
 
 /**

@@ -1,11 +1,8 @@
-import "@std/dotenv/load";
 import { assertEquals, assertStringIncludes } from "jsr:@std/assert";
-import { dataAsCsv } from "@nshiab/journalism-format";
 import getDataDW from "../../src/dataviz/getDataDW.ts";
 import updateDataDW from "../../src/dataviz/updateDataDW.ts";
 
-const chartData = [{ salary: 75000, hireDate: new Date("2022-12-15") }];
-const chartDataCsv = dataAsCsv(chartData);
+const chartDataCsv = "salary,hireDate\n75000,2022-12-15";
 
 const mapData = {
   type: "FeatureCollection",

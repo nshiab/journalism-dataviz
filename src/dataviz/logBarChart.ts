@@ -1,5 +1,5 @@
-import { formatNumber } from "@nshiab/journalism-format";
 import makeBars from "./helpers/makeBars.ts";
+import { formatNumber } from "./helpers/format.ts";
 
 /**
  * Generates and logs a text-based bar chart to the console. This function is useful for quickly visualizing data distributions or comparisons directly within a terminal or log output, without needing a graphical interface. It's particularly effective for presenting categorical data or showing the relative magnitudes of different items.

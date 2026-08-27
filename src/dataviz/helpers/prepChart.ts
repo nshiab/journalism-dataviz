@@ -1,8 +1,7 @@
-import { max, min, type Numeric } from "d3-array";
 import getColors from "./getColors.ts";
 import drawChart from "./drawChart.ts";
 import validateDataTypes from "./validateDataTypes.ts";
-import { formatDate, formatNumber } from "@nshiab/journalism-format";
+import { formatDate, formatNumber } from "./format.ts";
 
 export default function prepChart(
   type: "line" | "dot",
@@ -69,12 +68,12 @@ export default function prepChart(
         const val = d[x];
         return val instanceof Date ? val.getTime() : val as number;
       });
-      xMin = min(xValues as Numeric[]) as number;
-      xMax = max(xValues as Numeric[]) as number;
+      xMin = Math.min(...xValues);
+      xMax = Math.max(...xValues);
 
       const yValues = data.map((d) => d[y] as number);
-      yMin = min(yValues as Numeric[]) as number;
-      yMax = max(yValues as Numeric[]) as number;
+      yMin = Math.min(...yValues);
+      yMax = Math.max(...yValues);
 
       if (
         xMin === undefined ||
@@ -109,12 +108,12 @@ export default function prepChart(
           const val = d[x];
           return val instanceof Date ? val.getTime() : val as number;
         });
-        xMin = min(xValues as Numeric[]) as number;
-        xMax = max(xValues as Numeric[]) as number;
+        xMin = Math.min(...xValues);
+        xMax = Math.max(...xValues);
 
         const yValues = dataFiltered.map((d) => d[y] as number);
-        yMin = min(yValues as Numeric[]) as number;
-        yMax = max(yValues as Numeric[]) as number;
+        yMin = Math.min(...yValues);
+        yMax = Math.max(...yValues);
       }
 
       const { chart, xLabels } = drawChart(
@@ -170,12 +169,12 @@ export default function prepChart(
       const val = d[x];
       return val instanceof Date ? val.getTime() : val as number;
     });
-    const xMin = min(xValues as Numeric[]) as number;
-    const xMax = max(xValues as Numeric[]) as number;
+    const xMin = Math.min(...xValues);
+    const xMax = Math.max(...xValues);
 
     const yValues = data.map((d) => d[y] as number);
-    const yMin = min(yValues as Numeric[]) as number;
-    const yMax = max(yValues as Numeric[]) as number;
+    const yMin = Math.min(...yValues);
+    const yMax = Math.max(...yValues);
 
     if (
       xMin === undefined ||

@@ -1,15 +1,12 @@
-import "@std/dotenv/load";
 import { assertEquals } from "jsr:@std/assert";
 import updateDataDW from "../../src/dataviz/updateDataDW.ts";
-import { dataAsCsv } from "@nshiab/journalism-format";
+
+const chartDataCsv = "salary,hireDate\n75000,2022-12-15";
 
 const apiKey = Deno.env.get("DATAWRAPPER_KEY");
 if (typeof apiKey === "string" && apiKey !== "") {
   Deno.test("should update data in a chart", async () => {
-    const data = [{ salary: 75000, hireDate: new Date("2022-12-15") }];
-    const dataCSV = dataAsCsv(data);
-
-    await updateDataDW("ntURh", dataCSV);
+    await updateDataDW("ntURh", chartDataCsv);
 
     // Just making sure it doesn't crash for now.
     assertEquals(true, true);
@@ -49,10 +46,7 @@ if (typeof apiKey === "string" && apiKey !== "") {
 const differentApiKey = Deno.env.get("DW_KEY");
 if (typeof differentApiKey === "string" && differentApiKey !== "") {
   Deno.test("should update data in a chart with a specific API key", async () => {
-    const data = [{ salary: 75000, hireDate: new Date("2022-12-15") }];
-    const dataCSV = dataAsCsv(data);
-
-    await updateDataDW("ntURh", dataCSV, { apiKey: "DW_KEY" });
+    await updateDataDW("ntURh", chartDataCsv, { apiKey: "DW_KEY" });
 
     // Just making sure it doesn't crash for now.
     assertEquals(true, true);

@@ -1,4 +1,3 @@
-import "@std/dotenv/load";
 import { assertEquals } from "jsr:@std/assert";
 import publishChartDW from "../../src/dataviz/publishChartDW.ts";
 

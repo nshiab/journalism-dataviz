@@ -1,7 +1,6 @@
-import "@std/dotenv/load";
 import { assertEquals } from "jsr:@std/assert";
 import updateNotesDW from "../../src/dataviz/updateNotesDW.ts";
-import { formatDate } from "@nshiab/journalism-format";
+import { formatDate } from "../../src/dataviz/helpers/format.ts";
 
 const apiKey = Deno.env.get("DATAWRAPPER_KEY");
 if (typeof apiKey === "string" && apiKey !== "") {
