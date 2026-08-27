@@ -1,6 +1,6 @@
 {
   "name": "@nshiab/journalism-dataviz",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "Useful TypeScript functions for journalism projects. This library focuses on data visualization.",
   "repository": "https://github.com/nshiab/journalism-dataviz",
   "license": "MIT",
@@ -28,7 +28,7 @@
   },
   "nodeModulesDir": "auto",
   "imports": {
-    "@napi-rs/canvas": "npm:@napi-rs/canvas@^1.0.7",
+    "@napi-rs/canvas": "npm:@napi-rs/canvas@^1.0.8",
     "@observablehq/plot": "npm:@observablehq/plot@^0.6.17",
     "@resvg/resvg-js": "npm:@resvg/resvg-js@^2.6.2",
     "d3-dsv": "npm:d3-dsv@^3.0.1",
