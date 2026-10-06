@@ -1,4 +1,9 @@
-import { assertEquals, assertStringIncludes } from "jsr:@std/assert";
+import {
+  assertEquals,
+  assertRejects,
+  assertStrictEquals,
+  assertStringIncludes,
+} from "jsr:@std/assert";
 import { readFileSync } from "node:fs";
 import saveChart from "../../src/dataviz/saveChart.ts";
 import type { Data } from "@observablehq/plot";
@@ -531,4 +536,137 @@ Deno.test("should save a faceted chart with legend and all text elements", async
     }), `test/output/facet-with-legend-and-text.png`);
 
   assertEquals(true, true);
+});
+
+Deno.test("should await an async chart and save its SVG and PNG", async () => {
+  const originalDocument = globalThis.document;
+  for (const extension of ["svg", "png"]) {
+    const path = `test/output/async-chart.${extension}`;
+    await saveChart([{ x: 1, y: 2 }], async (data) => {
+      const renderingDocument = globalThis.document;
+      await new Promise<void>((resolve) => setTimeout(resolve, 5));
+      assertStrictEquals(globalThis.document, renderingDocument);
+      return plot({
+        title: "Async chart",
+        marks: [dot(data, { x: "x", y: "y" })],
+      });
+    }, path);
+    if (extension === "svg") {
+      assertStringIncludes(readFileSync(path, "utf-8"), "Async chart");
+    } else {
+      assertEquals(Array.from(readFileSync(path).subarray(0, 8)), [
+        137,
+        80,
+        78,
+        71,
+        13,
+        10,
+        26,
+        10,
+      ]);
+    }
+    assertStrictEquals(globalThis.document, originalDocument);
+  }
+});
+
+Deno.test("should preserve the DOM across concurrent saves and recover after rejection", async () => {
+  const originalDocument = globalThis.document;
+  const started = Promise.withResolvers<void>();
+  const resume = Promise.withResolvers<void>();
+  const events: string[] = [];
+  const failure = new Error("Async chart failed");
+  const failedSave = saveChart([], async () => {
+    const renderingDocument = globalThis.document;
+    events.push("first started");
+    started.resolve();
+    await resume.promise;
+    assertStrictEquals(globalThis.document, renderingDocument);
+    events.push("first failed");
+    throw failure;
+  }, "test/output/async-failure.svg");
+  const rejection = assertRejects(() => failedSave, Error, failure.message);
+  await started.promise;
+  const nextSave = saveChart([], () => {
+    events.push("second started");
+    return plot({ title: "Recovered chart" });
+  }, "test/output/async-recovery.svg");
+  const thirdSave = saveChart([], async () => {
+    events.push("third started");
+    const renderingDocument = globalThis.document;
+    await new Promise<void>((resolve) => setTimeout(resolve, 5));
+    assertStrictEquals(globalThis.document, renderingDocument);
+    return plot({ title: "Third chart" });
+  }, "test/output/async-third.svg");
+  resume.resolve();
+  const [error] = await Promise.all([rejection, nextSave, thirdSave]);
+  assertStrictEquals(error, failure);
+  assertEquals(events, [
+    "first started",
+    "first failed",
+    "second started",
+    "third started",
+  ]);
+  assertStrictEquals(globalThis.document, originalDocument);
+  assertStringIncludes(
+    readFileSync("test/output/async-recovery.svg", "utf-8"),
+    "Recovered chart",
+  );
+  assertStringIncludes(
+    readFileSync("test/output/async-third.svg", "utf-8"),
+    "Third chart",
+  );
+});
+
+Deno.test("should restore the DOM after a synchronous chart failure", async () => {
+  const originalDocument = globalThis.document;
+  const failure = new Error("Synchronous chart failed");
+  const error = await assertRejects(
+    () =>
+      saveChart([], () => {
+        throw failure;
+      }, "test/output/sync-failure.svg"),
+    Error,
+    failure.message,
+  );
+  assertStrictEquals(error, failure);
+  assertStrictEquals(globalThis.document, originalDocument);
+});
+
+Deno.test("should reject nested saves instead of blocking the rendering queue", async () => {
+  await assertRejects(
+    () =>
+      saveChart([], async () => {
+        await saveChart([], () => plot({}), "test/output/nested.svg");
+        return plot({});
+      }, "test/output/outer.svg"),
+    Error,
+    "saveChart() cannot be called from inside a chart function.",
+  );
+  await saveChart(
+    [],
+    () => plot({ title: "After nested failure" }),
+    "test/output/after-nested.svg",
+  );
+  assertStringIncludes(
+    readFileSync("test/output/after-nested.svg", "utf-8"),
+    "After nested failure",
+  );
+});
+
+Deno.test("should pass GeoJSON unchanged to an async map callback", async () => {
+  const data = {
+    type: "FeatureCollection",
+    features: [{
+      type: "Feature",
+      properties: { name: "Point" },
+      geometry: { type: "Point", coordinates: [-73, 45] },
+    }],
+  };
+  const path = "test/output/async-map.svg";
+  await saveChart(data, async (geoData) => {
+    assertStrictEquals(geoData, data);
+    await new Promise<void>((resolve) => setTimeout(resolve, 5));
+    return plot({ projection: "equirectangular", marks: [geo(geoData)] });
+  }, path);
+  assertStringIncludes(readFileSync(path, "utf-8"), 'aria-label="geo"');
 });

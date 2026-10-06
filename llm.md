@@ -530,15 +530,21 @@ console.log(rewoundFeature);
 
 ## saveChart
 
-Saves an [Observable Plot](https://github.com/observablehq/plot) chart as an
-image file (`.png`) or an SVG file (`.svg`).
+Saves an [Observable Plot](https://github.com/observablehq/plot) chart or map as
+a PNG or SVG file. The chart function can return an SVG or HTML element directly
+or through a promise. The rendering environment remains available until the
+chart function finishes. Concurrent saves are processed one at a time to protect
+that environment. Calling `saveChart` from inside its own chart function is not
+supported and rejects with an error.
 
 ### Signature
 
 ```typescript
-async function saveChart(
-  data: Iterable<any> | ArrayLike<any>,
-  chart: (data: Iterable<any> | ArrayLike<any>) => SVGSVGElement | HTMLElement,
+async function saveChart<T>(
+  data: T,
+  chart: (
+    data: T,
+  ) => SVGSVGElement | HTMLElement | Promise<SVGSVGElement | HTMLElement>,
   path: string,
   options?: { style?: string; dark?: boolean },
 ): Promise<void>;
@@ -546,53 +552,45 @@ async function saveChart(
 
 ### Parameters
 
-- **`data`**: An array of data objects that your Observable Plot chart function
-  expects.
-- **`chart`**: A function that takes the `data` array and returns an SVG or HTML
-  element representing the chart.
-- **`path`**: The file path where the image or SVG will be saved. The file
-  extension (`.png` or `.svg`) determines the output format.
-- **`options`**: Optional settings to customize the chart's appearance and
-  behavior.
-- **`options.style`**: A CSS string to apply custom styles to the chart.
-- **`options.dark`**: If `true`, the chart will be rendered with a dark mode
-  theme. Defaults to `false`.
+- **`data`**: The data passed to the chart function.
+- **`chart`**: A synchronous or asynchronous function returning an SVG or HTML
+  element representing the chart or map.
+- **`path`**: The output file path. The extension must be `.png` or `.svg`.
+- **`options`**: Optional settings to customize the chart's appearance.
+- **`options.style`**: A CSS string inserted into the generated SVG.
+- **`options.dark`**: If `true`, renders the chart with a dark theme. Defaults
+  to `false`.
 
 ### Returns
 
-A Promise that resolves when the chart has been successfully saved to the
-specified path.
+A promise that resolves after the file has been saved, or rejects if the chart
+function or saving fails.
 
 ### Examples
 
 ```ts
-// Save a simple dot plot as a PNG image.
 import { dot, plot } from "@observablehq/plot";
 
-const dataForPng = [{ year: 2024, value: 10 }, { year: 2025, value: 15 }];
-const chartForPng = (d) => plot({ marks: [dot(d, { x: "year", y: "value" })] });
-const pngPath = "output/dot-chart.png";
-
-await saveChart(dataForPng, chartForPng, pngPath);
-console.log(`Chart saved to ${pngPath}`);
+const data = [{ year: 2024, value: 10 }, { year: 2025, value: 15 }];
+await saveChart(
+  data,
+  (rows) => plot({ marks: [dot(rows, { x: "year", y: "value" })] }),
+  "output/chart.png",
+);
 ```
 
 ```ts
-// Save a bar chart as an SVG file with a custom background color.
-import { barY, plot } from "@observablehq/plot";
-
-const dataForSvg = [{ city: "New York", population: 8.4 }, {
-  city: "Los Angeles",
-  population: 3.9,
-}];
-const chartForSvg = (d) =>
-  plot({ marks: [barY(d, { x: "city", y: "population" })] });
-const svgPath = "output/bar-chart.svg";
-
-await saveChart(dataForSvg, chartForSvg, svgPath, {
-  style: "background-color: #f0f0f0;",
-});
-console.log(`Chart saved to ${svgPath}`);
+// Load Observable Plot asynchronously before creating the chart.
+const data = [{ year: 2024, value: 10 }, { year: 2025, value: 15 }];
+await saveChart(
+  data,
+  async (rows) => {
+    const { dot, plot } = await import("@observablehq/plot");
+    return plot({ marks: [dot(rows, { x: "year", y: "value" })] });
+  },
+  "output/chart.svg",
+  { dark: true, style: ".chart-title { font-size: 24px; }" },
+);
 ```
 
 ## updateAnnotationsDW

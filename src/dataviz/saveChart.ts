@@ -4,57 +4,69 @@ import { Resvg } from "@resvg/resvg-js";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import escapeXmlTest from "../helpers/escapeXmlTest.ts";
+import serializeChartRendering from "../helpers/serializeChartRendering.ts";
 
 /**
- * Saves an [Observable Plot](https://github.com/observablehq/plot) chart as an image file (`.png`) or an SVG file (`.svg`).
- *
- * @param data - An array of data objects that your Observable Plot chart function expects.
- * @param chart - A function that takes the `data` array and returns an SVG or HTML element representing the chart.
- * @param path - The file path where the image or SVG will be saved. The file extension (`.png` or `.svg`) determines the output format.
- * @param options - Optional settings to customize the chart's appearance and behavior.
- *   @param options.style - A CSS string to apply custom styles to the chart.
- *   @param options.dark - If `true`, the chart will be rendered with a dark mode theme. Defaults to `false`.
- * @returns A Promise that resolves when the chart has been successfully saved to the specified path.
+ * Saves an [Observable Plot](https://github.com/observablehq/plot) chart or map as a PNG or SVG file.
+ * The chart function can return an SVG or HTML element directly or through a promise.
+ * The rendering environment remains available until the chart function finishes.
+ * Concurrent saves are processed one at a time to protect that environment.
+ * Calling `saveChart` from inside its own chart function is not supported and rejects with an error.
  *
  * @example
  * ```ts
- * // Save a simple dot plot as a PNG image.
- * import { plot, dot } from "@observablehq/plot";
+ * import { dot, plot } from "@observablehq/plot";
  *
- * const dataForPng = [{ year: 2024, value: 10 }, { year: 2025, value: 15 }];
- * const chartForPng = (d) => plot({ marks: [dot(d, { x: "year", y: "value" })] });
- * const pngPath = "output/dot-chart.png";
- *
- * await saveChart(dataForPng, chartForPng, pngPath);
- * console.log(`Chart saved to ${pngPath}`);
+ * const data = [{ year: 2024, value: 10 }, { year: 2025, value: 15 }];
+ * await saveChart(
+ *   data,
+ *   (rows) => plot({ marks: [dot(rows, { x: "year", y: "value" })] }),
+ *   "output/chart.png",
+ * );
  * ```
  *
  * @example
  * ```ts
- * // Save a bar chart as an SVG file with a custom background color.
- * import { plot, barY } from "@observablehq/plot";
- *
- * const dataForSvg = [{ city: "New York", population: 8.4 }, { city: "Los Angeles", population: 3.9 }];
- * const chartForSvg = (d) => plot({ marks: [barY(d, { x: "city", y: "population" })] });
- * const svgPath = "output/bar-chart.svg";
- *
- * await saveChart(dataForSvg, chartForSvg, svgPath, { style: "background-color: #f0f0f0;" });
- * console.log(`Chart saved to ${svgPath}`);
+ * // Load Observable Plot asynchronously before creating the chart.
+ * const data = [{ year: 2024, value: 10 }, { year: 2025, value: 15 }];
+ * await saveChart(
+ *   data,
+ *   async (rows) => {
+ *     const { dot, plot } = await import("@observablehq/plot");
+ *     return plot({ marks: [dot(rows, { x: "year", y: "value" })] });
+ *   },
+ *   "output/chart.svg",
+ *   { dark: true, style: ".chart-title { font-size: 24px; }" },
+ * );
  * ```
  *
+ * @param data - The data passed to the chart function.
+ * @param chart - A synchronous or asynchronous function returning an SVG or HTML element representing the chart or map.
+ * @param path - The output file path. The extension must be `.png` or `.svg`.
+ * @param options - Optional settings to customize the chart's appearance.
+ * @param options.style - A CSS string inserted into the generated SVG.
+ * @param options.dark - If `true`, renders the chart with a dark theme. Defaults to `false`.
+ * @returns A promise that resolves after the file has been saved, or rejects if the chart function or saving fails.
+ * @typeParam T - The type of data passed unchanged to the chart function.
  * @category Dataviz
  */
-export default async function saveChart(
-  // deno-lint-ignore no-explicit-any
-  data: Iterable<any> | ArrayLike<any>,
-  // deno-lint-ignore no-explicit-any
-  chart: (data: Iterable<any> | ArrayLike<any>) => SVGSVGElement | HTMLElement,
+export default async function saveChart<T>(
+  data: T,
+  chart: (
+    data: T,
+  ) => SVGSVGElement | HTMLElement | Promise<SVGSVGElement | HTMLElement>,
   path: string,
   options: { style?: string; dark?: boolean } = {},
 ): Promise<void> {
-  // To satisfy the requirement of async function having an await
-  await Promise.resolve();
+  await serializeChartRendering(() => renderChart(data, chart, path, options));
+}
 
+async function renderChart<T>(
+  data: T,
+  chart: Parameters<typeof saveChart<T>>[1],
+  path: string,
+  options: { style?: string; dark?: boolean },
+): Promise<void> {
   const {
     document,
     window,
@@ -130,7 +142,7 @@ export default async function saveChart(
       return originalCreateElement.call(document, tagName);
     };
 
-    const element = chart(data);
+    const element = await chart(data);
 
     let title = "";
     let subtitle = "";
