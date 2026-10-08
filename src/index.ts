@@ -24,8 +24,6 @@
  * ```
  */
 
-export type { DatawrapperChartInfo } from "./dataviz/getInfoDW.ts";
-
 import getInfoDW from "./dataviz/getInfoDW.ts";
 import getDataDW from "./dataviz/getDataDW.ts";
 import updateDataDW from "./dataviz/updateDataDW.ts";

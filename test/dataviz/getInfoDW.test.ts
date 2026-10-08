@@ -1,6 +1,6 @@
 import { assertEquals, assertRejects } from "jsr:@std/assert";
 import process from "node:process";
-import { type DatawrapperChartInfo, getInfoDW } from "../../src/index.ts";
+import { getInfoDW } from "../../src/index.ts";
 
 Deno.test("getInfoDW returns chart information and handles authentication and errors", async (t) => {
   const originalFetch = globalThis.fetch;
@@ -35,9 +35,9 @@ Deno.test("getInfoDW returns chart information and handles authentication and er
   try {
     process.env.DATAWRAPPER_KEY = expectedKey;
     await t.step("returns the full parsed object by default", async () => {
-      const info: DatawrapperChartInfo = await getInfoDW("abcde");
-      const title: string | undefined = info.title;
-      assertEquals(title, "A chart");
+      const info = await getInfoDW("abcde");
+      if (info instanceof Response) throw new Error("Expected chart object");
+      assertEquals(info.title, "A chart");
       assertEquals(info, JSON.parse(body));
     });
     await t.step("uses a custom environment variable", async () => {
@@ -66,9 +66,10 @@ Deno.test("getInfoDW returns chart information and handles authentication and er
       assertEquals(calls, previousCalls);
     });
     await t.step("returns an unconsumed successful response", async () => {
-      const response: Response = await getInfoDW("abcde", {
+      const response = await getInfoDW("abcde", {
         returnResponse: true,
       });
+      if (!(response instanceof Response)) throw new Error("Expected Response");
       assertEquals(response.bodyUsed, false);
       assertEquals(await response.json(), JSON.parse(body));
     });
@@ -88,7 +89,7 @@ Deno.test("getInfoDW returns chart information and handles authentication and er
       "returns an unconsumed error response when requested",
       async () => {
         const returnResponse: boolean = status === 404;
-        const result: DatawrapperChartInfo | Response = await getInfoDW(
+        const result: Record<string, unknown> | Response = await getInfoDW(
           "abcde",
           { returnResponse },
         );

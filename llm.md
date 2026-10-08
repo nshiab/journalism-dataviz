@@ -91,45 +91,64 @@ console.log(data);
 
 ## getInfoDW
 
-Gets information and settings for a Datawrapper chart, table, or map. Returns
-the full parsed chart object without logging or writing files. Requires a
-Datawrapper API token with `chart:read` or `chart:write` scope.
+Gets information and settings for a Datawrapper chart, table, or map.
+
+Returns the full parsed chart object, including any chart-specific fields.
+Property values are typed as unknown because the response varies by
+visualization.
+
+Authentication is handled via an API key stored in an environment variable
+(`DATAWRAPPER_KEY` by default). The token requires `chart:read` or `chart:write`
+scope.
 
 ### Signature
 
 ```typescript
-function getInfoDW(
+async function getInfoDW(
   chartId: string,
-  options?: { apiKey?: string; returnResponse?: false },
-): Promise<DatawrapperChartInfo>;
+  options?: { apiKey?: string; returnResponse?: boolean },
+): Promise<Record<string, unknown> | Response>;
 ```
 
 ### Parameters
 
-- **`chartId`**: The unique ID of the visualization.
-- **`options`**: Optional authentication and response settings.
-- **`options.apiKey`**: The name of the environment variable holding the API
-  key, not the key itself. Defaults to `DATAWRAPPER_KEY`.
-- **`options.returnResponse`**: Return the unconsumed Response, including HTTP
-  errors, instead of parsing JSON. Defaults to false.
+- **`chartId`**: The unique ID of the Datawrapper chart, table, or map. This ID
+  can be found in the Datawrapper URL or dashboard.
+- **`options`**: Optional parameters to configure the request.
+- **`options.apiKey`**: The name of the environment variable that stores your
+  Datawrapper API key (e.g., `"DATAWRAPPER_KEY"`). If not provided, the function
+  defaults to looking for the `DATAWRAPPER_KEY` environment variable.
+- **`options.returnResponse`**: If `true`, the function will return the full,
+  unconsumed `Response` object from the Datawrapper API call, including HTTP
+  error responses. This can be useful for debugging or for more detailed
+  handling of the API response. Defaults to `false`.
 
 ### Returns
 
-The parsed chart object, or the raw Response when requested.
+A Promise that resolves to a parsed `Record<string, unknown>` by default, or a
+`Response` object if `returnResponse` is `true`.
 
 ### Examples
 
 ```ts
 import { getInfoDW } from "@nshiab/journalism-dataviz";
 
-const info = await getInfoDW("abcde");
-console.log(info.title, info.type, info.metadata);
+const info = await getInfoDW("myChartId");
+console.log(info); // full parsed chart object
 ```
 
 ```ts
-const info = await getInfoDW("abcde", { apiKey: "DW_KEY" });
-const response = await getInfoDW("abcde", { returnResponse: true });
-console.log(response.status);
+// If your API key is stored under a different name in process.env (e.g., `DW_KEY`).
+const info = await getInfoDW("anotherChartId", { apiKey: "DW_KEY" });
+console.log(info);
+```
+
+```ts
+// Get the full Response for more detailed handling.
+const response = await getInfoDW("myChartId", { returnResponse: true });
+if (response instanceof Response) {
+  console.log(response.status);
+}
 ```
 
 ## logBarChart
