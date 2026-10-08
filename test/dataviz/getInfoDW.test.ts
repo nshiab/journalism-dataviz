@@ -112,3 +112,31 @@ Deno.test("getInfoDW returns chart information and handles authentication and er
     });
   }
 });
+
+const apiKey = Deno.env.get("DATAWRAPPER_KEY");
+Deno.test({
+  name: "getInfoDW gets information from a live Datawrapper chart",
+  ignore: !apiKey,
+  async fn() {
+    const info = await getInfoDW("ntURh");
+    if (info instanceof Response) throw new Error("Expected chart object");
+    assertEquals(info.id, "ntURh");
+    assertEquals(typeof info.title, "string");
+    assertEquals(typeof info.type, "string");
+    assertEquals(typeof info.metadata, "object");
+    assertEquals(info.metadata !== null, true);
+  },
+});
+
+Deno.test({
+  name: "getInfoDW returns a live Datawrapper Response",
+  ignore: !apiKey,
+  async fn() {
+    const response = await getInfoDW("ntURh", { returnResponse: true });
+    if (!(response instanceof Response)) throw new Error("Expected Response");
+    assertEquals(response.status, 200);
+    assertEquals(response.bodyUsed, false);
+    const info = await response.json();
+    assertEquals(info.id, "ntURh");
+  },
+});
