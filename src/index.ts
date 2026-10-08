@@ -24,6 +24,9 @@
  * ```
  */
 
+export type { DatawrapperChartInfo } from "./dataviz/getInfoDW.ts";
+
+import getInfoDW from "./dataviz/getInfoDW.ts";
 import getDataDW from "./dataviz/getDataDW.ts";
 import updateDataDW from "./dataviz/updateDataDW.ts";
 import updateAnnotationsDW from "./dataviz/updateAnnotationsDW.ts";
@@ -37,6 +40,7 @@ import rewind from "./dataviz/rewind.ts";
 
 export {
   getDataDW,
+  getInfoDW,
   logBarChart,
   logDotChart,
   logLineChart,

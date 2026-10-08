@@ -89,6 +89,49 @@ const data = await getDataDW("anotherChartId", { apiKey: "DW_KEY" });
 console.log(data);
 ```
 
+## getInfoDW
+
+Gets information and settings for a Datawrapper chart, table, or map. Returns
+the full parsed chart object without logging or writing files. Requires a
+Datawrapper API token with `chart:read` or `chart:write` scope.
+
+### Signature
+
+```typescript
+function getInfoDW(
+  chartId: string,
+  options?: { apiKey?: string; returnResponse?: false },
+): Promise<DatawrapperChartInfo>;
+```
+
+### Parameters
+
+- **`chartId`**: The unique ID of the visualization.
+- **`options`**: Optional authentication and response settings.
+- **`options.apiKey`**: The name of the environment variable holding the API
+  key, not the key itself. Defaults to `DATAWRAPPER_KEY`.
+- **`options.returnResponse`**: Return the unconsumed Response, including HTTP
+  errors, instead of parsing JSON. Defaults to false.
+
+### Returns
+
+The parsed chart object, or the raw Response when requested.
+
+### Examples
+
+```ts
+import { getInfoDW } from "@nshiab/journalism-dataviz";
+
+const info = await getInfoDW("abcde");
+console.log(info.title, info.type, info.metadata);
+```
+
+```ts
+const info = await getInfoDW("abcde", { apiKey: "DW_KEY" });
+const response = await getInfoDW("abcde", { returnResponse: true });
+console.log(response.status);
+```
+
 ## logBarChart
 
 Generates and logs a text-based bar chart to the console. This function is
