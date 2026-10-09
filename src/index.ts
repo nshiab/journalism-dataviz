@@ -28,6 +28,7 @@ import getInfoDW from "./dataviz/getInfoDW.ts";
 import getDataDW from "./dataviz/getDataDW.ts";
 import updateDataDW from "./dataviz/updateDataDW.ts";
 import updateAnnotationsDW from "./dataviz/updateAnnotationsDW.ts";
+import updateInfoDW from "./dataviz/updateInfoDW.ts";
 import updateNotesDW from "./dataviz/updateNotesDW.ts";
 import publishChartDW from "./dataviz/publishChartDW.ts";
 import logBarChart from "./dataviz/logBarChart.ts";
@@ -47,5 +48,6 @@ export {
   saveChart,
   updateAnnotationsDW,
   updateDataDW,
+  updateInfoDW,
   updateNotesDW,
 };

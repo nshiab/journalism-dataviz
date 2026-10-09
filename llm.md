@@ -987,15 +987,80 @@ try {
 }
 ```
 
+## updateInfoDW
+
+Updates the title, description, and notes of a Datawrapper chart, table, or map
+in one API request.
+
+Only supplied fields are updated. Omit a field or pass `undefined` to preserve
+its existing value; pass an empty string to clear it. At least one field must be
+supplied. Other chart settings are preserved by Datawrapper's partial metadata
+update.
+
+The API key is read from `DATAWRAPPER_KEY` by default. This function updates the
+draft visualization; call `publishChartDW()` afterward to publish the changes.
+
+### Signature
+
+```typescript
+async function updateInfoDW(
+  chartId: string,
+  metadata: { title?: string; description?: string; note?: string },
+  options?: { apiKey?: string; returnResponse?: boolean },
+): Promise<void | Response>;
+```
+
+### Parameters
+
+- **`chartId`**: The ID of the Datawrapper chart, table, or map to update.
+- **`metadata`**: The fields to update. At least one must be supplied.
+- **`metadata.title`**: The visualization's headline. An empty string clears it.
+- **`metadata.description`**: The description below the title, stored as
+  `metadata.describe.intro`. An empty string clears it.
+- **`metadata.note`**: The notes in the visualization's footer, stored as
+  `metadata.annotate.notes`. An empty string clears them.
+- **`options`**: Optional authentication and response settings.
+- **`options.apiKey`**: The name of the environment variable containing the API
+  key. Defaults to `"DATAWRAPPER_KEY"`.
+- **`options.returnResponse`**: If `true`, returns the unconsumed response
+  without checking its status. Defaults to `false`.
+
+### Returns
+
+A promise resolving to `void`, or to the raw `Response` when requested. By
+default, non-200 responses throw an error.
+
+### Examples
+
+```ts
+import { updateInfoDW } from "@nshiab/journalism-dataviz";
+
+await updateInfoDW("abcde", {
+  title: "Sales keep rising",
+  description: "Monthly revenue since January 2025.",
+  note: "Source: company filings.",
+});
+```
+
+```ts
+// Clear the notes while preserving the title and description.
+await updateInfoDW("abcde", { note: "" }, { apiKey: "DW_KEY" });
+```
+
+```ts
+// Inspect the raw response, including non-200 responses.
+const response = await updateInfoDW("abcde", { title: "New title" }, {
+  returnResponse: true,
+});
+console.log(response?.status);
+```
+
 ## updateNotesDW
 
-Updates the notes field for a specified Datawrapper chart, table, or map. This
-function provides a programmatic way to add or modify descriptive text
-associated with your Datawrapper visualizations, which can include data sources,
-methodologies, or any other relevant context.
+Updates the notes field of a Datawrapper chart, table, or map.
 
-Authentication is handled via an API key, which can be provided through
-environment variables (`DATAWRAPPER_KEY`) or explicitly in the options.
+This function delegates to `updateInfoDW()` and logs a deprecation warning once
+per module instance. Use `updateInfoDW(chartId, { note }, options)` instead.
 
 ### Signature
 
@@ -1009,45 +1074,27 @@ async function updateNotesDW(
 
 ### Parameters
 
-- **`chartId`**: The unique ID of the Datawrapper chart, table, or map to
-  update. This ID can be found in the Datawrapper URL or dashboard.
-- **`note`**: The string content to update the chart's notes field with.
-- **`options`**: Optional parameters to configure the notes update process.
-- **`options.apiKey`**: The name of the environment variable that stores your
-  Datawrapper API key (e.g., `"DATAWRAPPER_KEY"`). If not provided, the function
-  defaults to looking for the `DATAWRAPPER_KEY` environment variable.
-- **`options.returnResponse`**: If `true`, the function will return the full
-  `Response` object from the Datawrapper API call. This can be useful for
-  debugging or for more detailed handling of the API response. Defaults to
-  `false`.
+- **`chartId`**: The ID of the Datawrapper chart, table, or map to update.
+- **`note`**: The notes text. An empty string clears the notes.
+- **`options`**: Optional authentication and response settings.
+- **`options.apiKey`**: The name of the environment variable containing the API
+  key. Defaults to `"DATAWRAPPER_KEY"`.
+- **`options.returnResponse`**: If `true`, returns the unconsumed response
+  without checking its status. Defaults to `false`.
 
 ### Returns
 
-A Promise that resolves to `void` if `returnResponse` is `false` (default), or a
-`Response` object if `returnResponse` is `true`.
+A promise resolving to `void`, or to the raw `Response` when requested. By
+default, non-200 responses throw an error.
 
 ### Examples
 
 ```ts
-// Update the notes field of a Datawrapper chart with a simple text string.
-import { formatDate, updateNotesDW } from "journalism";
+// Existing calls still work, but emit a deprecation warning.
+await updateNotesDW("abcde", "Last updated today.");
 
-const chartID = "myChartId";
-const dateString = formatDate(new Date(), "Month DD, YYYY, at HH:MM period", {
-  abbreviations: true,
+// Preferred replacement, including a custom API-key environment variable.
+await updateInfoDW("abcde", { note: "Last updated today." }, {
+  apiKey: "DW_KEY",
 });
-const note = `This chart was last updated on ${dateString}`;
-
-await updateNotesDW(chartID, note);
-console.log(`Notes updated for chart ${chartID}.`);
-```
-
-```ts
-// If your API key is stored under a different name in process.env (e.g., `DW_KEY`).
-const customApiKeyChartID = "anotherChartId";
-const customNote = "This is a note using a custom API key.";
-await updateNotesDW(customApiKeyChartID, customNote, { apiKey: "DW_KEY" });
-console.log(
-  `Notes updated for chart ${customApiKeyChartID} using custom API key.`,
-);
 ```
