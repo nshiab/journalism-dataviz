@@ -1,4 +1,4 @@
-[**Journalism Dataviz v1.0.25**](../index.md)
+[**Journalism Dataviz v1.0.26**](../index.md)
 
 ***
 

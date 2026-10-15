@@ -1,4 +1,4 @@
-**Journalism Dataviz v1.0.25**
+**Journalism Dataviz v1.0.26**
 
 ***
 

@@ -1,6 +1,6 @@
 {
   "name": "@nshiab/journalism-dataviz",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "description": "Useful TypeScript functions for journalism projects. This library focuses on data visualization.",
   "homepage": "https://nshiab.github.io/journalism-dataviz/",
   "license": "MIT",
