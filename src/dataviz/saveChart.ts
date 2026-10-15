@@ -46,15 +46,13 @@ import serializeChartRendering from "../helpers/serializeChartRendering.ts";
  * @param options - Optional settings to customize the chart's appearance.
  * @param options.style - A CSS string inserted into the generated SVG.
  * @param options.dark - If `true`, renders the chart with a dark theme. Defaults to `false`.
- * @returns A promise that resolves after the file has been saved, or rejects if the chart function or saving fails.
  * @typeParam T - The type of data passed unchanged to the chart function.
+ * @returns A promise that resolves after the file has been saved, or rejects if the chart function or saving fails.
  * @category Dataviz
  */
 export default async function saveChart<T>(
   data: T,
-  chart: (
-    data: T,
-  ) => SVGSVGElement | HTMLElement | Promise<SVGSVGElement | HTMLElement>,
+  chart: (data: T) => SVGSVGElement | HTMLElement | Promise<SVGSVGElement | HTMLElement>,
   path: string,
   options: { style?: string; dark?: boolean } = {},
 ): Promise<void> {
@@ -67,15 +65,7 @@ async function renderChart<T>(
   path: string,
   options: { style?: string; dark?: boolean },
 ): Promise<void> {
-  const {
-    document,
-    window,
-    Node,
-    Element,
-    HTMLElement,
-    SVGElement,
-    CustomEvent,
-  } = parseHTML(
+  const { document, window, Node, Element, HTMLElement, SVGElement, CustomEvent } = parseHTML(
     "<!DOCTYPE html><html><body></body></html>",
   );
 
@@ -91,56 +81,43 @@ async function renderChart<T>(
     "Image",
   ];
 
-  // deno-lint-ignore no-explicit-any
-  const oldGlobals: any = {};
-  for (const key of keysToSet) {
-    // @ts-ignore: saving globals
-    // deno-lint-ignore no-explicit-any
-    oldGlobals[key] = (globalThis as any)[key];
-  }
+  const oldGlobals = keysToSet.map((key): [string, PropertyDescriptor | undefined] => [
+    key,
+    Object.getOwnPropertyDescriptor(globalThis, key),
+  ]);
 
   try {
-    // Set up the DOM globals that Observable Plot needs for server-side rendering.
-    // @ts-ignore: setting globals
-    globalThis.document = document;
-    // @ts-ignore: setting globals
-    globalThis.window = window;
-    // @ts-ignore: setting globals
-    globalThis.Node = Node;
-    // @ts-ignore: setting globals
-    globalThis.Element = Element;
-    // @ts-ignore: setting globals
-    globalThis.HTMLElement = HTMLElement;
-    // @ts-ignore: setting globals
-    globalThis.SVGElement = SVGElement;
-    // @ts-ignore: setting globals
-    globalThis.CustomEvent = CustomEvent;
-    // @ts-ignore: setting globals
-    globalThis.Canvas = class {
-      width = 0;
-      height = 0;
-      getContext() {
-        return null;
-      }
-      toDataURL() {
-        return "";
-      }
-    };
-    // @ts-ignore: setting globals
-    globalThis.Image = class {
-      onload = null;
-      onerror = null;
-      src = "";
-    };
-    // @ts-ignore: setup canvas
-    const originalCreateElement = document.createElement;
-    // @ts-ignore: setup canvas
-    document.createElement = (tagName: string) => {
-      if (tagName.toLowerCase() === "canvas") {
-        return createCanvas(1, 1);
-      }
-      return originalCreateElement.call(document, tagName);
-    };
+    Object.assign(globalThis, {
+      document,
+      window,
+      Node,
+      Element,
+      HTMLElement,
+      SVGElement,
+      CustomEvent,
+      Canvas: class {
+        width = 0;
+        height = 0;
+        getContext() {
+          return null;
+        }
+        toDataURL() {
+          return "";
+        }
+      },
+      Image: class {
+        onload = null;
+        onerror = null;
+        src = "";
+      },
+    });
+    const originalCreateElement = document.createElement.bind(document);
+    Object.defineProperty(document, "createElement", {
+      configurable: true,
+      writable: true,
+      value: (tagName: string) =>
+        tagName.toLowerCase() === "canvas" ? createCanvas(1, 1) : originalCreateElement(tagName),
+    });
 
     const element = await chart(data);
 
@@ -172,12 +149,12 @@ async function renderChart<T>(
 
       // Extract SVGs and Canvases (legends)
       const children = Array.from(element.children);
-      for (const child of children as HTMLElement[]) {
+      for (const child of children) {
         if (child.tagName === "SVG") {
           svgStrings.push(child.outerHTML);
         } else if (child.querySelector("canvas")) {
-          // deno-lint-ignore no-explicit-any
-          const canvas = child.querySelector("canvas") as any;
+          const canvas = child.querySelector("canvas");
+          if (!canvas) throw new Error("Expected a legend canvas");
           const width = canvas.width;
           const height = canvas.height;
           const dataUrl = canvas.toDataURL();
@@ -186,19 +163,15 @@ async function renderChart<T>(
           );
         } else if (
           child.classList.contains("plot-legend") ||
-          child.className?.includes("-legend") ||
-          child.className?.includes("-swatches")
+          child.getAttribute("class")?.includes("-legend") ||
+          child.getAttribute("class")?.includes("-swatches")
         ) {
           // Handle HTML Legends (Categorical, etc.)
-          const items = child.querySelectorAll(
-            '[class*="-swatch"], [class*="-item"]',
-          );
+          const items = child.querySelectorAll('[class*="-swatch"], [class*="-item"]');
           if (items.length > 0) {
             let legendSvg = `<svg width="${chartWidth}" height="${
               Math.ceil(items.length / 5) * 20 + 10
-            }" viewBox="0 0 ${chartWidth} ${
-              Math.ceil(items.length / 5) * 20 + 10
-            }">`;
+            }" viewBox="0 0 ${chartWidth} ${Math.ceil(items.length / 5) * 20 + 10}">`;
 
             let currentX = 0; // The legend wrapper itself will be offset by 20px later
             let currentY = 0;
@@ -208,7 +181,7 @@ async function renderChart<T>(
               const text = item.textContent?.trim() || "";
 
               // Estimate width (swatch + text + padding)
-              const itemWidth = 20 + (text.length * 8) + 15;
+              const itemWidth = 20 + text.length * 8 + 15;
 
               if (currentX + itemWidth > chartWidth) {
                 currentX = 0; // Reset to 0 for next line
@@ -221,9 +194,7 @@ async function renderChart<T>(
                   `<svg x="${currentX}" y="${currentY}" `,
                 );
               }
-              legendSvg += `<text x="${currentX + 20}" y="${
-                currentY + 12
-              }" font-size="12" fill="${
+              legendSvg += `<text x="${currentX + 20}" y="${currentY + 12}" font-size="12" fill="${
                 options.dark ? "#B0B0B0" : "currentColor"
               }">${escapeXmlTest(text)}</text>`;
 
@@ -238,8 +209,7 @@ async function renderChart<T>(
           if (svgs.length > 0) {
             for (const svg of svgs) svgStrings.push(svg.outerHTML);
           } else {
-            // deno-lint-ignore no-explicit-any
-            const canvas = child.querySelector("canvas") as any;
+            const canvas = child.querySelector("canvas");
             if (canvas) {
               const width = canvas.width;
               const height = canvas.height;
@@ -252,11 +222,12 @@ async function renderChart<T>(
         }
       }
     } else if (
-      element.tagName === "svg" || element.nodeName === "svg" ||
-      element.tagName === "SVG" || element.nodeName === "SVG"
+      element.tagName === "svg" ||
+      element.nodeName === "svg" ||
+      element.tagName === "SVG" ||
+      element.nodeName === "SVG"
     ) {
-      // deno-lint-ignore no-explicit-any
-      const svgHtml = (element as any).outerHTML;
+      const svgHtml = element.outerHTML;
       const widthMatch = svgHtml.match(/width="([\d.]+)"/);
       if (widthMatch) chartWidth = parseFloat(widthMatch[1]);
       svgStrings.push(svgHtml);
@@ -358,8 +329,8 @@ async function renderChart<T>(
         .chart-title { font-weight: bold; }
         .chart-caption { font-style: italic; }
         ${
-      options.dark
-        ? `
+          options.dark
+            ? `
         svg { color-scheme: dark; color: #B0B0B0; }
         [aria-label*="axis"] text,
         [aria-label="legend"] text,
@@ -386,8 +357,8 @@ async function renderChart<T>(
           stroke-opacity: 0.3;
         }
         `
-        : ""
-    }
+            : ""
+        }
         ${options.style || ""}
       </style>`;
 
@@ -395,8 +366,7 @@ async function renderChart<T>(
       ? `<rect width="100%" height="100%" fill="#121212" />`
       : `<rect width="100%" height="100%" fill="white" />`;
 
-    let masterSvg =
-      `<svg width="${chartWidth}" height="${totalHeight}" viewBox="0 0 ${chartWidth} ${totalHeight}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    let masterSvg = `<svg width="${chartWidth}" height="${totalHeight}" viewBox="0 0 ${chartWidth} ${totalHeight}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       ${styleTag}
       ${background}
     `;
@@ -404,10 +374,9 @@ async function renderChart<T>(
     for (const comp of components) {
       if (comp.type === "text") {
         const x = 20;
-        masterSvg +=
-          `<text x="${x}" y="${comp.y}" font-size="${comp.fontSize}" fill="${comp.fill}" text-anchor="${comp.anchor}" ${
-            comp.className ? `class="${comp.className}"` : ""
-          }>${escapeXmlTest(comp.html)}</text>`;
+        masterSvg += `<text x="${x}" y="${comp.y}" font-size="${comp.fontSize}" fill="${comp.fill}" text-anchor="${comp.anchor}" ${
+          comp.className ? `class="${comp.className}"` : ""
+        }>${escapeXmlTest(comp.html)}</text>`;
       } else {
         const xOffset = 20;
         masterSvg += comp.html.replace(
@@ -447,9 +416,9 @@ async function renderChart<T>(
       throw new Error(`Unsupported file extension: .${extension}`);
     }
   } finally {
-    for (const key of keysToSet) {
-      // @ts-ignore: restoring globals
-      globalThis[key] = oldGlobals[key];
+    for (const [key, descriptor] of oldGlobals) {
+      if (descriptor) Object.defineProperty(globalThis, key, descriptor);
+      else Reflect.deleteProperty(globalThis, key);
     }
   }
 }

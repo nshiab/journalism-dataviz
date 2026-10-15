@@ -12,20 +12,6 @@ import prepChart from "./helpers/prepChart.ts";
  * - **Y-axis values**: Must be `number` values.
  * - All values must be non-null and defined.
  *
- * @param data - An array of objects representing the data to be visualized. Each object should contain keys corresponding to the `x` and `y` parameters.
- * @param x - The key in the data objects whose values will be plotted on the x-axis. Values must be numbers or Date objects.
- * @param labels - The key for labels in the data.
- * @param y - The key in the data objects whose values will be plotted on the y-axis. Values must be numbers.
- * @param options - An optional object to customize the chart's appearance and behavior.
- * @param options.formatX - A function to format the x-axis values for display. It receives the raw x-value as input and should return a string. If the first data point's x value is a Date, it defaults to formatting the date as "YYYY-MM-DD".
- * @param options.formatY - A function to format the y-axis values for display. It receives the numerical y-value as input and should return a string.
- * @param options.smallMultiples - A key in the data objects to create small multiples (separate charts) for each unique value of this key. This is useful for comparing trends across different categories.
- * @param options.fixedScales - If `true` and `smallMultiples` is used, all small multiple charts will share the same x and y scales, allowing for direct comparison of magnitudes. If `false`, each small multiple will have its own independent scales. Defaults to `false`.
- * @param options.smallMultiplesPerRow - The number of small multiples to display per row when `smallMultiples` is used. Defaults to `3`.
- * @param options.width - The width of the chart in characters. This affects the horizontal resolution of the chart. Defaults to `60`.
- * @param options.height - The height of the chart in lines. This affects the vertical resolution of the chart. Defaults to `20`.
- * @param options.title - The title of the chart. If not provided, a default title based on `x`, `y`, and `smallMultiples` (if applicable) will be generated.
- *
  * @example
  * ```ts
  * // Visualize a simple time series of values.
@@ -37,7 +23,7 @@ import prepChart from "./helpers/prepChart.ts";
  * ];
  *
  * logLineChart(timeSeriesData, "date", "value", {
- *     formatX: (d) => (d as Date).toISOString().slice(0, 10),
+ *     formatX: (d) => d.toISOString().slice(0, 10),
  *     title: "Monthly Data Trend",
  * });
  * ```
@@ -57,7 +43,7 @@ import prepChart from "./helpers/prepChart.ts";
  * ];
  *
  * logLineChart(multiCategoryData, "date", "value", {
- *     formatX: (d) => (d as Date).toLocaleDateString(),
+ *     formatX: (d) => d.toLocaleDateString(),
  *     formatY: (d) => "$" + d.toString(),
  *     smallMultiples: "category",
  *     smallMultiplesPerRow: 2,
@@ -66,15 +52,31 @@ import prepChart from "./helpers/prepChart.ts";
  * });
  * ```
  *
+ * @param data - An array of objects representing the data to be visualized. Each object should contain keys corresponding to the `x` and `y` parameters.
+ * @param x - The key in the data objects whose values will be plotted on the x-axis. Values must be numbers or Date objects.
+ * @param y - The key in the data objects whose values will be plotted on the y-axis. Values must be numbers.
+ * @param options - An optional object to customize the chart's appearance and behavior.
+ * @param options.formatX - A function to format the x-axis values for display. It receives the raw x-value as input and should return a string. If the first data point's x value is a Date, it defaults to formatting the date as "YYYY-MM-DD".
+ * @param options.formatY - A function to format the y-axis values for display. It receives the numerical y-value as input and should return a string.
+ * @param options.smallMultiples - A key in the data objects to create small multiples (separate charts) for each unique value of this key. This is useful for comparing trends across different categories.
+ * @param options.fixedScales - If `true` and `smallMultiples` is used, all small multiple charts will share the same x and y scales, allowing for direct comparison of magnitudes. If `false`, each small multiple will have its own independent scales. Defaults to `false`.
+ * @param options.smallMultiplesPerRow - The number of small multiples to display per row when `smallMultiples` is used. Defaults to `3`.
+ * @param options.width - The width of the chart in characters. This affects the horizontal resolution of the chart. Defaults to `60`.
+ * @param options.height - The height of the chart in lines. This affects the vertical resolution of the chart. Defaults to `20`.
+ * @param options.title - The title of the chart. If not provided, a default title based on `x`, `y`, and `smallMultiples` (if applicable) will be generated.
+ *
  * @returns {void}
  * @category Dataviz
  */
-export default function logLineChart<T extends Record<string, unknown>>(
+export default function logLineChart<
+  T extends Record<string, unknown>,
+  X extends keyof T = keyof T,
+>(
   data: T[],
-  x: keyof T,
+  x: X,
   y: keyof T,
   options: {
-    formatX?: (d: T[typeof x]) => string;
+    formatX?: (d: T[X]) => string;
     formatY?: (d: number) => string;
     smallMultiples?: keyof T;
     fixedScales?: boolean;
@@ -89,21 +91,29 @@ export default function logLineChart<T extends Record<string, unknown>>(
   } else {
     console.log(
       `\nLine chart of "${String(y)}" over "${String(x)}"${
-        options.smallMultiples
-          ? `, for each "${String(options.smallMultiples)}"`
-          : ""
+        options.smallMultiples ? `, for each "${String(options.smallMultiples)}"` : ""
       }:`,
     );
   }
 
+  const formatter = options.formatX;
+  const formatX = formatter
+    ? (value: unknown) => {
+        const row = data.find((row) => {
+          const original = row[x];
+          return original instanceof Date && value instanceof Date
+            ? Object.is(original.getTime(), value.getTime())
+            : original === value || Object.is(original, value);
+        });
+        if (!row) throw new Error("No data value matches the axis label");
+        return formatter(row[x] instanceof Date ? structuredClone(row[x]) : row[x]);
+      }
+    : undefined;
+
   prepChart("line", data, String(x), String(y), addLines, {
     ...options,
-    formatX: options.formatX
-      ? (d: unknown) => options.formatX!(d as T[typeof x])
-      : undefined,
+    formatX,
     formatY: options.formatY ?? ((d: number) => formatNumber(d)),
-    smallMultiples: options.smallMultiples
-      ? String(options.smallMultiples)
-      : undefined,
+    smallMultiples: options.smallMultiples ? String(options.smallMultiples) : undefined,
   });
 }

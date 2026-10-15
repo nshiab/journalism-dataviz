@@ -7,12 +7,6 @@ import process from "node:process";
  *
  * Authentication is handled via an API key stored in an environment variable (`DATAWRAPPER_KEY` by default). The token requires `chart:read` or `chart:write` scope.
  *
- * @param chartId - The unique ID of the Datawrapper chart, table, or map. This ID can be found in the Datawrapper URL or dashboard.
- * @param options - Optional parameters to configure the request.
- *   @param options.apiKey - The name of the environment variable that stores your Datawrapper API key (e.g., `"DATAWRAPPER_KEY"`). If not provided, the function defaults to looking for the `DATAWRAPPER_KEY` environment variable.
- *   @param options.returnResponse - If `true`, the function will return the full, unconsumed `Response` object from the Datawrapper API call, including HTTP error responses. This can be useful for debugging or for more detailed handling of the API response. Defaults to `false`.
- * @returns A Promise that resolves to a parsed `Record<string, unknown>` by default, or a `Response` object if `returnResponse` is `true`.
- *
  * @example
  * ```ts
  * import { getInfoDW } from "@nshiab/journalism-dataviz";
@@ -34,6 +28,12 @@ import process from "node:process";
  *   console.log(response.status);
  * }
  * ```
+ * @param chartId - The unique ID of the Datawrapper chart, table, or map. This ID can be found in the Datawrapper URL or dashboard.
+ * @param options - Optional parameters to configure the request.
+ *   @param options.apiKey - The name of the environment variable that stores your Datawrapper API key (e.g., `"DATAWRAPPER_KEY"`). If not provided, the function defaults to looking for the `DATAWRAPPER_KEY` environment variable.
+ *   @param options.returnResponse - If `true`, the function will return the full, unconsumed `Response` object from the Datawrapper API call, including HTTP error responses. This can be useful for debugging or for more detailed handling of the API response. Defaults to `false`.
+ * @returns A Promise that resolves to a parsed `Record<string, unknown>` by default, or a `Response` object if `returnResponse` is `true`.
+ *
  * @category Dataviz
  */
 export default async function getInfoDW(
@@ -46,16 +46,13 @@ export default async function getInfoDW(
     throw new Error(`process.env.${envVar} is undefined or ''.`);
   }
 
-  const response = await fetch(
-    `https://api.datawrapper.de/v3/charts/${chartId}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        Accept: "application/json",
-      },
+  const response = await fetch(`https://api.datawrapper.de/v3/charts/${chartId}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      Accept: "application/json",
     },
-  );
+  });
 
   if (options.returnResponse === true) {
     return response;
@@ -67,5 +64,9 @@ export default async function getInfoDW(
     );
   }
 
-  return await response.json();
+  const result: unknown = await response.json();
+  if (result === null || typeof result !== "object" || Array.isArray(result)) {
+    throw new Error("Expected a Datawrapper chart object");
+  }
+  return Object.fromEntries(Object.entries(result));
 }

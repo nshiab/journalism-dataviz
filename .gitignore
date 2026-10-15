@@ -1,7 +1,8 @@
-node_modules
-test/output/
-.DS_Store
+node_modules/
+dist/
+site/
 .env
-cov_profile
+.DS_Store
+test/output/
+npm/
 docs.json
-npm

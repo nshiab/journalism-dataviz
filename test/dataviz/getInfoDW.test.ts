@@ -1,8 +1,10 @@
-import { assertEquals, assertRejects } from "jsr:@std/assert";
+import { step } from "../assertions.ts";
+import { test } from "vite-plus/test";
+import { assertEquals, assertRejects } from "../assertions.ts";
 import process from "node:process";
 import { getInfoDW } from "../../src/index.ts";
 
-Deno.test("getInfoDW returns chart information and handles authentication and errors", async (t) => {
+test("getInfoDW returns chart information and handles authentication and errors", async () => {
   const originalFetch = globalThis.fetch;
   const envVars = ["DATAWRAPPER_KEY", "GET_INFO_DW_TEST_KEY"];
   const originalValues = envVars.map((name) => process.env[name]);
@@ -34,13 +36,13 @@ Deno.test("getInfoDW returns chart information and handles authentication and er
 
   try {
     process.env.DATAWRAPPER_KEY = expectedKey;
-    await t.step("returns the full parsed object by default", async () => {
+    await step("returns the full parsed object by default", async () => {
       const info = await getInfoDW("abcde");
       if (info instanceof Response) throw new Error("Expected chart object");
       assertEquals(info.title, "A chart");
       assertEquals(info, JSON.parse(body));
     });
-    await t.step("uses a custom environment variable", async () => {
+    await step("uses a custom environment variable", async () => {
       expectedKey = "custom-token";
       process.env.GET_INFO_DW_TEST_KEY = expectedKey;
       assertEquals(
@@ -52,7 +54,7 @@ Deno.test("getInfoDW returns chart information and handles authentication and er
       );
       expectedKey = "test-token";
     });
-    await t.step("rejects missing and empty keys before fetching", async () => {
+    await step("rejects missing and empty keys before fetching", async () => {
       const previousCalls = calls;
       for (const value of [undefined, ""]) {
         if (value === undefined) delete process.env.GET_INFO_DW_TEST_KEY;
@@ -65,7 +67,7 @@ Deno.test("getInfoDW returns chart information and handles authentication and er
       }
       assertEquals(calls, previousCalls);
     });
-    await t.step("returns an unconsumed successful response", async () => {
+    await step("returns an unconsumed successful response", async () => {
       const response = await getInfoDW("abcde", {
         returnResponse: true,
       });
@@ -73,33 +75,26 @@ Deno.test("getInfoDW returns chart information and handles authentication and er
       assertEquals(response.bodyUsed, false);
       assertEquals(await response.json(), JSON.parse(body));
     });
-    await t.step(
-      "reports HTTP errors before attempting JSON parsing",
-      async () => {
-        status = 404;
-        body = "Not JSON";
-        await assertRejects(
-          () => getInfoDW("abcde"),
-          Error,
-          "getInfoDW abcde: Upstream HTTP 404 - Not Found",
-        );
-      },
-    );
-    await t.step(
-      "returns an unconsumed error response when requested",
-      async () => {
-        const returnResponse: boolean = status === 404;
-        const result: Record<string, unknown> | Response = await getInfoDW(
-          "abcde",
-          { returnResponse },
-        );
-        if (!(result instanceof Response)) throw new Error("Expected Response");
-        assertEquals(result.status, 404);
-        assertEquals(result.bodyUsed, false);
-        assertEquals(await result.text(), body);
-      },
-    );
-    await t.step("rejects invalid JSON on success", async () => {
+    await step("reports HTTP errors before attempting JSON parsing", async () => {
+      status = 404;
+      body = "Not JSON";
+      await assertRejects(
+        () => getInfoDW("abcde"),
+        Error,
+        "getInfoDW abcde: Upstream HTTP 404 - Not Found",
+      );
+    });
+    await step("returns an unconsumed error response when requested", async () => {
+      const returnResponse: boolean = status === 404;
+      const result: Record<string, unknown> | Response = await getInfoDW("abcde", {
+        returnResponse,
+      });
+      if (!(result instanceof Response)) throw new Error("Expected Response");
+      assertEquals(result.status, 404);
+      assertEquals(result.bodyUsed, false);
+      assertEquals(await result.text(), body);
+    });
+    await step("rejects invalid JSON on success", async () => {
       status = 200;
       await assertRejects(() => getInfoDW("abcde"), SyntaxError);
     });
@@ -113,11 +108,10 @@ Deno.test("getInfoDW returns chart information and handles authentication and er
   }
 });
 
-const apiKey = Deno.env.get("DATAWRAPPER_KEY");
-Deno.test({
-  name: "getInfoDW gets information from a live Datawrapper chart",
-  ignore: !apiKey,
-  async fn() {
+const apiKey = process.env.DATAWRAPPER_KEY;
+test.skipIf(process.env.CI === "true" || !apiKey)(
+  "getInfoDW gets information from a live Datawrapper chart",
+  async () => {
     const info = await getInfoDW("ntURh");
     if (info instanceof Response) throw new Error("Expected chart object");
     assertEquals(info.id, "ntURh");
@@ -126,17 +120,18 @@ Deno.test({
     assertEquals(typeof info.metadata, "object");
     assertEquals(info.metadata !== null, true);
   },
-});
+);
 
-Deno.test({
-  name: "getInfoDW returns a live Datawrapper Response",
-  ignore: !apiKey,
-  async fn() {
+test.skipIf(process.env.CI === "true" || !apiKey)(
+  "getInfoDW returns a live Datawrapper Response",
+  async () => {
     const response = await getInfoDW("ntURh", { returnResponse: true });
     if (!(response instanceof Response)) throw new Error("Expected Response");
     assertEquals(response.status, 200);
     assertEquals(response.bodyUsed, false);
-    const info = await response.json();
+    const info: unknown = await response.json();
+    if (!info || typeof info !== "object" || !("id" in info))
+      throw new Error("Expected chart info");
     assertEquals(info.id, "ntURh");
   },
-});
+);

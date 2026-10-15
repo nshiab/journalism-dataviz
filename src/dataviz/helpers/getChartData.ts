@@ -5,11 +5,7 @@
  * @param width The width of the chart grid.
  * @returns A 2D array of strings, initialized with spaces.
  */
-export default function getChartData(
-  type: "line" | "dot",
-  height: number,
-  width: number,
-) {
+export default function getChartData(type: "line" | "dot", height: number, width: number) {
   const padding = type === "line" ? 1 : 0;
   const chartData = [];
   for (let i = 0; i < height; i++) {

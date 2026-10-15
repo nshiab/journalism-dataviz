@@ -60,7 +60,8 @@ export default async function updateInfoDW(
   }
 
   if (
-    metadata.title === undefined && metadata.description === undefined &&
+    metadata.title === undefined &&
+    metadata.description === undefined &&
     metadata.note === undefined
   ) {
     throw new Error("updateInfoDW requires a title, description, or note.");
@@ -84,17 +85,14 @@ export default async function updateInfoDW(
     }
   }
 
-  const response = await fetch(
-    `https://api.datawrapper.de/v3/charts/${chartId}`,
-    {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
+  const response = await fetch(`https://api.datawrapper.de/v3/charts/${chartId}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify(body),
+  });
   if (options.returnResponse === true) return response;
   if (response.status !== 200) {
     throw new Error(

@@ -1,10 +1,8 @@
-import { assertEquals } from "jsr:@std/assert";
-import {
-  formatDate,
-  formatNumber,
-} from "../../../src/dataviz/helpers/format.ts";
+import { test } from "vite-plus/test";
+import { assertEquals } from "../../assertions.ts";
+import { formatDate, formatNumber } from "../../../src/dataviz/helpers/format.ts";
 
-Deno.test("formatNumber adds thousands separators and optional rounding", () => {
+test("formatNumber adds thousands separators and optional rounding", () => {
   assertEquals(formatNumber(1234567.89), "1,234,567.89");
   assertEquals(
     formatNumber(1234.567, { decimals: 2, prefix: "$", suffix: " CAD" }),
@@ -12,7 +10,7 @@ Deno.test("formatNumber adds thousands separators and optional rounding", () => 
   );
 });
 
-Deno.test("formatDate formats the local chart date patterns", () => {
+test("formatDate formats the local chart date patterns", () => {
   const date = new Date("2024-02-03T16:05:00Z");
 
   assertEquals(formatDate(date, "YYYY-MM-DD", { utc: true }), "2024-02-03");

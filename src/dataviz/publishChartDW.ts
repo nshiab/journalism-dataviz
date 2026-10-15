@@ -3,12 +3,6 @@ import process from "node:process";
 /**
  * Publishes a specified Datawrapper chart, table, or map. This function streamlines the process of making your Datawrapper visualizations live, allowing for automated deployment and updates. It handles authentication using an API key, which can be provided via environment variables or directly through options.
  *
- * @param chartId - The unique ID of the Datawrapper chart, table, or map to be published. This ID can be found in the Datawrapper URL or dashboard.
- * @param options - Optional parameters to configure the publishing process.
- *   @param options.apiKey - The name of the environment variable that stores your Datawrapper API key (e.g., `"DATAWRAPPER_KEY"`). If not provided, the function defaults to looking for the `DATAWRAPPER_KEY` environment variable.
- *   @param options.returnResponse - If `true`, the function will return the full `Response` object from the Datawrapper API call. This can be useful for debugging or for more detailed handling of the API response. Defaults to `false`.
- * @returns A Promise that resolves to `void` if `returnResponse` is `false` (default), or a `Response` object if `returnResponse` is `true`.
- *
  * @example
  * ```ts
  * // Publish a Datawrapper chart with a given ID.
@@ -30,6 +24,12 @@ import process from "node:process";
  * const response = await publishChartDW(chartIDForResponse, { returnResponse: true });
  * console.log(`Response status for ${chartIDForResponse}: ${response?.status}`);
  * ```
+ * @param chartId - The unique ID of the Datawrapper chart, table, or map to be published. This ID can be found in the Datawrapper URL or dashboard.
+ * @param options - Optional parameters to configure the publishing process.
+ *   @param options.apiKey - The name of the environment variable that stores your Datawrapper API key (e.g., `"DATAWRAPPER_KEY"`). If not provided, the function defaults to looking for the `DATAWRAPPER_KEY` environment variable.
+ *   @param options.returnResponse - If `true`, the function will return the full `Response` object from the Datawrapper API call. This can be useful for debugging or for more detailed handling of the API response. Defaults to `false`.
+ * @returns A Promise that resolves to `void` if `returnResponse` is `false` (default), or a `Response` object if `returnResponse` is `true`.
+ *
  * @category Dataviz
  */
 export default async function publishChartDW(
@@ -42,15 +42,12 @@ export default async function publishChartDW(
     throw new Error(`process.env.${envVar} is undefined or ''.`);
   }
 
-  const response = await fetch(
-    `https://api.datawrapper.de/v3/charts/${chartId}/publish`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-      },
+  const response = await fetch(`https://api.datawrapper.de/v3/charts/${chartId}/publish`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
     },
-  );
+  });
   // if returning a response, do it before the response.status checks
   if (options.returnResponse === true) {
     return response;
