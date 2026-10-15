@@ -6,13 +6,6 @@ import { csvParse } from "d3-dsv";
  *
  * Authentication is handled via an API key, which can be provided through environment variables (`DATAWRAPPER_KEY`) or explicitly in the options.
  *
- * @param chartId - The unique ID of the Datawrapper chart, table, or map. This ID can be found in the Datawrapper URL or dashboard.
- * @param options - Optional parameters to configure the request.
- *   @param options.apiKey - The name of the environment variable that stores your Datawrapper API key (e.g., `"DATAWRAPPER_KEY"`). If not provided, the function defaults to looking for the `DATAWRAPPER_KEY` environment variable.
- *   @param options.parse - If `true`, the response will be parsed and returned as a JavaScript value. CSV data (charts and tables) is returned as an array of objects; JSON data (maps) is returned as a parsed object. Defaults to `false`.
- *   @param options.returnResponse - If `true`, the function will return the full `Response` object from the Datawrapper API call. This can be useful for debugging or for more detailed handling of the API response. Defaults to `false`.
- * @returns A Promise that resolves to a raw `string` by default, a parsed value if `parse` is `true` (`Record<string, string>[]` for CSV charts/tables, or a `object` for JSON maps), or a `Response` object if `returnResponse` is `true`.
- *
  * @example
  * ```ts
  * import { getDataDW } from "journalism-dataviz";
@@ -38,6 +31,13 @@ import { csvParse } from "d3-dsv";
  * const data = await getDataDW("anotherChartId", { apiKey: "DW_KEY" });
  * console.log(data);
  * ```
+ * @param chartId - The unique ID of the Datawrapper chart, table, or map. This ID can be found in the Datawrapper URL or dashboard.
+ * @param options - Optional parameters to configure the request.
+ *   @param options.apiKey - The name of the environment variable that stores your Datawrapper API key (e.g., `"DATAWRAPPER_KEY"`). If not provided, the function defaults to looking for the `DATAWRAPPER_KEY` environment variable.
+ *   @param options.parse - If `true`, the response will be parsed and returned as a JavaScript value. CSV data (charts and tables) is returned as an array of objects; JSON data (maps) is returned as a parsed object. Defaults to `false`.
+ *   @param options.returnResponse - If `true`, the function will return the full `Response` object from the Datawrapper API call. This can be useful for debugging or for more detailed handling of the API response. Defaults to `false`.
+ * @returns A Promise that resolves to a raw `string` by default, a parsed value if `parse` is `true` (`Record<string, string>[]` for CSV charts/tables, or a `object` for JSON maps), or a `Response` object if `returnResponse` is `true`.
+ *
  * @category Dataviz
  */
 export default async function getDataDW(
@@ -47,22 +47,19 @@ export default async function getDataDW(
     parse?: boolean;
     returnResponse?: boolean;
   } = {},
-): Promise<string | Record<string, string>[] | unknown> {
+): Promise<unknown> {
   const envVar = options.apiKey ?? "DATAWRAPPER_KEY";
   const apiKey = process.env[envVar];
   if (apiKey === undefined || apiKey === "") {
     throw new Error(`process.env.${envVar} is undefined or ''.`);
   }
 
-  const response = await fetch(
-    `https://api.datawrapper.de/v3/charts/${chartId}/data`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-      },
+  const response = await fetch(`https://api.datawrapper.de/v3/charts/${chartId}/data`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
     },
-  );
+  });
 
   if (options.returnResponse === true) {
     return response;
@@ -79,9 +76,10 @@ export default async function getDataDW(
   if (options.parse === true) {
     const trimmed = text.trimStart();
     if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
-      return JSON.parse(text);
+      const parsed: unknown = JSON.parse(text);
+      return parsed;
     }
-    return csvParse(text) as Record<string, string>[];
+    return csvParse(text);
   }
 
   return text;

@@ -1,4 +1,5 @@
-import { assertEquals, assertStringIncludes } from "jsr:@std/assert";
+import { expect, test } from "vite-plus/test";
+import { assertEquals, assertStringIncludes } from "../assertions.ts";
 import getDataDW from "../../src/dataviz/getDataDW.ts";
 import updateDataDW from "../../src/dataviz/updateDataDW.ts";
 
@@ -26,63 +27,73 @@ const mapData = {
   ],
 };
 
-const apiKey = Deno.env.get("DATAWRAPPER_KEY");
-if (typeof apiKey === "string" && apiKey !== "") {
-  Deno.test("should get data from a chart", async () => {
+const apiKey = process.env.DATAWRAPPER_KEY;
+{
+  test.skipIf(process.env.CI === "true" || !apiKey)("should get data from a chart", async () => {
     await updateDataDW("ntURh", chartDataCsv);
     const data = await getDataDW("ntURh");
 
-    assertStringIncludes(data as string, "salary");
-    assertStringIncludes(data as string, "75000");
-    assertStringIncludes(data as string, "2022-12-15");
+    assertStringIncludes(data, "salary");
+    assertStringIncludes(data, "75000");
+    assertStringIncludes(data, "2022-12-15");
   });
 
-  Deno.test("should get data from a chart parsed as rows", async () => {
-    await updateDataDW("ntURh", chartDataCsv);
-    const rows = await getDataDW("ntURh", { parse: true });
+  test.skipIf(process.env.CI === "true" || !apiKey)(
+    "should get data from a chart parsed as rows",
+    async () => {
+      await updateDataDW("ntURh", chartDataCsv);
+      const rows = await getDataDW("ntURh", { parse: true });
 
-    assertEquals((rows as Record<string, string>[])[0], {
-      salary: "75000",
-      hireDate: "2022-12-15",
-    });
-  });
+      if (!Array.isArray(rows)) throw new Error("Expected rows");
+      assertEquals(rows[0], {
+        salary: "75000",
+        hireDate: "2022-12-15",
+      });
+    },
+  );
 
-  Deno.test("should get data from a map", async () => {
+  test.skipIf(process.env.CI === "true" || !apiKey)("should get data from a map", async () => {
     await updateDataDW("lDO6F", JSON.stringify(mapData));
     const data = await getDataDW("lDO6F");
 
-    assertStringIncludes(data as string, "FeatureCollection");
-    assertStringIncludes(data as string, "Polygon");
+    assertStringIncludes(data, "FeatureCollection");
+    assertStringIncludes(data, "Polygon");
   });
 
-  Deno.test("should get data from a map parsed as an object", async () => {
-    await updateDataDW("lDO6F", JSON.stringify(mapData));
-    const data = await getDataDW("lDO6F", { parse: true });
+  test.skipIf(process.env.CI === "true" || !apiKey)(
+    "should get data from a map parsed as an object",
+    async () => {
+      await updateDataDW("lDO6F", JSON.stringify(mapData));
+      const data = await getDataDW("lDO6F", { parse: true });
 
-    assertEquals((data as typeof mapData).type, "FeatureCollection");
-    assertEquals((data as typeof mapData).features[0].geometry.type, "Polygon");
-  });
+      // Datawrapper may add fields such as markers to uploaded map data.
+      expect(data).toMatchObject(mapData);
+    },
+  );
 
-  Deno.test("should return a Response when returnResponse is true", async () => {
-    const response = await getDataDW("ntURh", { returnResponse: true });
+  test.skipIf(process.env.CI === "true" || !apiKey)(
+    "should return a Response when returnResponse is true",
+    async () => {
+      const response = await getDataDW("ntURh", { returnResponse: true });
 
-    assertEquals(response instanceof Response, true);
-    assertEquals((response as Response).status, 200);
-  });
-} else {
-  console.log("No DATAWRAPPER_KEY in process.env");
+      assertEquals(response instanceof Response, true);
+      if (!(response instanceof Response)) throw new Error("Expected Response");
+      assertEquals(response.status, 200);
+    },
+  );
 }
 
-const differentApiKey = Deno.env.get("DW_KEY");
-if (typeof differentApiKey === "string" && differentApiKey !== "") {
-  Deno.test("should get data from a chart with a specific API key", async () => {
-    await updateDataDW("ntURh", chartDataCsv, { apiKey: "DW_KEY" });
-    const data = await getDataDW("ntURh", { apiKey: "DW_KEY" });
+const differentApiKey = process.env.DW_KEY;
+{
+  test.skipIf(process.env.CI === "true" || !differentApiKey)(
+    "should get data from a chart with a specific API key",
+    async () => {
+      await updateDataDW("ntURh", chartDataCsv, { apiKey: "DW_KEY" });
+      const data = await getDataDW("ntURh", { apiKey: "DW_KEY" });
 
-    assertStringIncludes(data as string, "salary");
-    assertStringIncludes(data as string, "75000");
-    assertStringIncludes(data as string, "2022-12-15");
-  });
-} else {
-  console.log("No DW_KEY in process.env");
+      assertStringIncludes(data, "salary");
+      assertStringIncludes(data, "75000");
+      assertStringIncludes(data, "2022-12-15");
+    },
+  );
 }

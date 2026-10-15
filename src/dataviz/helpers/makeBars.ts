@@ -15,12 +15,12 @@ import { formatNumber } from "./format.ts";
  * @param showTotal If true, show the total sum of all values.
  * @returns An array of strings representing the bar chart.
  */
-export default function makeBars(
-  data: { [key: string]: unknown }[],
+export default function makeBars<T extends Record<string, unknown>, K extends keyof T>(
+  data: T[],
   color: string,
-  labels: string,
+  labels: K,
   values: string,
-  formatLabels: (d: unknown) => string,
+  formatLabels: (d: T[K]) => string,
   formatValues: (d: number) => string,
   width: number,
   compact: boolean,
@@ -36,9 +36,9 @@ export default function makeBars(
 
   const valuesData = data.map((d) => {
     if (typeof d[values] === "number") {
-      return d[values] as number;
+      return d[values];
     } else {
-      throw new Error(`${d[values]} is not a number`);
+      throw new Error(`${String(d[values])} is not a number`);
     }
   });
   const maxVal = Math.max(...valuesData);
@@ -52,9 +52,9 @@ export default function makeBars(
       ? `${totalLabel}: ${formatValues(sumVal)}`
       : `Total "${values}": ${formatValues(sumVal)}`;
     console.log(
-      `\n${
-        " ".repeat(Math.round(maxLength + 1 + width / 2 - total.length / 2))
-      }${grey}${total}${reset}`,
+      `\n${" ".repeat(
+        Math.round(maxLength + 1 + width / 2 - total.length / 2),
+      )}${grey}${total}${reset}`,
     );
   }
 
@@ -65,7 +65,8 @@ export default function makeBars(
 
     const nbCharacters = Math.round((valuesData[i] / maxVal) * width);
 
-    let line = labelsData[i] +
+    let line =
+      labelsData[i] +
       grey +
       " ┤" +
       reset +
@@ -76,7 +77,8 @@ export default function makeBars(
       formatValues(valuesData[i]);
 
     if (showPercentages) {
-      line += " " +
+      line +=
+        " " +
         grey +
         formatNumber((valuesData[i] / sumVal) * 100, {
           decimals: 2,

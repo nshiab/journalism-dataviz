@@ -1,68 +1,130 @@
-# The Journalism library (dataviz functions)
+**Journalism Dataviz v1.0.25**
 
-To install the library with Deno, use:
+***
 
-```bash
-deno add jsr:@nshiab/journalism-dataviz
+# The Journalism Library (dataviz)
+
+Useful TypeScript functions for data visualization in journalism projects.
+Part of the [journalism library](https://github.com/nshiab/journalism).
+
+The library is maintained by [Nael Shiab](https://naelshiab.com/), computational
+journalist and senior data producer for [CBC News](https://www.cbc.ca/news).
+
+> [!TIP]
+> To learn how to use this library and more, check out
+> [Code Like a Journalist](https://www.code-like-a-journalist.com/), a free and
+> open-source data analysis and data visualization course in TypeScript. You
+> might also find
+> [simple-data-analysis](https://github.com/nshiab/simple-data-analysis) useful.
+
+## Installation
+
+Requires **Node.js 24.21.0 or later**.
+
+```sh
+npm install @nshiab/journalism-dataviz
 ```
-
-To install the library with Node.js, use:
-
-```bash
-npm i @nshiab/journalism-dataviz
-```
-
-To import a function, use:
 
 ```ts
-import { functionName } from "@nshiab/journalism-dataviz";
+import { logBarChart } from "@nshiab/journalism-dataviz";
+
+logBarChart(
+  [
+    { country: "Canada", count: 40 },
+    { country: "France", count: 25 },
+  ],
+  "country",
+  "count",
+);
 ```
 
-To import a function from the web entry point, use:
+To start a data project with folders, configuration and documentation for AI
+agents, run:
+
+```sh
+npx @nshiab/setup-data-project
+```
+
+## Browser use
+
+For browser projects, use the `/web` entry point with a browser bundler.
 
 ```ts
-import { functionName } from "@nshiab/journalism-dataviz/web";
+import { rewind } from "@nshiab/journalism-dataviz/web";
+
+const polygon = {
+  type: "Polygon",
+  coordinates: [
+    [
+      [0, 0],
+      [1, 0],
+      [1, 1],
+      [0, 0],
+    ],
+  ],
+};
+const rewound = rewind(polygon);
 ```
 
-## getDataDW
+## Documentation
+
+- [Documentation](https://nshiab.github.io/journalism-dataviz/)
+- [llms.txt — Documentation index for AI agents](https://nshiab.github.io/journalism-dataviz/llms.txt)
+- [llm.md — Complete Markdown reference](https://nshiab.github.io/journalism-dataviz/llm.md),
+  for AI assistants or offline reading
+- [npm package](https://www.npmjs.com/package/@nshiab/journalism-dataviz)
+
+See
+[CONTRIBUTING.md](https://github.com/nshiab/journalism-dataviz/blob/main/CONTRIBUTING.md)
+for development commands.
+
+## Dataviz
+
+### getDataDW()
+
+> **getDataDW**(`chartId`, `options?`): `Promise`\<`unknown`\>
 
 Gets the data of a Datawrapper chart, table, or map.
 
-Authentication is handled via an API key, which can be provided through
-environment variables (`DATAWRAPPER_KEY`) or explicitly in the options.
+Authentication is handled via an API key, which can be provided through environment variables (`DATAWRAPPER_KEY`) or explicitly in the options.
 
-### Signature
+#### Parameters
 
-```typescript
-async function getDataDW(
-  chartId: string,
-  options?: { apiKey?: string; parse?: boolean; returnResponse?: boolean },
-): Promise<string | Record<string, string>[] | unknown>;
-```
+##### chartId
 
-### Parameters
+`string`
 
-- **`chartId`**: The unique ID of the Datawrapper chart, table, or map. This ID
-  can be found in the Datawrapper URL or dashboard.
-- **`options`**: Optional parameters to configure the request.
-- **`options.apiKey`**: The name of the environment variable that stores your
-  Datawrapper API key (e.g., `"DATAWRAPPER_KEY"`). If not provided, the function
-  defaults to looking for the `DATAWRAPPER_KEY` environment variable.
-- **`options.parse`**: If `true`, the response will be parsed and returned as a
-  JavaScript value. CSV data (charts and tables) is returned as an array of
-  objects; JSON data (maps) is returned as a parsed object. Defaults to `false`.
-- **`options.returnResponse`**: If `true`, the function will return the full
-  `Response` object from the Datawrapper API call. This can be useful for
-  debugging or for more detailed handling of the API response. Defaults to
-  `false`.
+The unique ID of the Datawrapper chart, table, or map. This ID can be found in the Datawrapper URL or dashboard.
 
-### Returns
+##### options?
 
-A Promise that resolves to a raw `string` by default, a parsed value if `parse`
-is `true` (`Record<string, string>[]` for CSV charts/tables, or a `object` for
-JSON maps), or a `Response` object if `returnResponse` is `true`.
+Optional parameters to configure the request.
 
-### Examples
+###### apiKey?
+
+`string`
+
+The name of the environment variable that stores your Datawrapper API key (e.g., `"DATAWRAPPER_KEY"`). If not provided, the function defaults to looking for the `DATAWRAPPER_KEY` environment variable.
+
+###### parse?
+
+`boolean`
+
+If `true`, the response will be parsed and returned as a JavaScript value. CSV data (charts and tables) is returned as an array of objects; JSON data (maps) is returned as a parsed object. Defaults to `false`.
+
+###### returnResponse?
+
+`boolean`
+
+If `true`, the function will return the full `Response` object from the Datawrapper API call. This can be useful for debugging or for more detailed handling of the API response. Defaults to `false`.
+
+#### Returns
+
+`Promise`\<`unknown`\>
+
+A Promise that resolves to a raw `string` by default, a parsed value if `parse` is `true` (`Record<string, string>[]` for CSV charts/tables, or a `object` for JSON maps), or a `Response` object if `returnResponse` is `true`.
+
+#### Examples
 
 ```ts
 import { getDataDW } from "journalism-dataviz";
@@ -89,46 +151,49 @@ const data = await getDataDW("anotherChartId", { apiKey: "DW_KEY" });
 console.log(data);
 ```
 
-## getInfoDW
+***
+
+### getInfoDW()
+
+> **getInfoDW**(`chartId`, `options?`): `Promise`\<`Record`\<`string`, `unknown`\> \| `Response`\>
 
 Gets information and settings for a Datawrapper chart, table, or map.
 
-Returns the full parsed chart object, including any chart-specific fields.
-Property values are typed as unknown because the response varies by
-visualization.
+Returns the full parsed chart object, including any chart-specific fields. Property values are typed as unknown because the response varies by visualization.
 
-Authentication is handled via an API key stored in an environment variable
-(`DATAWRAPPER_KEY` by default). The token requires `chart:read` or `chart:write`
-scope.
+Authentication is handled via an API key stored in an environment variable (`DATAWRAPPER_KEY` by default). The token requires `chart:read` or `chart:write` scope.
 
-### Signature
+#### Parameters
 
-```typescript
-async function getInfoDW(
-  chartId: string,
-  options?: { apiKey?: string; returnResponse?: boolean },
-): Promise<Record<string, unknown> | Response>;
-```
+##### chartId
 
-### Parameters
+`string`
 
-- **`chartId`**: The unique ID of the Datawrapper chart, table, or map. This ID
-  can be found in the Datawrapper URL or dashboard.
-- **`options`**: Optional parameters to configure the request.
-- **`options.apiKey`**: The name of the environment variable that stores your
-  Datawrapper API key (e.g., `"DATAWRAPPER_KEY"`). If not provided, the function
-  defaults to looking for the `DATAWRAPPER_KEY` environment variable.
-- **`options.returnResponse`**: If `true`, the function will return the full,
-  unconsumed `Response` object from the Datawrapper API call, including HTTP
-  error responses. This can be useful for debugging or for more detailed
-  handling of the API response. Defaults to `false`.
+The unique ID of the Datawrapper chart, table, or map. This ID can be found in the Datawrapper URL or dashboard.
 
-### Returns
+##### options?
 
-A Promise that resolves to a parsed `Record<string, unknown>` by default, or a
-`Response` object if `returnResponse` is `true`.
+Optional parameters to configure the request.
 
-### Examples
+###### apiKey?
+
+`string`
+
+The name of the environment variable that stores your Datawrapper API key (e.g., `"DATAWRAPPER_KEY"`). If not provided, the function defaults to looking for the `DATAWRAPPER_KEY` environment variable.
+
+###### returnResponse?
+
+`boolean`
+
+If `true`, the function will return the full, unconsumed `Response` object from the Datawrapper API call, including HTTP error responses. This can be useful for debugging or for more detailed handling of the API response. Defaults to `false`.
+
+#### Returns
+
+`Promise`\<`Record`\<`string`, `unknown`\> \| `Response`\>
+
+A Promise that resolves to a parsed `Record<string, unknown>` by default, or a `Response` object if `returnResponse` is `true`.
+
+#### Examples
 
 ```ts
 import { getInfoDW } from "@nshiab/journalism-dataviz";
@@ -151,368 +216,449 @@ if (response instanceof Response) {
 }
 ```
 
-## logBarChart
+***
 
-Generates and logs a text-based bar chart to the console. This function is
-useful for quickly visualizing data distributions or comparisons directly within
-a terminal or log output, without needing a graphical interface. It's
-particularly effective for presenting categorical data or showing the relative
-magnitudes of different items.
+### logBarChart()
 
-The chart is constructed using ASCII characters, making it universally
-compatible across various terminal environments. It can display data for various
-categories and their corresponding numerical values, with extensive options for
-custom formatting of labels and values, controlling the chart's width, and
-adding a descriptive title or a total label. For optimal visualization, it's
-recommended that the input `data` be sorted by the `values` key in descending
-order, though the function does not enforce this.
+> **logBarChart**\<`T`\>(`data`, `labels`, `values`, `options?`): `void`
 
-### Signature
+Generates and logs a text-based bar chart to the console. This function is useful for quickly visualizing data distributions or comparisons directly within a terminal or log output, without needing a graphical interface. It's particularly effective for presenting categorical data or showing the relative magnitudes of different items.
 
-```typescript
-function logBarChart<T extends Record<string, unknown>>(
-  data: T[],
-  labels: keyof T,
-  values: keyof T,
-  options?: {
-    formatLabels?: (d: T[labels]) => string;
-    formatValues?: (d: number) => string;
-    width?: number;
-    title?: string;
-    totalLabel?: string;
-    compact?: boolean;
-    showPercentages?: boolean;
-    showTotal?: boolean;
-  },
-): void;
-```
+The chart is constructed using ASCII characters, making it universally compatible across various terminal environments. It can display data for various categories and their corresponding numerical values, with extensive options for custom formatting of labels and values, controlling the chart's width, and adding a descriptive title or a total label. For optimal visualization, it's recommended that the input `data` be sorted by the `values` key in descending order, though the function does not enforce this.
 
-### Parameters
+#### Type Parameters
 
-- **`data`**: An array of objects, where each object represents a bar in the
-  chart. Each object should contain keys corresponding to the `labels` and
-  `values` parameters.
-- **`labels`**: The key in the data objects whose values will be used as textual
-  labels for each bar (e.g., 'category', 'name', 'country').
-- **`values`**: The key in the data objects whose numerical values will
-  determine the length of each bar and be displayed alongside the labels (e.g.,
-  'sales', 'count', 'percentage').
-- **`options`**: Optional configuration for customizing the appearance and
-  behavior of the chart.
-- **`options.formatLabels`**: A function to format the labels displayed on the
-  chart. It receives the raw label value as input and should return a string.
-  Defaults to converting the label to a string.
-- **`options.formatValues`**: A function to format the numerical values
-  displayed next to the bars. It receives the numerical value as input and
-  should return a string. Defaults to formatting the number using `formatNumber`
-  (which adds commas for thousands, etc.).
-- **`options.width`**: The maximum width of the bars in characters. The bars
-  will scale proportionally to this width. A larger width allows for more
-  detailed visualization. Defaults to `40`.
-- **`options.title`**: An optional title to display above the chart. If not
-  provided, a default title based on `labels` and `values` keys will be
-  generated.
-- **`options.totalLabel`**: An optional label to display for the total sum of
-  all values at the bottom of the chart. If provided, the sum of all `values`
-  will be calculated and displayed next to this label. This also enables the
-  display of the total row.
-- **`options.compact`**: If `true`, the chart will be rendered in a more compact
-  format, reducing vertical spacing between bars. Defaults to `false`.
-- **`options.showPercentages`**: If `true`, the percentage of the total for each
-  bar will be displayed next to its value. Defaults to `false`.
-- **`options.showTotal`**: If `true`, the total sum of all values will be
-  displayed above the chart. Defaults to `false`.
+##### T
 
-### Examples
+`T` *extends* `Record`\<`string`, `unknown`\>
+
+#### Parameters
+
+##### data
+
+`T`[]
+
+An array of objects, where each object represents a bar in the chart. Each object should contain keys corresponding to the `labels` and `values` parameters.
+
+##### labels
+
+keyof `T`
+
+The key in the data objects whose values will be used as textual labels for each bar (e.g., 'category', 'name', 'country').
+
+##### values
+
+keyof `T`
+
+The key in the data objects whose numerical values will determine the length of each bar and be displayed alongside the labels (e.g., 'sales', 'count', 'percentage').
+
+##### options?
+
+Optional configuration for customizing the appearance and behavior of the chart.
+
+###### compact?
+
+`boolean`
+
+If `true`, the chart will be rendered in a more compact format, reducing vertical spacing between bars. Defaults to `false`.
+
+###### formatLabels?
+
+(`d`) => `string`
+
+A function to format the labels displayed on the chart. It receives the raw label value as input and should return a string. Defaults to converting the label to a string.
+
+###### formatValues?
+
+(`d`) => `string`
+
+A function to format the numerical values displayed next to the bars. It receives the numerical value as input and should return a string. Defaults to formatting the number using `formatNumber` (which adds commas for thousands, etc.).
+
+###### showPercentages?
+
+`boolean`
+
+If `true`, the percentage of the total for each bar will be displayed next to its value. Defaults to `false`.
+
+###### showTotal?
+
+`boolean`
+
+If `true`, the total sum of all values will be displayed above the chart. Defaults to `false`.
+
+###### title?
+
+`string`
+
+An optional title to display above the chart. If not provided, a default title based on `labels` and `values` keys will be generated.
+
+###### totalLabel?
+
+`string`
+
+An optional label to display for the total sum of all values at the bottom of the chart. If provided, the sum of all `values` will be calculated and displayed next to this label. This also enables the display of the total row.
+
+###### width?
+
+`number`
+
+The maximum width of the bars in characters. The bars will scale proportionally to this width. A larger width allows for more detailed visualization. Defaults to `40`.
+
+#### Returns
+
+`void`
+
+#### Examples
 
 ```ts
 // Visualize sales data for different regions.
 const salesData = [
-  { region: "North", sales: 1200 },
-  { region: "South", sales: 800 },
-  { region: "East", sales: 1500 },
-  { region: "West", sales: 950 },
+  { region: 'North', sales: 1200 },
+  { region: 'South', sales: 800 },
+  { region: 'East', sales: 1500 },
+  { region: 'West', sales: 950 }
 ];
-logBarChart(salesData, "region", "sales", { title: "Regional Sales Overview" });
+logBarChart(salesData, 'region', 'sales', { title: 'Regional Sales Overview' });
 ```
 
 ```ts
 // Display product popularity with custom value formatting, a compact layout, and show percentages.
 const productPopularity = [
-  { product: "Laptop", views: 5000 },
-  { product: "Mouse", views: 1500 },
-  { product: "Keyboard", views: 2500 },
+  { product: 'Laptop', views: 5000 },
+  { product: 'Mouse', views: 1500 },
+  { product: 'Keyboard', views: 2500 }
 ];
-logBarChart(productPopularity, "product", "views", {
+logBarChart(productPopularity, 'product', 'views', {
   formatValues: (v) => `${v / 1000}K`,
   width: 30,
   compact: true,
-  totalLabel: "Total Views",
-  showPercentages: true,
+  totalLabel: 'Total Views',
+  showPercentages: true
 });
 ```
 
-## logDotChart
+***
 
-Generates and logs a text-based dot chart to the console. This function is ideal
-for visualizing the relationship between two numerical variables. It provides a
-quick, terminal-friendly way to inspect data trends and distributions.
+### logDotChart()
 
-The chart is rendered using ASCII characters, ensuring compatibility across
-various terminal environments. It supports custom formatting for both x and
-y-axis values, and can generate small multiples to compare distributions across
-different categories. While the function expects data to be sorted by the x-axis
-values for proper rendering, it does not enforce this.
+> **logDotChart**\<`T`, `X`\>(`data`, `x`, `y`, `options?`): `void`
+
+Generates and logs a text-based dot chart to the console. This function is ideal for visualizing the relationship between two numerical variables. It provides a quick, terminal-friendly way to inspect data trends and distributions.
+
+The chart is rendered using ASCII characters, ensuring compatibility across various terminal environments. It supports custom formatting for both x and y-axis values, and can generate small multiples to compare distributions across different categories. While the function expects data to be sorted by the x-axis values for proper rendering, it does not enforce this.
 
 **Data Type Requirements:**
-
 - **X-axis values**: Must be `number` or `Date` objects.
 - **Y-axis values**: Must be `number` values.
 - All values must be non-null and defined.
 
-### Signature
+#### Type Parameters
 
-```typescript
-function logDotChart<T extends Record<string, unknown>>(
-  data: T[],
-  x: keyof T,
-  y: keyof T,
-  options?: {
-    formatX?: (d: T[x]) => string;
-    formatY?: (d: number) => string;
-    smallMultiples?: keyof T;
-    fixedScales?: boolean;
-    smallMultiplesPerRow?: number;
-    width?: number;
-    height?: number;
-    title?: string;
-  },
-): void;
-```
+##### T
 
-### Parameters
+`T` *extends* `Record`\<`string`, `unknown`\>
 
-- **`data`**: An array of objects representing the data to be visualized. Each
-  object should contain keys corresponding to the `x` and `y` parameters.
-- **`x`**: The key in the data objects whose values will be plotted on the
-  x-axis. Values must be numbers or Date objects.
-- **`y`**: The key in the data objects whose values will be plotted on the
-  y-axis. Values must be numbers.
-- **`options`**: An optional object to customize the chart's appearance and
-  behavior.
-- **`options.formatX`**: A function to format the x-axis values for display. It
-  receives the raw x-value as input and should return a string. If the first
-  data point's x value is a Date, it defaults to formatting the date as
-  "YYYY-MM-DD".
-- **`options.formatY`**: A function to format the y-axis values for display. It
-  receives the numerical y-value as input and should return a string.
-- **`options.smallMultiples`**: A key in the data objects to create small
-  multiples (separate charts) for each unique value of this key. This is useful
-  for comparing trends across different categories.
-- **`options.fixedScales`**: If `true` and `smallMultiples` is used, all small
-  multiple charts will share the same x and y scales, allowing for direct
-  comparison of magnitudes. If `false`, each small multiple will have its own
-  independent scales. Defaults to `false`.
-- **`options.smallMultiplesPerRow`**: The number of small multiples to display
-  per row when `smallMultiples` is used. Defaults to `3`.
-- **`options.width`**: The width of the chart in characters. This affects the
-  horizontal resolution of the chart. Defaults to `60`.
-- **`options.height`**: The height of the chart in lines. This affects the
-  vertical resolution of the chart. Defaults to `20`.
-- **`options.title`**: The title of the chart. If not provided, a default title
-  based on `x`, `y`, and `smallMultiples` (if applicable) will be generated.
+##### X
 
-### Examples
+`X` *extends* `string` \| `number` \| `symbol` = keyof `T`
+
+#### Parameters
+
+##### data
+
+`T`[]
+
+An array of objects representing the data to be visualized. Each object should contain keys corresponding to the `x` and `y` parameters.
+
+##### x
+
+`X`
+
+The key in the data objects whose values will be plotted on the x-axis. Values must be numbers or Date objects.
+
+##### y
+
+keyof `T`
+
+The key in the data objects whose values will be plotted on the y-axis. Values must be numbers.
+
+##### options?
+
+An optional object to customize the chart's appearance and behavior.
+
+###### fixedScales?
+
+`boolean`
+
+If `true` and `smallMultiples` is used, all small multiple charts will share the same x and y scales, allowing for direct comparison of magnitudes. If `false`, each small multiple will have its own independent scales. Defaults to `false`.
+
+###### formatX?
+
+(`d`) => `string`
+
+A function to format the x-axis values for display. It receives the raw x-value as input and should return a string. If the first data point's x value is a Date, it defaults to formatting the date as "YYYY-MM-DD".
+
+###### formatY?
+
+(`d`) => `string`
+
+A function to format the y-axis values for display. It receives the numerical y-value as input and should return a string.
+
+###### height?
+
+`number`
+
+The height of the chart in lines. This affects the vertical resolution of the chart. Defaults to `20`.
+
+###### smallMultiples?
+
+keyof `T`
+
+A key in the data objects to create small multiples (separate charts) for each unique value of this key. This is useful for comparing trends across different categories.
+
+###### smallMultiplesPerRow?
+
+`number`
+
+The number of small multiples to display per row when `smallMultiples` is used. Defaults to `3`.
+
+###### title?
+
+`string`
+
+The title of the chart. If not provided, a default title based on `x`, `y`, and `smallMultiples` (if applicable) will be generated.
+
+###### width?
+
+`number`
+
+The width of the chart in characters. This affects the horizontal resolution of the chart. Defaults to `60`.
+
+#### Returns
+
+`void`
+
+#### Examples
 
 ```ts
 // Visualize a time series of values.
 const timeSeriesData = [
-  { date: new Date("2023-01-01"), value: 10 },
-  { date: new Date("2023-02-01"), value: 20 },
-  { date: new Date("2023-03-01"), value: 30 },
-  { date: new Date("2023-04-01"), value: 40 },
+    { date: new Date("2023-01-01"), value: 10 },
+    { date: new Date("2023-02-01"), value: 20 },
+    { date: new Date("2023-03-01"), value: 30 },
+    { date: new Date("2023-04-01"), value: 40 },
 ];
 
 logDotChart(timeSeriesData, "date", "value", {
-  formatX: (d) => (d as Date).toISOString().slice(0, 10),
-  formatY: (d) => "$" + d.toString(),
-  title: "Monthly Sales Trend",
+    formatX: (d) => d.toISOString().slice(0, 10),
+    formatY: (d) => "$" + d.toString(),
+    title: "Monthly Sales Trend",
 });
 ```
 
 ```ts
 // Compare trends across different categories using small multiples.
 const multiCategoryData = [
-  { date: new Date("2023-01-01"), value: 10, category: "A" },
-  { date: new Date("2023-02-01"), value: 20, category: "A" },
-  { date: new Date("2023-03-01"), value: 30, category: "A" },
-  { date: new Date("2023-04-01"), value: 40, category: "A" },
-  { date: new Date("2023-01-01"), value: 15, category: "B" },
-  { date: new Date("2023-02-01"), value: 25, category: "B" },
-  { date: new Date("2023-03-01"), value: 35, category: "B" },
-  { date: new Date("2023-04-01"), value: 45, category: "B" },
+    { date: new Date("2023-01-01"), value: 10, category: "A" },
+    { date: new Date("2023-02-01"), value: 20, category: "A" },
+    { date: new Date("2023-03-01"), value: 30, category: "A" },
+    { date: new Date("2023-04-01"), value: 40, category: "A" },
+    { date: new Date("2023-01-01"), value: 15, category: "B" },
+    { date: new Date("2023-02-01"), value: 25, category: "B" },
+    { date: new Date("2023-03-01"), value: 35, category: "B" },
+    { date: new Date("2023-04-01"), value: 45, category: "B" },
 ];
 
 logDotChart(multiCategoryData, "date", "value", {
-  formatX: (d) => (d as Date).toISOString().slice(0, 10),
-  formatY: (d) => "$" + d.toString(),
-  smallMultiples: "category",
-  smallMultiplesPerRow: 2,
-  fixedScales: true,
-  title: "Sales Trend by Category",
+    formatX: (d) => d.toISOString().slice(0, 10),
+    formatY: (d) => "$" + d.toString(),
+    smallMultiples: "category",
+    smallMultiplesPerRow: 2,
+    fixedScales: true,
+    title: "Sales Trend by Category",
 });
 ```
 
-## logLineChart
+***
 
-Generates and logs a text-based line chart to the console. This function is
-particularly useful for visualizing trends over time providing a quick and
-accessible way to understand data progression directly within a terminal or log
-output.
+### logLineChart()
 
-The chart is rendered using ASCII characters, ensuring broad compatibility. It
-supports custom formatting for both x and y-axis values, and can generate small
-multiples to compare trends across different categories. When the chart's width
-is smaller than the number of data points, the line represents an averaged
-approximation of the data, providing a smoothed view of the trend. For optimal
-visualization, it's recommended that the input `data` be sorted by the x-axis
-values.
+> **logLineChart**\<`T`, `X`\>(`data`, `x`, `y`, `options?`): `void`
+
+Generates and logs a text-based line chart to the console. This function is particularly useful for visualizing trends over time providing a quick and accessible way to understand data progression directly within a terminal or log output.
+
+The chart is rendered using ASCII characters, ensuring broad compatibility. It supports custom formatting for both x and y-axis values, and can generate small multiples to compare trends across different categories. When the chart's width is smaller than the number of data points, the line represents an averaged approximation of the data, providing a smoothed view of the trend. For optimal visualization, it's recommended that the input `data` be sorted by the x-axis values.
 
 **Data Type Requirements:**
-
 - **X-axis values**: Must be `number` or `Date` objects.
 - **Y-axis values**: Must be `number` values.
 - All values must be non-null and defined.
 
-### Signature
+#### Type Parameters
 
-```typescript
-function logLineChart<T extends Record<string, unknown>>(
-  data: T[],
-  x: keyof T,
-  y: keyof T,
-  options?: {
-    formatX?: (d: T[x]) => string;
-    formatY?: (d: number) => string;
-    smallMultiples?: keyof T;
-    fixedScales?: boolean;
-    smallMultiplesPerRow?: number;
-    width?: number;
-    height?: number;
-    title?: string;
-  },
-): void;
-```
+##### T
 
-### Parameters
+`T` *extends* `Record`\<`string`, `unknown`\>
 
-- **`data`**: An array of objects representing the data to be visualized. Each
-  object should contain keys corresponding to the `x` and `y` parameters.
-- **`x`**: The key in the data objects whose values will be plotted on the
-  x-axis. Values must be numbers or Date objects.
-- **`labels`**: The key for labels in the data.
-- **`y`**: The key in the data objects whose values will be plotted on the
-  y-axis. Values must be numbers.
-- **`options`**: An optional object to customize the chart's appearance and
-  behavior.
-- **`options.formatX`**: A function to format the x-axis values for display. It
-  receives the raw x-value as input and should return a string. If the first
-  data point's x value is a Date, it defaults to formatting the date as
-  "YYYY-MM-DD".
-- **`options.formatY`**: A function to format the y-axis values for display. It
-  receives the numerical y-value as input and should return a string.
-- **`options.smallMultiples`**: A key in the data objects to create small
-  multiples (separate charts) for each unique value of this key. This is useful
-  for comparing trends across different categories.
-- **`options.fixedScales`**: If `true` and `smallMultiples` is used, all small
-  multiple charts will share the same x and y scales, allowing for direct
-  comparison of magnitudes. If `false`, each small multiple will have its own
-  independent scales. Defaults to `false`.
-- **`options.smallMultiplesPerRow`**: The number of small multiples to display
-  per row when `smallMultiples` is used. Defaults to `3`.
-- **`options.width`**: The width of the chart in characters. This affects the
-  horizontal resolution of the chart. Defaults to `60`.
-- **`options.height`**: The height of the chart in lines. This affects the
-  vertical resolution of the chart. Defaults to `20`.
-- **`options.title`**: The title of the chart. If not provided, a default title
-  based on `x`, `y`, and `smallMultiples` (if applicable) will be generated.
+##### X
 
-### Examples
+`X` *extends* `string` \| `number` \| `symbol` = keyof `T`
+
+#### Parameters
+
+##### data
+
+`T`[]
+
+An array of objects representing the data to be visualized. Each object should contain keys corresponding to the `x` and `y` parameters.
+
+##### x
+
+`X`
+
+The key in the data objects whose values will be plotted on the x-axis. Values must be numbers or Date objects.
+
+##### y
+
+keyof `T`
+
+The key in the data objects whose values will be plotted on the y-axis. Values must be numbers.
+
+##### options?
+
+An optional object to customize the chart's appearance and behavior.
+
+###### fixedScales?
+
+`boolean`
+
+If `true` and `smallMultiples` is used, all small multiple charts will share the same x and y scales, allowing for direct comparison of magnitudes. If `false`, each small multiple will have its own independent scales. Defaults to `false`.
+
+###### formatX?
+
+(`d`) => `string`
+
+A function to format the x-axis values for display. It receives the raw x-value as input and should return a string. If the first data point's x value is a Date, it defaults to formatting the date as "YYYY-MM-DD".
+
+###### formatY?
+
+(`d`) => `string`
+
+A function to format the y-axis values for display. It receives the numerical y-value as input and should return a string.
+
+###### height?
+
+`number`
+
+The height of the chart in lines. This affects the vertical resolution of the chart. Defaults to `20`.
+
+###### smallMultiples?
+
+keyof `T`
+
+A key in the data objects to create small multiples (separate charts) for each unique value of this key. This is useful for comparing trends across different categories.
+
+###### smallMultiplesPerRow?
+
+`number`
+
+The number of small multiples to display per row when `smallMultiples` is used. Defaults to `3`.
+
+###### title?
+
+`string`
+
+The title of the chart. If not provided, a default title based on `x`, `y`, and `smallMultiples` (if applicable) will be generated.
+
+###### width?
+
+`number`
+
+The width of the chart in characters. This affects the horizontal resolution of the chart. Defaults to `60`.
+
+#### Returns
+
+`void`
+
+#### Examples
 
 ```ts
 // Visualize a simple time series of values.
 const timeSeriesData = [
-  { date: new Date("2023-01-01"), value: 10 },
-  { date: new Date("2023-02-01"), value: 20 },
-  { date: new Date("2023-03-01"), value: 30 },
-  { date: new Date("2023-04-01"), value: 40 },
+    { date: new Date("2023-01-01"), value: 10 },
+    { date: new Date("2023-02-01"), value: 20 },
+    { date: new Date("2023-03-01"), value: 30 },
+    { date: new Date("2023-04-01"), value: 40 },
 ];
 
 logLineChart(timeSeriesData, "date", "value", {
-  formatX: (d) => (d as Date).toISOString().slice(0, 10),
-  title: "Monthly Data Trend",
+    formatX: (d) => d.toISOString().slice(0, 10),
+    title: "Monthly Data Trend",
 });
 ```
 
 ```ts
 // Compare trends across different categories using small multiples.
 const multiCategoryData = [
-  { date: new Date("2023-01-01"), value: 10, category: "A" },
-  { date: new Date("2023-02-01"), value: 20, category: "A" },
-  { date: new Date("2023-03-01"), value: 30, category: "A" },
-  { date: new Date("2023-04-01"), value: 40, category: "A" },
-  { date: new Date("2023-01-01"), value: 15, category: "B" },
-  { date: new Date("2023-02-01"), value: 25, category: "B" },
-  { date: new Date("2023-03-01"), value: 35, category: "B" },
-  { date: new Date("2023-04-01"), value: 45, category: "B" },
+    { date: new Date("2023-01-01"), value: 10, category: "A" },
+    { date: new Date("2023-02-01"), value: 20, category: "A" },
+    { date: new Date("2023-03-01"), value: 30, category: "A" },
+    { date: new Date("2023-04-01"), value: 40, category: "A" },
+    { date: new Date("2023-01-01"), value: 15, category: "B" },
+    { date: new Date("2023-02-01"), value: 25, category: "B" },
+    { date: new Date("2023-03-01"), value: 35, category: "B" },
+    { date: new Date("2023-04-01"), value: 45, category: "B" },
 ];
 
 logLineChart(multiCategoryData, "date", "value", {
-  formatX: (d) => (d as Date).toLocaleDateString(),
-  formatY: (d) => "$" + d.toString(),
-  smallMultiples: "category",
-  smallMultiplesPerRow: 2,
-  fixedScales: true,
-  title: "Sales Trend by Category",
+    formatX: (d) => d.toLocaleDateString(),
+    formatY: (d) => "$" + d.toString(),
+    smallMultiples: "category",
+    smallMultiplesPerRow: 2,
+    fixedScales: true,
+    title: "Sales Trend by Category",
 });
 ```
 
-## publishChartDW
+***
 
-Publishes a specified Datawrapper chart, table, or map. This function
-streamlines the process of making your Datawrapper visualizations live, allowing
-for automated deployment and updates. It handles authentication using an API
-key, which can be provided via environment variables or directly through
-options.
+### publishChartDW()
 
-### Signature
+> **publishChartDW**(`chartId`, `options?`): `Promise`\<`void` \| `Response`\>
 
-```typescript
-async function publishChartDW(
-  chartId: string,
-  options?: { apiKey?: string; returnResponse?: boolean },
-): Promise<void | Response>;
-```
+Publishes a specified Datawrapper chart, table, or map. This function streamlines the process of making your Datawrapper visualizations live, allowing for automated deployment and updates. It handles authentication using an API key, which can be provided via environment variables or directly through options.
 
-### Parameters
+#### Parameters
 
-- **`chartId`**: The unique ID of the Datawrapper chart, table, or map to be
-  published. This ID can be found in the Datawrapper URL or dashboard.
-- **`options`**: Optional parameters to configure the publishing process.
-- **`options.apiKey`**: The name of the environment variable that stores your
-  Datawrapper API key (e.g., `"DATAWRAPPER_KEY"`). If not provided, the function
-  defaults to looking for the `DATAWRAPPER_KEY` environment variable.
-- **`options.returnResponse`**: If `true`, the function will return the full
-  `Response` object from the Datawrapper API call. This can be useful for
-  debugging or for more detailed handling of the API response. Defaults to
-  `false`.
+##### chartId
 
-### Returns
+`string`
 
-A Promise that resolves to `void` if `returnResponse` is `false` (default), or a
-`Response` object if `returnResponse` is `true`.
+The unique ID of the Datawrapper chart, table, or map to be published. This ID can be found in the Datawrapper URL or dashboard.
 
-### Examples
+##### options?
+
+Optional parameters to configure the publishing process.
+
+###### apiKey?
+
+`string`
+
+The name of the environment variable that stores your Datawrapper API key (e.g., `"DATAWRAPPER_KEY"`). If not provided, the function defaults to looking for the `DATAWRAPPER_KEY` environment variable.
+
+###### returnResponse?
+
+`boolean`
+
+If `true`, the function will return the full `Response` object from the Datawrapper API call. This can be useful for debugging or for more detailed handling of the API response. Defaults to `false`.
+
+#### Returns
+
+`Promise`\<`void` \| `Response`\>
+
+A Promise that resolves to `void` if `returnResponse` is `false` (default), or a `Response` object if `returnResponse` is `true`.
+
+#### Examples
 
 ```ts
 // Publish a Datawrapper chart with a given ID.
@@ -531,32 +677,39 @@ console.log(`Chart ${customApiKeyChartID} published using custom API key.`);
 ```ts
 // Get the full HTTP response object after publishing.
 const chartIDForResponse = "yetAnotherChartId";
-const response = await publishChartDW(chartIDForResponse, {
-  returnResponse: true,
-});
+const response = await publishChartDW(chartIDForResponse, { returnResponse: true });
 console.log(`Response status for ${chartIDForResponse}: ${response?.status}`);
 ```
 
-## rewind
+***
 
-Rewinds the winding order of the specified GeoJSON object to be clockwise. It is
-based on the D3-geo library's winding order conventions.
+### rewind()
 
-### Signature
+> **rewind**\<`T`\>(`object`): `T`
 
-```typescript
-function rewind(object: any): any;
-```
+Rewinds the winding order of the specified GeoJSON object to be clockwise. It is based on the D3-geo library's winding order conventions.
 
-### Parameters
+#### Type Parameters
 
-- **`object`**: The GeoJSON object to rewind.
+##### T
 
-### Returns
+`T`
 
-A new GeoJSON object.
+#### Parameters
 
-### Examples
+##### object
+
+`T`
+
+A GeoJSON geometry, feature, feature collection, or null.
+
+#### Returns
+
+`T`
+
+A rewound copy; non-polygon geometries are returned unchanged. Polygon coordinates are two-dimensional.
+
+#### Examples
 
 ```ts
 // Rewind a FeatureCollection.
@@ -568,10 +721,10 @@ const featureCollection = {
       properties: {},
       geometry: {
         type: "Polygon",
-        coordinates: [[[-10, -10], [-10, 10], [10, 10], [10, -10], [-10, -10]]],
-      },
-    },
-  ],
+        coordinates: [[[-10, -10], [-10, 10], [10, 10], [10, -10], [-10, -10]]]
+      }
+    }
+  ]
 };
 const rewoundFeatureCollection = rewind(featureCollection);
 ```
@@ -583,52 +736,76 @@ const feature = {
   properties: { name: "Example Area" },
   geometry: {
     type: "Polygon",
-    coordinates: [[[-5, -5], [-5, 5], [5, 5], [5, -5], [-5, -5]]],
-  },
+    coordinates: [[[-5, -5], [-5, 5], [5, 5], [5, -5], [-5, -5]]]
+  }
 };
 const rewoundFeature = rewind(feature);
 console.log(rewoundFeature);
 ```
 
-## saveChart
+***
 
-Saves an [Observable Plot](https://github.com/observablehq/plot) chart or map as
-a PNG or SVG file. The chart function can return an SVG or HTML element directly
-or through a promise. The rendering environment remains available until the
-chart function finishes. Concurrent saves are processed one at a time to protect
-that environment. Calling `saveChart` from inside its own chart function is not
-supported and rejects with an error.
+### saveChart()
 
-### Signature
+> **saveChart**\<`T`\>(`data`, `chart`, `path`, `options?`): `Promise`\<`void`\>
 
-```typescript
-async function saveChart<T>(
-  data: T,
-  chart: (
-    data: T,
-  ) => SVGSVGElement | HTMLElement | Promise<SVGSVGElement | HTMLElement>,
-  path: string,
-  options?: { style?: string; dark?: boolean },
-): Promise<void>;
-```
+Saves an [Observable Plot](https://github.com/observablehq/plot) chart or map as a PNG or SVG file.
+The chart function can return an SVG or HTML element directly or through a promise.
+The rendering environment remains available until the chart function finishes.
+Concurrent saves are processed one at a time to protect that environment.
+Calling `saveChart` from inside its own chart function is not supported and rejects with an error.
 
-### Parameters
+#### Type Parameters
 
-- **`data`**: The data passed to the chart function.
-- **`chart`**: A synchronous or asynchronous function returning an SVG or HTML
-  element representing the chart or map.
-- **`path`**: The output file path. The extension must be `.png` or `.svg`.
-- **`options`**: Optional settings to customize the chart's appearance.
-- **`options.style`**: A CSS string inserted into the generated SVG.
-- **`options.dark`**: If `true`, renders the chart with a dark theme. Defaults
-  to `false`.
+##### T
 
-### Returns
+`T`
 
-A promise that resolves after the file has been saved, or rejects if the chart
-function or saving fails.
+The type of data passed unchanged to the chart function.
 
-### Examples
+#### Parameters
+
+##### data
+
+`T`
+
+The data passed to the chart function.
+
+##### chart
+
+(`data`) => `SVGSVGElement` \| `HTMLElement` \| `Promise`\<`SVGSVGElement` \| `HTMLElement`\>
+
+A synchronous or asynchronous function returning an SVG or HTML element representing the chart or map.
+
+##### path
+
+`string`
+
+The output file path. The extension must be `.png` or `.svg`.
+
+##### options?
+
+Optional settings to customize the chart's appearance.
+
+###### dark?
+
+`boolean`
+
+If `true`, renders the chart with a dark theme. Defaults to `false`.
+
+###### style?
+
+`string`
+
+A CSS string inserted into the generated SVG.
+
+#### Returns
+
+`Promise`\<`void`\>
+
+A promise that resolves after the file has been saved, or rejects if the chart function or saving fails.
+
+#### Examples
 
 ```ts
 import { dot, plot } from "@observablehq/plot";
@@ -655,158 +832,104 @@ await saveChart(
 );
 ```
 
-## updateAnnotationsDW
+***
 
-Updates annotations on a Datawrapper chart. This function allows you to
-programmatically add, modify, or remove text and line annotations on your
-Datawrapper visualizations, providing precise control over highlighting specific
-data points or trends.
+### updateAnnotationsDW()
 
-This function supports various annotation properties, including position, text
-content, styling (bold, italic, color, size), alignment, and connector lines
-with customizable arrowheads.
+> **updateAnnotationsDW**(`chartId`, `annotations`, `options?`): `Promise`\<`void` \| `Response`\>
 
-Authentication is handled via an API key, which can be provided through
-environment variables (`DATAWRAPPER_KEY`) or explicitly in the options. For
-detailed information on Datawrapper annotations and their properties, refer to
-the official Datawrapper API documentation.
+Updates annotations on a Datawrapper chart. This function allows you to programmatically add, modify, or remove text and line annotations on your Datawrapper visualizations, providing precise control over highlighting specific data points or trends.
 
-### Signature
+This function supports various annotation properties, including position, text content, styling (bold, italic, color, size), alignment, and connector lines with customizable arrowheads.
 
-```typescript
-async function updateAnnotationsDW(
-  chartId: string,
-  annotations: {
-    x: string;
-    y: string;
-    text: string;
-    bg?: boolean;
-    dx?: number;
-    dy?: number;
-    bold?: boolean;
-    size?: number;
-    align?: "tl" | "tc" | "tr" | "ml" | "mc" | "mr" | "bl" | "bc" | "br";
-    color?: string;
-    width?: number;
-    italic?: boolean;
-    underline?: boolean;
-    showMobile?: boolean;
-    showDesktop?: boolean;
-    mobileFallback?: boolean;
-    connectorLine?: {
-      type?: "straight" | "curveRight" | "curveLeft";
-      circle?: boolean;
-      stroke?: 1 | 2 | 3;
-      enabled?: boolean;
-      arrowHead?: "lines" | "triangle" | false;
-      circleStyle?: string;
-      circleRadius?: number;
-      inheritColor?: boolean;
-      targetPadding?: number;
-    };
-  }[],
-  options?: { apiKey?: string; returnResponse?: boolean },
-): Promise<void | Response>;
-```
+Authentication is handled via an API key, which can be provided through environment variables (`DATAWRAPPER_KEY`) or explicitly in the options. For detailed information on Datawrapper annotations and their properties, refer to the official Datawrapper API documentation.
 
-### Parameters
+Annotation fields:
+- `x`: The x-coordinate of the annotation's position on the chart.
+- `y`: The y-coordinate of the annotation's position on the chart.
+- `text`: The text content of the annotation.
+- `bg`: If `true`, the annotation text will have a background. Defaults to `false`.
+- `dx`: The horizontal offset of the annotation text from its `x` coordinate, in pixels. Defaults to `0`.
+- `dy`: The vertical offset of the annotation text from its `y` coordinate, in pixels. Defaults to `0`.
+- `bold`: If `true`, the annotation text will be bold. Defaults to `false`.
+- `size`: The font size of the annotation text in pixels. Defaults to `12`.
+- `align`: The alignment of the annotation text relative to its `x` and `y` coordinates. Can be `"tl"` (top-left), `"tc"` (top-center), `"tr"` (top-right), `"ml"` (middle-left), `"mc"` (middle-center), `"mr"` (middle-right), `"bl"` (bottom-left), `"bc"` (bottom-center), or `"br"` (bottom-right). Defaults to `"mr"`.
+- `color`: The color of the annotation text (e.g., `"#FF0000"`, `"red"`). Defaults to `"#8C8C8C"`.
+- `width`: The maximum width of the annotation text box in pixels. Text will wrap if it exceeds this width. Defaults to `20`.
+- `italic`: If `true`, the annotation text will be italic. Defaults to `false`.
+- `underline`: If `true`, the annotation text will be underlined. Defaults to `false`.
+- `showMobile`: If `true`, the annotation will be visible on mobile devices. Defaults to `true`.
+- `showDesktop`: If `true`, the annotation will be visible on desktop devices. Defaults to `true`.
+- `mobileFallback`: If `true`, the annotation will be displayed as a simple text label on mobile if it's too complex. Defaults to `false`.
+- `connectorLine`: An object defining the properties of a connector line from the annotation to a data point.
+- `connectorLine.type`: The type of the connector line. Can be `"straight"`, `"curveRight"`, or `"curveLeft"`. Defaults to `"straight"`.
+- `connectorLine.circle`: If `true`, a circle will be drawn at the end of the connector line. Defaults to `false`.
+- `connectorLine.stroke`: The stroke width of the connector line. Can be `1`, `2`, or `3`. Defaults to `1`.
+- `connectorLine.enabled`: If `true`, the connector line will be drawn. Defaults to `false`.
+- `connectorLine.arrowHead`: The style of the arrowhead. Can be `"lines"`, `"triangle"`, or `false` (no arrowhead). Defaults to `"lines"`.
+- `connectorLine.circleStyle`: The style of the circle at the end of the connector line. Defaults to `"solid"`.
+- `connectorLine.circleRadius`: The radius of the circle at the end of the connector line. Defaults to `10`.
+- `connectorLine.inheritColor`: If `true`, the connector line will inherit the annotation's text color. Defaults to `false`.
+- `connectorLine.targetPadding`: The padding between the end of the connector line and the target data point. Defaults to `4`.
 
-- **`chartId`**: The ID of the Datawrapper chart to update. This ID can be found
-  in the Datawrapper URL or dashboard.
-- **`annotations`**: An array of annotation objects. Each object defines a
-  single annotation with its properties. Required properties for each annotation
-  are `x`, `y`, and `text`.
-- **`annotations.x`**: The x-coordinate of the annotation's position on the
-  chart.
-- **`annotations.y`**: The y-coordinate of the annotation's position on the
-  chart.
-- **`annotations.text`**: The text content of the annotation.
-- **`annotations.bg`**: If `true`, the annotation text will have a background.
-  Defaults to `false`.
-- **`annotations.dx`**: The horizontal offset of the annotation text from its
-  `x` coordinate, in pixels. Defaults to `0`.
-- **`annotations.dy`**: The vertical offset of the annotation text from its `y`
-  coordinate, in pixels. Defaults to `0`.
-- **`annotations.bold`**: If `true`, the annotation text will be bold. Defaults
-  to `false`.
-- **`annotations.size`**: The font size of the annotation text in pixels.
-  Defaults to `12`.
-- **`annotations.align`**: The alignment of the annotation text relative to its
-  `x` and `y` coordinates. Can be `"tl"` (top-left), `"tc"` (top-center), `"tr"`
-  (top-right), `"ml"` (middle-left), `"mc"` (middle-center), `"mr"`
-  (middle-right), `"bl"` (bottom-left), `"bc"` (bottom-center), or `"br"`
-  (bottom-right). Defaults to `"mr"`.
-- **`annotations.color`**: The color of the annotation text (e.g., `"#FF0000"`,
-  `"red"`). Defaults to `"#8C8C8C"`.
-- **`annotations.width`**: The maximum width of the annotation text box in
-  pixels. Text will wrap if it exceeds this width. Defaults to `20`.
-- **`annotations.italic`**: If `true`, the annotation text will be italic.
-  Defaults to `false`.
-- **`annotations.underline`**: If `true`, the annotation text will be
-  underlined. Defaults to `false`.
-- **`annotations.showMobile`**: If `true`, the annotation will be visible on
-  mobile devices. Defaults to `true`.
-- **`annotations.showDesktop`**: If `true`, the annotation will be visible on
-  desktop devices. Defaults to `true`.
-- **`annotations.mobileFallback`**: If `true`, the annotation will be displayed
-  as a simple text label on mobile if it's too complex. Defaults to `false`.
-- **`annotations.connectorLine`**: An object defining the properties of a
-  connector line from the annotation to a data point.
-- **`annotations.connectorLine.type`**: The type of the connector line. Can be
-  `"straight"`, `"curveRight"`, or `"curveLeft"`. Defaults to `"straight"`.
-- **`annotations.connectorLine.circle`**: If `true`, a circle will be drawn at
-  the end of the connector line. Defaults to `false`.
-- **`annotations.connectorLine.stroke`**: The stroke width of the connector
-  line. Can be `1`, `2`, or `3`. Defaults to `1`.
-- **`annotations.connectorLine.enabled`**: If `true`, the connector line will be
-  drawn. Defaults to `false`.
-- **`annotations.connectorLine.arrowHead`**: The style of the arrowhead. Can be
-  `"lines"`, `"triangle"`, or `false` (no arrowhead). Defaults to `"lines"`.
-- **`annotations.connectorLine.circleStyle`**: The style of the circle at the
-  end of the connector line. Defaults to `"solid"`.
-- **`annotations.connectorLine.circleRadius`**: The radius of the circle at the
-  end of the connector line. Defaults to `10`.
-- **`annotations.connectorLine.inheritColor`**: If `true`, the connector line
-  will inherit the annotation's text color. Defaults to `false`.
-- **`annotations.connectorLine.targetPadding`**: The padding between the end of
-  the connector line and the target data point. Defaults to `4`.
-- **`options.apiKey`**: The name of the environment variable that stores your
-  Datawrapper API key. If not provided, the function defaults to looking for
-  `DATAWRAPPER_KEY`.
-- **`options.returnResponse`**: If `true`, the function will return the full
-  `Response` object from the Datawrapper API call. This can be useful for
-  debugging or for more detailed handling of the API response. Defaults to
-  `false`.
+#### Parameters
 
-### Returns
+##### chartId
 
-A Promise that resolves to `void` if `returnResponse` is `false` (default), or a
-`Response` object if `returnResponse` is `true`.
+`string`
 
-### Examples
+The ID of the Datawrapper chart to update. This ID can be found in the Datawrapper URL or dashboard.
+
+##### annotations
+
+`object`[]
+
+An array of annotation objects. Each object defines a single annotation with its properties. Required properties for each annotation are `x`, `y`, and `text`.
+
+##### options?
+
+###### apiKey?
+
+`string`
+
+The name of the environment variable that stores your Datawrapper API key. If not provided, the function defaults to looking for `DATAWRAPPER_KEY`.
+
+###### returnResponse?
+
+`boolean`
+
+If `true`, the function will return the full `Response` object from the Datawrapper API call. This can be useful for debugging or for more detailed handling of the API response. Defaults to `false`.
+
+#### Returns
+
+`Promise`\<`void` \| `Response`\>
+
+A Promise that resolves to `void` if `returnResponse` is `false` (default), or a `Response` object if `returnResponse` is `true`.
+
+#### Examples
 
 ```ts
 // Update annotations on a Datawrapper chart with a simple text annotation and one with an arrow.
 
 const chartID = "myChartId";
 const myAnnotations = [
-  {
-    "x": "2024/08/30 01:52",
-    "y": "14496235",
-    "text": "This is an annotation!",
-  },
-  {
-    "x": "2024/06/29",
-    "y": "15035128",
-    "dy": 50,
-    "text": "This is also some text, but with an arrow!",
-    "connectorLine": {
-      "enabled": true,
-      "type": "straight",
-      "arrowHead": "lines",
-    },
-    "mobileFallback": false,
-  },
+   {
+       "x": "2024/08/30 01:52",
+       "y": "14496235",
+       "text": "This is an annotation!"
+   },
+   {
+       "x": "2024/06/29",
+       "y": "15035128",
+       "dy": 50,
+       "text": "This is also some text, but with an arrow!",
+       "connectorLine": {
+           "enabled": true,
+           "type": "straight",
+           "arrowHead": "lines"
+       },
+       "mobileFallback": false
+   }
 ];
 
 await updateAnnotationsDW(chartID, myAnnotations);
@@ -817,81 +940,70 @@ console.log(`Annotations updated for chart ${chartID}.`);
 // If your Datawrapper API key is stored under a different environment variable name (e.g., `DW_API_KEY`).
 const customApiKeyChartID = "anotherChartId";
 const annotationsForCustomKey = [
-  { x: "2024/01/01", y: "100", text: "Custom API Key Test" },
+  { x: "2024/01/01", y: "100", text: "Custom API Key Test" }
 ];
-await updateAnnotationsDW(customApiKeyChartID, annotationsForCustomKey, {
-  apiKey: "DW_API_KEY",
-});
-console.log(
-  `Annotations updated for chart ${customApiKeyChartID} using custom API key.`,
-);
+await updateAnnotationsDW(customApiKeyChartID, annotationsForCustomKey, { apiKey: "DW_API_KEY" });
+console.log(`Annotations updated for chart ${customApiKeyChartID} using custom API key.`);
 ```
 
-## updateDataDW
+***
 
-Updates the data of a specified Datawrapper chart, table, or map. This function
-is essential for keeping your Datawrapper visualizations dynamic and up-to-date
-with the latest information. It supports both CSV data for standard charts and
-tables, and JSON data for more complex visualizations like locator maps.
+### updateDataDW()
 
-Datawrapper is a powerful tool for creating interactive data visualizations.
-This function allows for programmatic updates, which is ideal for automated data
-pipelines, dashboards, or applications that require fresh data to be reflected
-in visualizations without manual intervention.
+> **updateDataDW**(`chartId`, `data`, `options?`): `Promise`\<`void` \| `Response`\>
 
-Authentication is handled via an API key, which can be provided through
-environment variables (`process.env.DATAWRAPPER_KEY`) or explicitly in the
-options. The `Content-Type` header for the API request is automatically set
-based on whether the data is CSV or JSON.
+Updates the data of a specified Datawrapper chart, table, or map. This function is essential for keeping your Datawrapper visualizations dynamic and up-to-date with the latest information. It supports both CSV data for standard charts and tables, and JSON data for more complex visualizations like locator maps.
 
-### Signature
+Datawrapper is a powerful tool for creating interactive data visualizations. This function allows for programmatic updates, which is ideal for automated data pipelines, dashboards, or applications that require fresh data to be reflected in visualizations without manual intervention.
 
-```typescript
-async function updateDataDW(
-  chartId: string,
-  data: string,
-  options?: { apiKey?: string; returnResponse?: boolean },
-): Promise<void | Response>;
-```
+Authentication is handled via an API key, which can be provided through environment variables (`process.env.DATAWRAPPER_KEY`) or explicitly in the options. The `Content-Type` header for the API request is automatically set based on whether the data is CSV or JSON.
 
-### Parameters
+#### Parameters
 
-- **`chartId`**: The unique ID of the Datawrapper chart, table, or map to
-  update. This ID can be found in the Datawrapper URL or dashboard.
-- **`data`**: The data to update the chart, table, or map with. For standard
-  charts and tables, this should be a CSV formatted string. For locator maps,
-  this should be a JSON string representing the map's data (e.g., markers,
-  areas).
-- **`options`**: Optional parameters to configure the data update process.
-- **`options.apiKey`**: The name of the environment variable that stores your
-  Datawrapper API key (e.g., `"DATAWRAPPER_KEY"`). If not provided, the function
-  defaults to looking for `process.env.DATAWRAPPER_KEY`.
-- **`options.returnResponse`**: If `true`, the function will return the full
-  `Response` object from the Datawrapper API call. This can be useful for
-  debugging or for more detailed handling of the API response. Defaults to
-  `false`.
+##### chartId
 
-### Returns
+`string`
 
-A Promise that resolves to `void` if `returnResponse` is `false` (default), or a
-`Response` object if `returnResponse` is `true`.
+The unique ID of the Datawrapper chart, table, or map to update. This ID can be found in the Datawrapper URL or dashboard.
 
-### Throws
+##### data
 
-- **`Error`**: If the API key is not found, if the Datawrapper API returns an
-  error status (e.g., invalid chart ID, authentication failure, malformed data),
-  or if there's a network issue.
+`string`
 
-### Examples
+The data to update the chart, table, or map with. For standard charts and tables, this should be a CSV formatted string. For locator maps, this should be a JSON string representing the map's data (e.g., markers, areas).
+
+##### options?
+
+Optional parameters to configure the data update process.
+
+###### apiKey?
+
+`string`
+
+The name of the environment variable that stores your Datawrapper API key (e.g., `"DATAWRAPPER_KEY"`). If not provided, the function defaults to looking for `process.env.DATAWRAPPER_KEY`.
+
+###### returnResponse?
+
+`boolean`
+
+If `true`, the function will return the full `Response` object from the Datawrapper API call. This can be useful for debugging or for more detailed handling of the API response. Defaults to `false`.
+
+#### Returns
+
+`Promise`\<`void` \| `Response`\>
+
+A Promise that resolves to `void` if `returnResponse` is `false` (default), or a `Response` object if `returnResponse` is `true`.
+
+#### Examples
 
 ```ts
 // Update the data of a Datawrapper chart or table with CSV formatted data.
-import { dataAsCsv, updateDataDW } from "journalism";
+import { updateDataDW, dataAsCsv } from "journalism";
 
 const chartID = "myChartId";
 const data = [
-  { salary: 75000, hireDate: new Date("2022-12-15") },
-  { salary: 80000, hireDate: new Date("2023-01-20") },
+ { salary: 75000, hireDate: new Date("2022-12-15") },
+ { salary: 80000, hireDate: new Date("2023-01-20") },
 ];
 const dataForChart = dataAsCsv(data);
 
@@ -904,7 +1016,7 @@ console.log(`Data updated for chart ${chartID}.`);
 
 const mapID = "myMapId";
 const geojson = {
-  "type": "FeatureCollection",
+ "type": "FeatureCollection",
   "features": [
     {
       "type": "Feature",
@@ -914,30 +1026,30 @@ const geojson = {
           [
             [
               11.127454320325711,
-              20.34856592751224,
+              20.34856592751224
             ],
             [
               11.127454320325711,
-              -13.781306861158996,
+              -13.781306861158996
             ],
             [
               55.68071875381875,
-              -13.781306861158996,
+              -13.781306861158996
             ],
             [
               55.68071875381875,
-              20.34856592751224,
+              20.34856592751224
             ],
             [
               11.127454320325711,
-              20.34856592751224,
-            ],
-          ],
+              20.34856592751224
+            ]
+          ]
         ],
-        "type": "Polygon",
-      },
-    },
-  ],
+        "type": "Polygon"
+      }
+    }
+  ]
 };
 
 const dataForMap = {
@@ -958,11 +1070,11 @@ const dataForMap = {
         "stroke-dasharray": "100000",
         "pattern": "solid",
         "pattern-line-width": 2,
-        "pattern-line-gap": 2,
+        "pattern-line-gap": 2
       },
-      "feature": geojson,
-    },
-  ],
+      "feature": geojson
+    }
+  ]
 };
 
 await updateDataDW(mapID, JSON.stringify(dataForMap));
@@ -987,50 +1099,75 @@ try {
 }
 ```
 
-## updateInfoDW
+#### Throws
 
-Updates the title, description, and notes of a Datawrapper chart, table, or map
-in one API request.
+If the API key is not found, if the Datawrapper API returns an error status (e.g., invalid chart ID, authentication failure, malformed data), or if there's a network issue.
 
-Only supplied fields are updated. Omit a field or pass `undefined` to preserve
-its existing value; pass an empty string to clear it. At least one field must be
-supplied. Other chart settings are preserved by Datawrapper's partial metadata
-update.
+***
 
-The API key is read from `DATAWRAPPER_KEY` by default. This function updates the
-draft visualization; call `publishChartDW()` afterward to publish the changes.
+### updateInfoDW()
 
-### Signature
+> **updateInfoDW**(`chartId`, `metadata`, `options?`): `Promise`\<`void` \| `Response`\>
 
-```typescript
-async function updateInfoDW(
-  chartId: string,
-  metadata: { title?: string; description?: string; note?: string },
-  options?: { apiKey?: string; returnResponse?: boolean },
-): Promise<void | Response>;
-```
+Updates the title, description, and notes of a Datawrapper chart, table, or map in one API request.
 
-### Parameters
+Only supplied fields are updated. Omit a field or pass `undefined` to preserve its existing value; pass an empty string to clear it. At least one field must be supplied. Other chart settings are preserved by Datawrapper's partial metadata update.
 
-- **`chartId`**: The ID of the Datawrapper chart, table, or map to update.
-- **`metadata`**: The fields to update. At least one must be supplied.
-- **`metadata.title`**: The visualization's headline. An empty string clears it.
-- **`metadata.description`**: The description below the title, stored as
-  `metadata.describe.intro`. An empty string clears it.
-- **`metadata.note`**: The notes in the visualization's footer, stored as
-  `metadata.annotate.notes`. An empty string clears them.
-- **`options`**: Optional authentication and response settings.
-- **`options.apiKey`**: The name of the environment variable containing the API
-  key. Defaults to `"DATAWRAPPER_KEY"`.
-- **`options.returnResponse`**: If `true`, returns the unconsumed response
-  without checking its status. Defaults to `false`.
+The API key is read from `DATAWRAPPER_KEY` by default. This function updates the draft visualization; call `publishChartDW()` afterward to publish the changes.
 
-### Returns
+#### Parameters
 
-A promise resolving to `void`, or to the raw `Response` when requested. By
-default, non-200 responses throw an error.
+##### chartId
 
-### Examples
+`string`
+
+The ID of the Datawrapper chart, table, or map to update.
+
+##### metadata
+
+The fields to update. At least one must be supplied.
+
+###### description?
+
+`string`
+
+The description below the title, stored as `metadata.describe.intro`. An empty string clears it.
+
+###### note?
+
+`string`
+
+The notes in the visualization's footer, stored as `metadata.annotate.notes`. An empty string clears them.
+
+###### title?
+
+`string`
+
+The visualization's headline. An empty string clears it.
+
+##### options?
+
+Optional authentication and response settings.
+
+###### apiKey?
+
+`string`
+
+The name of the environment variable containing the API key. Defaults to `"DATAWRAPPER_KEY"`.
+
+###### returnResponse?
+
+`boolean`
+
+If `true`, returns the unconsumed response without checking its status. Defaults to `false`.
+
+#### Returns
+
+`Promise`\<`void` \| `Response`\>
+
+A promise resolving to `void`, or to the raw `Response` when requested. By default, non-200 responses throw an error.
+
+#### Examples
 
 ```ts
 import { updateInfoDW } from "@nshiab/journalism-dataviz";
@@ -1055,39 +1192,53 @@ const response = await updateInfoDW("abcde", { title: "New title" }, {
 console.log(response?.status);
 ```
 
-## updateNotesDW
+***
+
+### ~~updateNotesDW()~~
+
+> **updateNotesDW**(`chartId`, `note`, `options?`): `Promise`\<`void` \| `Response`\>
 
 Updates the notes field of a Datawrapper chart, table, or map.
 
-This function delegates to `updateInfoDW()` and logs a deprecation warning once
-per module instance. Use `updateInfoDW(chartId, { note }, options)` instead.
+This function delegates to `updateInfoDW()` and logs a deprecation warning once per module instance. Use `updateInfoDW(chartId, { note }, options)` instead.
 
-### Signature
+#### Parameters
 
-```typescript
-async function updateNotesDW(
-  chartId: string,
-  note: string,
-  options?: { apiKey?: string; returnResponse?: boolean },
-): Promise<void | Response>;
-```
+##### chartId
 
-### Parameters
+`string`
 
-- **`chartId`**: The ID of the Datawrapper chart, table, or map to update.
-- **`note`**: The notes text. An empty string clears the notes.
-- **`options`**: Optional authentication and response settings.
-- **`options.apiKey`**: The name of the environment variable containing the API
-  key. Defaults to `"DATAWRAPPER_KEY"`.
-- **`options.returnResponse`**: If `true`, returns the unconsumed response
-  without checking its status. Defaults to `false`.
+The ID of the Datawrapper chart, table, or map to update.
 
-### Returns
+##### note
 
-A promise resolving to `void`, or to the raw `Response` when requested. By
-default, non-200 responses throw an error.
+`string`
 
-### Examples
+The notes text. An empty string clears the notes.
+
+##### options?
+
+Optional authentication and response settings.
+
+###### apiKey?
+
+`string`
+
+The name of the environment variable containing the API key. Defaults to `"DATAWRAPPER_KEY"`.
+
+###### returnResponse?
+
+`boolean`
+
+If `true`, returns the unconsumed response without checking its status. Defaults to `false`.
+
+#### Returns
+
+`Promise`\<`void` \| `Response`\>
+
+A promise resolving to `void`, or to the raw `Response` when requested. By default, non-200 responses throw an error.
+
+#### Example
 
 ```ts
 // Existing calls still work, but emit a deprecation warning.
@@ -1098,3 +1249,7 @@ await updateInfoDW("abcde", { note: "Last updated today." }, {
   apiKey: "DW_KEY",
 });
 ```
+
+#### Deprecated
+
+Use `updateInfoDW(chartId, { note }, options)` instead. This function will be removed in the next major version.

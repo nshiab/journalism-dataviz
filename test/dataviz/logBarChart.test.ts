@@ -1,31 +1,28 @@
-import { assertEquals } from "jsr:@std/assert";
+import firesPerProvincejson from "../data/firesPerProvince.json" with { type: "json" };
+import { test } from "vite-plus/test";
+import { assertEquals } from "../assertions.ts";
 import logBarChart from "../../src/dataviz/logBarChart.ts";
-import { readFileSync } from "node:fs";
 import { formatNumber } from "../../src/dataviz/helpers/format.ts";
 
-Deno.test("should create a bar chart", () => {
-  const data = JSON.parse(
-    readFileSync("test/data/firesPerProvince.json", "utf-8"),
-  );
+test("should create a bar chart", () => {
+  const data = structuredClone(firesPerProvincejson);
 
   logBarChart(data, "nameEnglish", "burntArea");
   // How to assert
   assertEquals(true, true);
 });
-Deno.test("should create a bar chart with options", () => {
-  const data = JSON.parse(
-    readFileSync("test/data/firesPerProvince.json", "utf-8"),
-  );
+test("should create a bar chart with options", () => {
+  const data = structuredClone(firesPerProvincejson);
 
   logBarChart(data, "nameEnglish", "burntArea", {
     formatLabels: (d) => String(d).toUpperCase(),
-    formatValues: (d) => formatNumber(d as number, { suffix: " ha" }),
+    formatValues: (d) => formatNumber(d, { suffix: " ha" }),
     width: 10,
   });
   // How to assert
   assertEquals(true, true);
 });
-Deno.test("should create a bar chart (example from the doc)", () => {
+test("should create a bar chart (example from the doc)", () => {
   const data = [
     { category: "A", value: 10 },
     { category: "B", value: 20 },
@@ -35,14 +32,12 @@ Deno.test("should create a bar chart (example from the doc)", () => {
   // How to assert
   assertEquals(true, true);
 });
-Deno.test("should create a bar chart with custom title and compact format", () => {
-  const data = JSON.parse(
-    readFileSync("test/data/firesPerProvince.json", "utf-8"),
-  );
+test("should create a bar chart with custom title and compact format", () => {
+  const data = structuredClone(firesPerProvincejson);
 
   logBarChart(data, "nameEnglish", "burntArea", {
     formatLabels: (d) => String(d).toUpperCase(),
-    formatValues: (d) => formatNumber(d as number, { suffix: " ha" }),
+    formatValues: (d) => formatNumber(d, { suffix: " ha" }),
     width: 10,
     title: "Burnt area per province",
     compact: true,
@@ -52,7 +47,7 @@ Deno.test("should create a bar chart with custom title and compact format", () =
   assertEquals(true, true);
 });
 
-Deno.test("should create a bar chart and show percentages", () => {
+test("should create a bar chart and show percentages", () => {
   const data = [
     { category: "A", value: 10 },
     { category: "B", value: 20 },
@@ -63,7 +58,7 @@ Deno.test("should create a bar chart and show percentages", () => {
   assertEquals(true, true);
 });
 
-Deno.test("should create a bar chart and show total", () => {
+test("should create a bar chart and show total", () => {
   const data = [
     { category: "A", value: 10 },
     { category: "B", value: 20 },
@@ -74,7 +69,7 @@ Deno.test("should create a bar chart and show total", () => {
   assertEquals(true, true);
 });
 
-Deno.test("should create a bar chart and show total and percentages", () => {
+test("should create a bar chart and show total and percentages", () => {
   const data = [
     { category: "A", value: 10 },
     { category: "B", value: 20 },

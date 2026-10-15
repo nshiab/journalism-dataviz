@@ -3,14 +3,12 @@
  * @param options Options for the y-axis, including height, format function, and min/max values.
  * @returns An object containing the y-axis data.
  */
-export default function getAxisY(
-  options: {
-    height: number;
-    formatY: (d: number) => string;
-    yMin: number;
-    yMax: number;
-  },
-) {
+export default function getAxisY(options: {
+  height: number;
+  formatY: (d: number) => string;
+  yMin: number;
+  yMax: number;
+}) {
   let yMinString = options.formatY(options.yMin);
   let yMaxString = options.formatY(options.yMax);
 

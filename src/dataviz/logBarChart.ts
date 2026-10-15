@@ -6,19 +6,6 @@ import { formatNumber } from "./helpers/format.ts";
  *
  * The chart is constructed using ASCII characters, making it universally compatible across various terminal environments. It can display data for various categories and their corresponding numerical values, with extensive options for custom formatting of labels and values, controlling the chart's width, and adding a descriptive title or a total label. For optimal visualization, it's recommended that the input `data` be sorted by the `values` key in descending order, though the function does not enforce this.
  *
- * @param data - An array of objects, where each object represents a bar in the chart. Each object should contain keys corresponding to the `labels` and `values` parameters.
- * @param labels - The key in the data objects whose values will be used as textual labels for each bar (e.g., 'category', 'name', 'country').
- * @param values - The key in the data objects whose numerical values will determine the length of each bar and be displayed alongside the labels (e.g., 'sales', 'count', 'percentage').
- * @param options - Optional configuration for customizing the appearance and behavior of the chart.
- * @param options.formatLabels - A function to format the labels displayed on the chart. It receives the raw label value as input and should return a string. Defaults to converting the label to a string.
- * @param options.formatValues - A function to format the numerical values displayed next to the bars. It receives the numerical value as input and should return a string. Defaults to formatting the number using `formatNumber` (which adds commas for thousands, etc.).
- * @param options.width - The maximum width of the bars in characters. The bars will scale proportionally to this width. A larger width allows for more detailed visualization. Defaults to `40`.
- * @param options.title - An optional title to display above the chart. If not provided, a default title based on `labels` and `values` keys will be generated.
- * @param options.totalLabel - An optional label to display for the total sum of all values at the bottom of the chart. If provided, the sum of all `values` will be calculated and displayed next to this label. This also enables the display of the total row.
- * @param options.compact - If `true`, the chart will be rendered in a more compact format, reducing vertical spacing between bars. Defaults to `false`.
- * @param options.showPercentages - If `true`, the percentage of the total for each bar will be displayed next to its value. Defaults to `false`.
- * @param options.showTotal - If `true`, the total sum of all values will be displayed above the chart. Defaults to `false`.
- *
  * @example
  * ```ts
  * // Visualize sales data for different regions.
@@ -46,6 +33,19 @@ import { formatNumber } from "./helpers/format.ts";
  *   showPercentages: true
  * });
  * ```
+ * @param data - An array of objects, where each object represents a bar in the chart. Each object should contain keys corresponding to the `labels` and `values` parameters.
+ * @param labels - The key in the data objects whose values will be used as textual labels for each bar (e.g., 'category', 'name', 'country').
+ * @param values - The key in the data objects whose numerical values will determine the length of each bar and be displayed alongside the labels (e.g., 'sales', 'count', 'percentage').
+ * @param options - Optional configuration for customizing the appearance and behavior of the chart.
+ * @param options.formatLabels - A function to format the labels displayed on the chart. It receives the raw label value as input and should return a string. Defaults to converting the label to a string.
+ * @param options.formatValues - A function to format the numerical values displayed next to the bars. It receives the numerical value as input and should return a string. Defaults to formatting the number using `formatNumber` (which adds commas for thousands, etc.).
+ * @param options.width - The maximum width of the bars in characters. The bars will scale proportionally to this width. A larger width allows for more detailed visualization. Defaults to `40`.
+ * @param options.title - An optional title to display above the chart. If not provided, a default title based on `labels` and `values` keys will be generated.
+ * @param options.totalLabel - An optional label to display for the total sum of all values at the bottom of the chart. If provided, the sum of all `values` will be calculated and displayed next to this label. This also enables the display of the total row.
+ * @param options.compact - If `true`, the chart will be rendered in a more compact format, reducing vertical spacing between bars. Defaults to `false`.
+ * @param options.showPercentages - If `true`, the percentage of the total for each bar will be displayed next to its value. Defaults to `false`.
+ * @param options.showTotal - If `true`, the total sum of all values will be displayed above the chart. Defaults to `false`.
+ *
  * @returns {void}
  * @category Dataviz
  */
@@ -70,11 +70,13 @@ export default function logBarChart<T extends Record<string, unknown>>(
     console.log(`\nBar chart of "${String(values)}" per "${String(labels)}":`);
   }
 
-  const formatLabels = options.formatLabels ??
+  const formatLabels =
+    options.formatLabels ??
     function (d: T[typeof labels]) {
       return String(d);
     };
-  const formatValues = options.formatValues ??
+  const formatValues =
+    options.formatValues ??
     function (d: number) {
       return formatNumber(d);
     };
@@ -83,9 +85,9 @@ export default function logBarChart<T extends Record<string, unknown>>(
   const chartData = makeBars(
     data,
     "\x1b[38;5;55m", // Darker purple color
-    String(labels),
+    labels,
     String(values),
-    (d: unknown) => formatLabels(d as T[typeof labels]),
+    formatLabels,
     formatValues,
     width,
     options.compact ?? false,

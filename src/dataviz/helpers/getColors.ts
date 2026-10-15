@@ -3,7 +3,7 @@
  * @param categories An array of category names.
  * @returns An array of objects, each containing a category name and its assigned color code.
  */
-export default function getColors(categories: string[]) {
+export default function getColors<T>(categories: T[]) {
   const colorCodes = [
     "\x1b[38;5;208m", // Orange
     "\x1b[31m", // Red

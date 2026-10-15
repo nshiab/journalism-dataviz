@@ -35,13 +35,12 @@ export default function prepChart(
   const formatX = options.formatX
     ? options.formatX
     : data[0][x] instanceof Date
-    ? (d: unknown) => formatDate(d as Date, "YYYY-MM-DD", { utc: true })
-    : function (d: unknown) {
-      return String(d);
-    };
-  const formatY = options.formatY
-    ? options.formatY
-    : (d: number) => formatNumber(d);
+      ? (d: unknown) =>
+          formatDate(d instanceof Date ? d : new Date(number(d)), "YYYY-MM-DD", { utc: true })
+      : function (d: unknown) {
+          return String(d);
+        };
+  const formatY = options.formatY ? options.formatY : (d: number) => formatNumber(d);
 
   const width = options.width ?? 75;
   const height = options.height ?? 15;
@@ -50,9 +49,7 @@ export default function prepChart(
   const fixedScales = options.fixedScales ?? false;
 
   if (typeof smallMultiples === "string") {
-    const categories = Array.from(
-      new Set(data.map((d) => d[smallMultiples])),
-    ) as string[];
+    const categories = Array.from(new Set(data.map((d) => d[smallMultiples])));
     const colors = getColors(categories);
 
     const allLabelsX: string[] = [];
@@ -66,21 +63,16 @@ export default function prepChart(
     if (fixedScales) {
       const xValues = data.map((d) => {
         const val = d[x];
-        return val instanceof Date ? val.getTime() : val as number;
+        return val instanceof Date ? val.getTime() : number(val);
       });
       xMin = Math.min(...xValues);
       xMax = Math.max(...xValues);
 
-      const yValues = data.map((d) => d[y] as number);
+      const yValues = data.map((d) => number(d[y]));
       yMin = Math.min(...yValues);
       yMax = Math.max(...yValues);
 
-      if (
-        xMin === undefined ||
-        xMax === undefined ||
-        yMin === undefined ||
-        yMax === undefined
-      ) {
+      if (xMin === undefined || xMax === undefined || yMin === undefined || yMax === undefined) {
         throw new Error("The min or max value is undefined.");
       }
     }
@@ -98,43 +90,34 @@ export default function prepChart(
     }
 
     const allCharts = colors?.map((c) => {
-      const dataFiltered = data.filter(
-        (d) => d[smallMultiples] === c.category,
-      );
+      const dataFiltered = data.filter((d) => d[smallMultiples] === c.category);
 
       // The min and max values for each small multiple
       if (!fixedScales) {
         const xValues = dataFiltered.map((d) => {
           const val = d[x];
-          return val instanceof Date ? val.getTime() : val as number;
+          return val instanceof Date ? val.getTime() : number(val);
         });
         xMin = Math.min(...xValues);
         xMax = Math.max(...xValues);
 
-        const yValues = dataFiltered.map((d) => d[y] as number);
+        const yValues = dataFiltered.map((d) => number(d[y]));
         yMin = Math.min(...yValues);
         yMax = Math.max(...yValues);
       }
 
-      const { chart, xLabels } = drawChart(
-        type,
-        drawFunction,
-        dataFiltered,
-        x,
-        y,
-        c.color,
-        {
-          title: c.category,
-          width: Math.round(width / smallMultiplesPerRow),
-          height: height,
-          formatX: formatX,
-          formatY: formatY,
-          xMin,
-          xMax,
-          yMin,
-          yMax,
-        },
-      );
+      const categoryLabel = String(c.category);
+      const { chart, xLabels } = drawChart(type, drawFunction, dataFiltered, x, y, c.color, {
+        title: c.category ? categoryLabel : undefined,
+        width: Math.round(width / smallMultiplesPerRow),
+        height: height,
+        formatX: formatX,
+        formatY: formatY,
+        xMin,
+        xMax,
+        yMin,
+        yMax,
+      });
       allLabelsX.push(...xLabels);
       return chart;
     });
@@ -167,21 +150,16 @@ export default function prepChart(
   } else {
     const xValues = data.map((d) => {
       const val = d[x];
-      return val instanceof Date ? val.getTime() : val as number;
+      return val instanceof Date ? val.getTime() : number(val);
     });
     const xMin = Math.min(...xValues);
     const xMax = Math.max(...xValues);
 
-    const yValues = data.map((d) => d[y] as number);
+    const yValues = data.map((d) => number(d[y]));
     const yMin = Math.min(...yValues);
     const yMax = Math.max(...yValues);
 
-    if (
-      xMin === undefined ||
-      xMax === undefined ||
-      yMin === undefined ||
-      yMax === undefined
-    ) {
+    if (xMin === undefined || xMax === undefined || yMin === undefined || yMax === undefined) {
       throw new Error("The min or max value is undefined.");
     }
 
@@ -197,27 +175,24 @@ export default function prepChart(
       }
     }
 
-    const { chart } = drawChart(
-      type,
-      drawFunction,
-      data,
-      x,
-      y,
-      "\x1b[38;5;208m",
-      {
-        formatX: formatX,
-        formatY: formatY,
-        width: width,
-        height: height,
-        xMin,
-        xMax,
-        yMin,
-        yMax,
-      },
-    );
+    const { chart } = drawChart(type, drawFunction, data, x, y, "\x1b[38;5;208m", {
+      formatX: formatX,
+      formatY: formatY,
+      width: width,
+      height: height,
+      xMin,
+      xMax,
+      yMin,
+      yMax,
+    });
 
     const chartString = chart.map((d) => d.join("")).join("\n");
 
     console.log(`${chartString}`);
   }
+}
+
+function number(value: unknown): number {
+  if (typeof value !== "number") throw new Error("Expected a numeric value");
+  return value;
 }

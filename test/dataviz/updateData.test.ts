@@ -1,18 +1,19 @@
-import { assertEquals } from "jsr:@std/assert";
+import { test } from "vite-plus/test";
+import { assertEquals } from "../assertions.ts";
 import updateDataDW from "../../src/dataviz/updateDataDW.ts";
 
 const chartDataCsv = "salary,hireDate\n75000,2022-12-15";
 
-const apiKey = Deno.env.get("DATAWRAPPER_KEY");
-if (typeof apiKey === "string" && apiKey !== "") {
-  Deno.test("should update data in a chart", async () => {
+const apiKey = process.env.DATAWRAPPER_KEY;
+{
+  test.skipIf(process.env.CI === "true" || !apiKey)("should update data in a chart", async () => {
     await updateDataDW("ntURh", chartDataCsv);
 
     // Just making sure it doesn't crash for now.
     assertEquals(true, true);
   });
 
-  Deno.test("should update data in a map", async () => {
+  test.skipIf(process.env.CI === "true" || !apiKey)("should update data in a map", async () => {
     const data = {
       type: "FeatureCollection",
       features: [
@@ -40,17 +41,16 @@ if (typeof apiKey === "string" && apiKey !== "") {
     // Just making sure it doesn't crash for now.
     assertEquals(true, true);
   });
-} else {
-  console.log("No DATAWRAPPER_KEY in process.env");
 }
-const differentApiKey = Deno.env.get("DW_KEY");
-if (typeof differentApiKey === "string" && differentApiKey !== "") {
-  Deno.test("should update data in a chart with a specific API key", async () => {
-    await updateDataDW("ntURh", chartDataCsv, { apiKey: "DW_KEY" });
+const differentApiKey = process.env.DW_KEY;
+{
+  test.skipIf(process.env.CI === "true" || !differentApiKey)(
+    "should update data in a chart with a specific API key",
+    async () => {
+      await updateDataDW("ntURh", chartDataCsv, { apiKey: "DW_KEY" });
 
-    // Just making sure it doesn't crash for now.
-    assertEquals(true, true);
-  });
-} else {
-  console.log("No DW_KEY in process.env");
+      // Just making sure it doesn't crash for now.
+      assertEquals(true, true);
+    },
+  );
 }

@@ -5,13 +5,9 @@ let pendingRender: Promise<void> = Promise.resolve();
 
 // DOM globals are shared across saves. Keep them owned by one render until its
 // callback and file output finish, and let later saves proceed after failures.
-export default function serializeChartRendering(
-  render: () => Promise<void>,
-): Promise<void> {
+export default function serializeChartRendering(render: () => Promise<void>): Promise<void> {
   if (renderingContext.getStore()?.active) {
-    return Promise.reject(
-      new Error("saveChart() cannot be called from inside a chart function."),
-    );
+    return Promise.reject(new Error("saveChart() cannot be called from inside a chart function."));
   }
 
   const currentRender = pendingRender.then(() => {

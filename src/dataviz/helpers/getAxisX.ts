@@ -33,9 +33,7 @@ export default function getAxisX(
     if (i < xLabelFirst.length) {
       xAxis.push(`\x1b[90m${xLabelFirst[i]}\x1b[0m`);
     } else if (i >= options.width - xLabelLast.length) {
-      xAxis.push(
-        `\x1b[90m${xLabelLast[i - (options.width - xLabelLast.length)]}\x1b[0m`,
-      );
+      xAxis.push(`\x1b[90m${xLabelLast[i - (options.width - xLabelLast.length)]}\x1b[0m`);
     } else {
       xAxis.push(" ");
     }

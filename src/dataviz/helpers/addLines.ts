@@ -15,16 +15,15 @@ export default function addLines(
     const xIndexRaw = Math.round((i / (data.length - 1)) * options.width);
     const xIndex = Math.min(xIndexRaw, options.width - 1);
     // yValue is guaranteed to be a number due to upfront validation
-    const yValue = data[i][y] as number;
+    const yValue = data[i][y];
+    if (typeof yValue !== "number") throw new Error("Expected a numeric y value");
 
     let yIndexRaw: number;
     if (yMax === yMin) {
       // All values are the same, place them in the middle of the chart
       yIndexRaw = Math.round(options.height / 2);
     } else {
-      yIndexRaw = Math.round(
-        ((yValue - yMin) / (yMax - yMin)) * options.height,
-      );
+      yIndexRaw = Math.round(((yValue - yMin) / (yMax - yMin)) * options.height);
     }
     const yIndex = Math.min(yIndexRaw, options.height - 1);
 
@@ -56,10 +55,7 @@ function pushAvgValue(
   } else {
     avgValues.push({
       x: x,
-      y: Math.min(
-        Math.round(values.reduce((a, b) => a + b) / values.length),
-        options.height - 1,
-      ),
+      y: Math.min(Math.round(values.reduce((a, b) => a + b) / values.length), options.height - 1),
     });
   }
 }

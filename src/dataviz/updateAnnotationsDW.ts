@@ -7,37 +7,33 @@ import process from "node:process";
  *
  * Authentication is handled via an API key, which can be provided through environment variables (`DATAWRAPPER_KEY`) or explicitly in the options. For detailed information on Datawrapper annotations and their properties, refer to the official Datawrapper API documentation.
  *
- * @param chartId - The ID of the Datawrapper chart to update. This ID can be found in the Datawrapper URL or dashboard.
- * @param annotations - An array of annotation objects. Each object defines a single annotation with its properties. Required properties for each annotation are `x`, `y`, and `text`.
- *   @param annotations.x - The x-coordinate of the annotation's position on the chart.
- *   @param annotations.y - The y-coordinate of the annotation's position on the chart.
- *   @param annotations.text - The text content of the annotation.
- *   @param annotations.bg - If `true`, the annotation text will have a background. Defaults to `false`.
- *   @param annotations.dx - The horizontal offset of the annotation text from its `x` coordinate, in pixels. Defaults to `0`.
- *   @param annotations.dy - The vertical offset of the annotation text from its `y` coordinate, in pixels. Defaults to `0`.
- *   @param annotations.bold - If `true`, the annotation text will be bold. Defaults to `false`.
- *   @param annotations.size - The font size of the annotation text in pixels. Defaults to `12`.
- *   @param annotations.align - The alignment of the annotation text relative to its `x` and `y` coordinates. Can be `"tl"` (top-left), `"tc"` (top-center), `"tr"` (top-right), `"ml"` (middle-left), `"mc"` (middle-center), `"mr"` (middle-right), `"bl"` (bottom-left), `"bc"` (bottom-center), or `"br"` (bottom-right). Defaults to `"mr"`.
- *   @param annotations.color - The color of the annotation text (e.g., `"#FF0000"`, `"red"`). Defaults to `"#8C8C8C"`.
- *   @param annotations.width - The maximum width of the annotation text box in pixels. Text will wrap if it exceeds this width. Defaults to `20`.
- *   @param annotations.italic - If `true`, the annotation text will be italic. Defaults to `false`.
- *   @param annotations.underline - If `true`, the annotation text will be underlined. Defaults to `false`.
- *   @param annotations.showMobile - If `true`, the annotation will be visible on mobile devices. Defaults to `true`.
- *   @param annotations.showDesktop - If `true`, the annotation will be visible on desktop devices. Defaults to `true`.
- *   @param annotations.mobileFallback - If `true`, the annotation will be displayed as a simple text label on mobile if it's too complex. Defaults to `false`.
- *   @param annotations.connectorLine - An object defining the properties of a connector line from the annotation to a data point.
- *     @param annotations.connectorLine.type - The type of the connector line. Can be `"straight"`, `"curveRight"`, or `"curveLeft"`. Defaults to `"straight"`.
- *     @param annotations.connectorLine.circle - If `true`, a circle will be drawn at the end of the connector line. Defaults to `false`.
- *     @param annotations.connectorLine.stroke - The stroke width of the connector line. Can be `1`, `2`, or `3`. Defaults to `1`.
- *     @param annotations.connectorLine.enabled - If `true`, the connector line will be drawn. Defaults to `false`.
- *     @param annotations.connectorLine.arrowHead - The style of the arrowhead. Can be `"lines"`, `"triangle"`, or `false` (no arrowhead). Defaults to `"lines"`.
- *     @param annotations.connectorLine.circleStyle - The style of the circle at the end of the connector line. Defaults to `"solid"`.
- *     @param annotations.connectorLine.circleRadius - The radius of the circle at the end of the connector line. Defaults to `10`.
- *     @param annotations.connectorLine.inheritColor - If `true`, the connector line will inherit the annotation's text color. Defaults to `false`.
- *     @param annotations.connectorLine.targetPadding - The padding between the end of the connector line and the target data point. Defaults to `4`.
- * @param options.apiKey - The name of the environment variable that stores your Datawrapper API key. If not provided, the function defaults to looking for `DATAWRAPPER_KEY`.
- * @param options.returnResponse - If `true`, the function will return the full `Response` object from the Datawrapper API call. This can be useful for debugging or for more detailed handling of the API response. Defaults to `false`.
- * @returns A Promise that resolves to `void` if `returnResponse` is `false` (default), or a `Response` object if `returnResponse` is `true`.
+ * Annotation fields:
+ * - `x`: The x-coordinate of the annotation's position on the chart.
+ * - `y`: The y-coordinate of the annotation's position on the chart.
+ * - `text`: The text content of the annotation.
+ * - `bg`: If `true`, the annotation text will have a background. Defaults to `false`.
+ * - `dx`: The horizontal offset of the annotation text from its `x` coordinate, in pixels. Defaults to `0`.
+ * - `dy`: The vertical offset of the annotation text from its `y` coordinate, in pixels. Defaults to `0`.
+ * - `bold`: If `true`, the annotation text will be bold. Defaults to `false`.
+ * - `size`: The font size of the annotation text in pixels. Defaults to `12`.
+ * - `align`: The alignment of the annotation text relative to its `x` and `y` coordinates. Can be `"tl"` (top-left), `"tc"` (top-center), `"tr"` (top-right), `"ml"` (middle-left), `"mc"` (middle-center), `"mr"` (middle-right), `"bl"` (bottom-left), `"bc"` (bottom-center), or `"br"` (bottom-right). Defaults to `"mr"`.
+ * - `color`: The color of the annotation text (e.g., `"#FF0000"`, `"red"`). Defaults to `"#8C8C8C"`.
+ * - `width`: The maximum width of the annotation text box in pixels. Text will wrap if it exceeds this width. Defaults to `20`.
+ * - `italic`: If `true`, the annotation text will be italic. Defaults to `false`.
+ * - `underline`: If `true`, the annotation text will be underlined. Defaults to `false`.
+ * - `showMobile`: If `true`, the annotation will be visible on mobile devices. Defaults to `true`.
+ * - `showDesktop`: If `true`, the annotation will be visible on desktop devices. Defaults to `true`.
+ * - `mobileFallback`: If `true`, the annotation will be displayed as a simple text label on mobile if it's too complex. Defaults to `false`.
+ * - `connectorLine`: An object defining the properties of a connector line from the annotation to a data point.
+ * - `connectorLine.type`: The type of the connector line. Can be `"straight"`, `"curveRight"`, or `"curveLeft"`. Defaults to `"straight"`.
+ * - `connectorLine.circle`: If `true`, a circle will be drawn at the end of the connector line. Defaults to `false`.
+ * - `connectorLine.stroke`: The stroke width of the connector line. Can be `1`, `2`, or `3`. Defaults to `1`.
+ * - `connectorLine.enabled`: If `true`, the connector line will be drawn. Defaults to `false`.
+ * - `connectorLine.arrowHead`: The style of the arrowhead. Can be `"lines"`, `"triangle"`, or `false` (no arrowhead). Defaults to `"lines"`.
+ * - `connectorLine.circleStyle`: The style of the circle at the end of the connector line. Defaults to `"solid"`.
+ * - `connectorLine.circleRadius`: The radius of the circle at the end of the connector line. Defaults to `10`.
+ * - `connectorLine.inheritColor`: If `true`, the connector line will inherit the annotation's text color. Defaults to `false`.
+ * - `connectorLine.targetPadding`: The padding between the end of the connector line and the target data point. Defaults to `4`.
  *
  * @example
  * ```ts
@@ -77,6 +73,12 @@ import process from "node:process";
  * await updateAnnotationsDW(customApiKeyChartID, annotationsForCustomKey, { apiKey: "DW_API_KEY" });
  * console.log(`Annotations updated for chart ${customApiKeyChartID} using custom API key.`);
  * ```
+ * @param chartId - The ID of the Datawrapper chart to update. This ID can be found in the Datawrapper URL or dashboard.
+ * @param annotations - An array of annotation objects. Each object defines a single annotation with its properties. Required properties for each annotation are `x`, `y`, and `text`.
+ * @param options.apiKey - The name of the environment variable that stores your Datawrapper API key. If not provided, the function defaults to looking for `DATAWRAPPER_KEY`.
+ * @param options.returnResponse - If `true`, the function will return the full `Response` object from the Datawrapper API call. This can be useful for debugging or for more detailed handling of the API response. Defaults to `false`.
+ * @returns A Promise that resolves to `void` if `returnResponse` is `false` (default), or a `Response` object if `returnResponse` is `true`.
+ *
  * @category Dataviz
  */
 export default async function updateAnnotationsDW(
@@ -150,9 +152,7 @@ export default async function updateAnnotationsDW(
   const annotationsWithDefaults = annotations.map((annotation) => {
     // We check for mandatory values.
     if (!annotation.x || !annotation.y || !annotation.text) {
-      throw new Error(
-        "Missing x, y, or text for at least one annotation.",
-      );
+      throw new Error("Missing x, y, or text for at least one annotation.");
     }
 
     // We extract the connectorLine from the rest
@@ -166,23 +166,20 @@ export default async function updateAnnotationsDW(
     };
   });
 
-  const response = await fetch(
-    `https://api.datawrapper.de/v3/charts/${chartId}`,
-    {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        metadata: {
-          visualize: {
-            "text-annotations": annotationsWithDefaults,
-          },
-        },
-      }),
+  const response = await fetch(`https://api.datawrapper.de/v3/charts/${chartId}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify({
+      metadata: {
+        visualize: {
+          "text-annotations": annotationsWithDefaults,
+        },
+      },
+    }),
+  });
   // if returning a response, do it before the response.status checks
   if (options.returnResponse === true) {
     return response;

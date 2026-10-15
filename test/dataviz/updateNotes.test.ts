@@ -1,40 +1,39 @@
-import { assertEquals } from "jsr:@std/assert";
+import { test } from "vite-plus/test";
+import { assertEquals } from "../assertions.ts";
 import updateNotesDW from "../../src/dataviz/updateNotesDW.ts";
 import { formatDate } from "../../src/dataviz/helpers/format.ts";
 
-const apiKey = Deno.env.get("DATAWRAPPER_KEY");
-if (typeof apiKey === "string" && apiKey !== "") {
-  Deno.test("should update the note in a chart", async () => {
-    const dateString = formatDate(
-      new Date(),
-      "Month DD, YYYY, at HH:MM period",
-      { abbreviations: true },
-    );
-    const note = `This chart was last updated on ${dateString}`;
+const apiKey = process.env.DATAWRAPPER_KEY;
+{
+  test.skipIf(process.env.CI === "true" || !apiKey)(
+    "should update the note in a chart",
+    async () => {
+      const dateString = formatDate(new Date(), "Month DD, YYYY, at HH:MM period", {
+        abbreviations: true,
+      });
+      const note = `This chart was last updated on ${dateString}`;
 
-    await updateNotesDW("ntURh", note);
+      await updateNotesDW("ntURh", note);
 
-    // Just making sure it doesn't crash for now.
-    assertEquals(true, true);
-  });
-} else {
-  console.log("No DATAWRAPPER_KEY in process.env");
+      // Just making sure it doesn't crash for now.
+      assertEquals(true, true);
+    },
+  );
 }
-const differentApiKey = Deno.env.get("DW_KEY");
-if (typeof differentApiKey === "string" && differentApiKey !== "") {
-  Deno.test("should update the note in a chart with a specific API key", async () => {
-    const dateString = formatDate(
-      new Date(),
-      "Month DD, YYYY, at HH:MM period",
-      { abbreviations: true },
-    );
-    const note = `This chart was last updated on ${dateString}`;
+const differentApiKey = process.env.DW_KEY;
+{
+  test.skipIf(process.env.CI === "true" || !differentApiKey)(
+    "should update the note in a chart with a specific API key",
+    async () => {
+      const dateString = formatDate(new Date(), "Month DD, YYYY, at HH:MM period", {
+        abbreviations: true,
+      });
+      const note = `This chart was last updated on ${dateString}`;
 
-    await updateNotesDW("ntURh", note, { apiKey: "DW_KEY" });
+      await updateNotesDW("ntURh", note, { apiKey: "DW_KEY" });
 
-    // Just making sure it doesn't crash for now.
-    assertEquals(true, true);
-  });
-} else {
-  console.log("No DW_KEY in process.env");
+      // Just making sure it doesn't crash for now.
+      assertEquals(true, true);
+    },
+  );
 }

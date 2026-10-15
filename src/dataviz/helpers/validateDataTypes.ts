@@ -21,7 +21,7 @@ export default function validateDataTypes(
 
     if (!isValidX) {
       throw new Error(
-        `Row ${i}: x-axis value "${x}" must be a number or Date. Got: ${typeof xValue} (${xValue})`,
+        `Row ${i}: x-axis value "${x}" must be a number or Date. Got: ${typeof xValue} (${JSON.stringify(xValue)})`,
       );
     }
 
@@ -35,7 +35,7 @@ export default function validateDataTypes(
 
     if (!isValidY) {
       throw new Error(
-        `Row ${i}: y-axis value "${y}" must be a number. Got: ${typeof yValue} (${yValue})`,
+        `Row ${i}: y-axis value "${y}" must be a number. Got: ${typeof yValue} (${JSON.stringify(yValue)})`,
       );
     }
   }

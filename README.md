@@ -1,56 +1,75 @@
-# The Journalism Library (dataviz functions)
+# The Journalism Library (dataviz)
 
-Useful TypeScript functions for journalism projects. This library focuses on
-data visualization. It's part of the
-[journalism library](https://github.com/nshiab/journalism).
+Useful TypeScript functions for data visualization in journalism projects.
+Part of the [journalism library](https://github.com/nshiab/journalism).
 
-The library is available on [JSR](https://jsr.io/@nshiab/journalism-dataviz)
-with its [documentation](https://jsr.io/@nshiab/journalism-dataviz/doc) and on
-[NPM](https://www.npmjs.com/package/@nshiab/journalism-dataviz).
-
-The documentation is also available as the markdown file
-[llm.md](https://github.com/nshiab/journalism-dataviz/blob/main/llm.md), which
-can be passed as context to improve the use of the library by AI coding
-assistants or agents.
-
-The library is maintained by [Nael Shiab](http://naelshiab.com/), computational
+The library is maintained by [Nael Shiab](https://naelshiab.com/), computational
 journalist and senior data producer for [CBC News](https://www.cbc.ca/news).
 
 > [!TIP]
 > To learn how to use this library and more, check out
 > [Code Like a Journalist](https://www.code-like-a-journalist.com/), a free and
 > open-source data analysis and data visualization course in TypeScript. You
-> might also find the
-> [simple-data-analysis library](https://github.com/nshiab/simple-data-analysis)
-> interesting.
+> might also find
+> [simple-data-analysis](https://github.com/nshiab/simple-data-analysis) useful.
 
-To install the library, you can use the following commands:
+## Installation
 
-```bash
-# Deno
-deno add jsr:@nshiab/journalism-dataviz
+Requires **Node.js 24.21.0 or later**.
 
-# Node
-npm i @nshiab/journalism-dataviz
-
-# Bun
-bun add @nshiab/journalism-dataviz
+```sh
+npm install @nshiab/journalism-dataviz
 ```
 
-To quickly set up a data project with essential folders, configurations, and
-documentation for AI agents, you can use
-[@nshiab/setup-data-project](https://github.com/nshiab/setup-data-project).
+```ts
+import { logBarChart } from "@nshiab/journalism-dataviz";
 
-```bash
-# Deno
-deno run -A jsr:@nshiab/setup-data-project
+logBarChart(
+  [
+    { country: "Canada", count: 40 },
+    { country: "France", count: 25 },
+  ],
+  "country",
+  "count",
+);
+```
 
-# Node
+To start a data project with folders, configuration and documentation for AI
+agents, run:
+
+```sh
 npx @nshiab/setup-data-project
-
-# Bun
-bunx @nshiab/setup-data-project
 ```
 
-If you wish to contribute, please check the
-[guidelines](https://github.com/nshiab/journalism-dataviz/blob/main/CONTRIBUTING.md).
+## Browser use
+
+For browser projects, use the `/web` entry point with a browser bundler.
+
+```ts
+import { rewind } from "@nshiab/journalism-dataviz/web";
+
+const polygon = {
+  type: "Polygon",
+  coordinates: [
+    [
+      [0, 0],
+      [1, 0],
+      [1, 1],
+      [0, 0],
+    ],
+  ],
+};
+const rewound = rewind(polygon);
+```
+
+## Documentation
+
+- [Documentation](https://nshiab.github.io/journalism-dataviz/)
+- [llms.txt — Documentation index for AI agents](https://nshiab.github.io/journalism-dataviz/llms.txt)
+- [llm.md — Complete Markdown reference](https://nshiab.github.io/journalism-dataviz/llm.md),
+  for AI assistants or offline reading
+- [npm package](https://www.npmjs.com/package/@nshiab/journalism-dataviz)
+
+See
+[CONTRIBUTING.md](https://github.com/nshiab/journalism-dataviz/blob/main/CONTRIBUTING.md)
+for development commands.
