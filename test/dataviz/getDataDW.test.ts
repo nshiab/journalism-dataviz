@@ -1,4 +1,4 @@
-import { test } from "vite-plus/test";
+import { expect, test } from "vite-plus/test";
 import { assertEquals, assertStringIncludes } from "../assertions.ts";
 import getDataDW from "../../src/dataviz/getDataDW.ts";
 import updateDataDW from "../../src/dataviz/updateDataDW.ts";
@@ -66,7 +66,8 @@ const apiKey = process.env.DATAWRAPPER_KEY;
       await updateDataDW("lDO6F", JSON.stringify(mapData));
       const data = await getDataDW("lDO6F", { parse: true });
 
-      assertEquals(data, mapData);
+      // Datawrapper may add fields such as markers to uploaded map data.
+      expect(data).toMatchObject(mapData);
     },
   );
 

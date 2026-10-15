@@ -15,7 +15,11 @@ export default defineConfig({
   fmt: {
     ignorePatterns: ["docs/**", "llm.md", "llms.txt", "test/data/**"],
   },
-  test: { setupFiles: ["./test/setup.ts"] },
+  test: {
+    setupFiles: ["./test/setup.ts"],
+    // Local live tests share Datawrapper charts; CI runs only independent offline tests.
+    fileParallelism: process.env.CI === "true",
+  },
   pack: {
     entry: ["src/index.ts", "src/web.ts"],
     sourcemap: true,
