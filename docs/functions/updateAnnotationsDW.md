@@ -1,4 +1,4 @@
-[**Journalism Dataviz v1.0.29**](../index.md)
+[**Journalism Dataviz v1.0.30**](../index.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **updateAnnotationsDW**(`chartId`, `annotations`, `options?`): `Promise`\<`void` \| `Response`\>
 
-Defined in: [updateAnnotationsDW.ts:84](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/updateAnnotationsDW.ts#L84)
+Defined in: [updateAnnotationsDW.ts:84](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/updateAnnotationsDW.ts#L84)
 
 Updates annotations on a Datawrapper chart. This function allows you to programmatically add, modify, or remove text and line annotations on your Datawrapper visualizations, providing precise control over highlighting specific data points or trends.
 

@@ -1,4 +1,4 @@
-[**Journalism Dataviz v1.0.29**](../index.md)
+[**Journalism Dataviz v1.0.30**](../index.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **logLineChart**\<`T`, `X`\>(`data`, `x`, `y`, `options?`): `void`
 
-Defined in: [logLineChart.ts:71](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/logLineChart.ts#L71)
+Defined in: [logLineChart.ts:71](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/logLineChart.ts#L71)
 
 Generates and logs a text-based line chart to the console. This function is particularly useful for visualizing trends over time providing a quick and accessible way to understand data progression directly within a terminal or log output.
 

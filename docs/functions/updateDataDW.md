@@ -1,4 +1,4 @@
-[**Journalism Dataviz v1.0.29**](../index.md)
+[**Journalism Dataviz v1.0.30**](../index.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **updateDataDW**(`chartId`, `data`, `options?`): `Promise`\<`void` \| `Response`\>
 
-Defined in: [updateDataDW.ts:126](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/updateDataDW.ts#L126)
+Defined in: [updateDataDW.ts:126](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/updateDataDW.ts#L126)
 
 Updates the data of a specified Datawrapper chart, table, or map. This function is essential for keeping your Datawrapper visualizations dynamic and up-to-date with the latest information. It supports both CSV data for standard charts and tables, and JSON data for more complex visualizations like locator maps.
 

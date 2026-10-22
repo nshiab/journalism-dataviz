@@ -1,4 +1,4 @@
-[**Journalism Dataviz v1.0.29**](../index.md)
+[**Journalism Dataviz v1.0.30**](../index.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **getInfoDW**(`chartId`, `options?`): `Promise`\<`Record`\<`string`, `unknown`\> \| `Response`\>
 
-Defined in: [getInfoDW.ts:39](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/getInfoDW.ts#L39)
+Defined in: [getInfoDW.ts:39](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/getInfoDW.ts#L39)
 
 Gets information and settings for a Datawrapper chart, table, or map.
 

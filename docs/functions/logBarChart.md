@@ -1,4 +1,4 @@
-[**Journalism Dataviz v1.0.29**](../index.md)
+[**Journalism Dataviz v1.0.30**](../index.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **logBarChart**\<`T`\>(`data`, `labels`, `values`, `options?`): `void`
 
-Defined in: [logBarChart.ts:52](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/logBarChart.ts#L52)
+Defined in: [logBarChart.ts:52](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/logBarChart.ts#L52)
 
 Generates and logs a text-based bar chart to the console. This function is useful for quickly visualizing data distributions or comparisons directly within a terminal or log output, without needing a graphical interface. It's particularly effective for presenting categorical data or showing the relative magnitudes of different items.
 

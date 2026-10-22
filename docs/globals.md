@@ -1,8 +1,8 @@
-[**Journalism Dataviz v1.0.29**](index.md)
+[**Journalism Dataviz v1.0.30**](index.md)
 
 ***
 
-# Journalism Dataviz v1.0.29
+# Journalism Dataviz v1.0.30
 
 ## Dataviz
 

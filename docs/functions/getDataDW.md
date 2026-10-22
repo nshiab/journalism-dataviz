@@ -1,4 +1,4 @@
-[**Journalism Dataviz v1.0.29**](../index.md)
+[**Journalism Dataviz v1.0.30**](../index.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **getDataDW**(`chartId`, `options?`): `Promise`\<`unknown`\>
 
-Defined in: [getDataDW.ts:43](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/getDataDW.ts#L43)
+Defined in: [getDataDW.ts:43](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/getDataDW.ts#L43)
 
 Gets the data of a Datawrapper chart, table, or map.
 

@@ -1,4 +1,4 @@
-[**Journalism Dataviz v1.0.29**](../index.md)
+[**Journalism Dataviz v1.0.30**](../index.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **updateInfoDW**(`chartId`, `metadata`, `options?`): `Promise`\<`void` \| `Response`\>
 
-Defined in: [updateInfoDW.ts:47](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/updateInfoDW.ts#L47)
+Defined in: [updateInfoDW.ts:47](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/updateInfoDW.ts#L47)
 
 Updates the title, description, and notes of a Datawrapper chart, table, or map in one API request.
 

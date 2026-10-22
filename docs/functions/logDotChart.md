@@ -1,4 +1,4 @@
-[**Journalism Dataviz v1.0.29**](../index.md)
+[**Journalism Dataviz v1.0.30**](../index.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **logDotChart**\<`T`, `X`\>(`data`, `x`, `y`, `options?`): `void`
 
-Defined in: [logDotChart.ts:72](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/logDotChart.ts#L72)
+Defined in: [logDotChart.ts:72](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/logDotChart.ts#L72)
 
 Generates and logs a text-based dot chart to the console. This function is ideal for visualizing the relationship between two numerical variables. It provides a quick, terminal-friendly way to inspect data trends and distributions.
 

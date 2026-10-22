@@ -1,4 +1,4 @@
-[**Journalism Dataviz v1.0.29**](../index.md)
+[**Journalism Dataviz v1.0.30**](../index.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **saveChart**\<`T`\>(`data`, `chart`, `path`, `options?`): `Promise`\<`void`\>
 
-Defined in: [saveChart.ts:53](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/saveChart.ts#L53)
+Defined in: [saveChart.ts:53](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/saveChart.ts#L53)
 
 Saves an [Observable Plot](https://github.com/observablehq/plot) chart or map as a PNG or SVG file.
 The chart function can return an SVG or HTML element directly or through a promise.

@@ -1,4 +1,4 @@
-**Journalism Dataviz v1.0.29**
+**Journalism Dataviz v1.0.30**
 
 ***
 
@@ -82,7 +82,7 @@ for development commands.
 
 > **getDataDW**(`chartId`, `options?`): `Promise`\<`unknown`\>
 
-Defined in: [getDataDW.ts:43](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/getDataDW.ts#L43)
+Defined in: [getDataDW.ts:43](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/getDataDW.ts#L43)
 
 Gets the data of a Datawrapper chart, table, or map.
 
@@ -157,7 +157,7 @@ console.log(data);
 
 > **getInfoDW**(`chartId`, `options?`): `Promise`\<`Record`\<`string`, `unknown`\> \| `Response`\>
 
-Defined in: [getInfoDW.ts:39](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/getInfoDW.ts#L39)
+Defined in: [getInfoDW.ts:39](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/getInfoDW.ts#L39)
 
 Gets information and settings for a Datawrapper chart, table, or map.
 
@@ -224,7 +224,7 @@ if (response instanceof Response) {
 
 > **logBarChart**\<`T`\>(`data`, `labels`, `values`, `options?`): `void`
 
-Defined in: [logBarChart.ts:52](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/logBarChart.ts#L52)
+Defined in: [logBarChart.ts:52](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/logBarChart.ts#L52)
 
 Generates and logs a text-based bar chart to the console. This function is useful for quickly visualizing data distributions or comparisons directly within a terminal or log output, without needing a graphical interface. It's particularly effective for presenting categorical data or showing the relative magnitudes of different items.
 
@@ -347,7 +347,7 @@ logBarChart(productPopularity, 'product', 'views', {
 
 > **logDotChart**\<`T`, `X`\>(`data`, `x`, `y`, `options?`): `void`
 
-Defined in: [logDotChart.ts:72](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/logDotChart.ts#L72)
+Defined in: [logDotChart.ts:72](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/logDotChart.ts#L72)
 
 Generates and logs a text-based dot chart to the console. This function is ideal for visualizing the relationship between two numerical variables. It provides a quick, terminal-friendly way to inspect data trends and distributions.
 
@@ -491,7 +491,7 @@ logDotChart(multiCategoryData, "date", "value", {
 
 > **logLineChart**\<`T`, `X`\>(`data`, `x`, `y`, `options?`): `void`
 
-Defined in: [logLineChart.ts:71](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/logLineChart.ts#L71)
+Defined in: [logLineChart.ts:71](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/logLineChart.ts#L71)
 
 Generates and logs a text-based line chart to the console. This function is particularly useful for visualizing trends over time providing a quick and accessible way to understand data progression directly within a terminal or log output.
 
@@ -634,7 +634,7 @@ logLineChart(multiCategoryData, "date", "value", {
 
 > **publishChartDW**(`chartId`, `options?`): `Promise`\<`void` \| `Response`\>
 
-Defined in: [publishChartDW.ts:35](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/publishChartDW.ts#L35)
+Defined in: [publishChartDW.ts:35](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/publishChartDW.ts#L35)
 
 Publishes a specified Datawrapper chart, table, or map. This function streamlines the process of making your Datawrapper visualizations live, allowing for automated deployment and updates. It handles authentication using an API key, which can be provided via environment variables or directly through options.
 
@@ -697,7 +697,7 @@ console.log(`Response status for ${chartIDForResponse}: ${response?.status}`);
 
 > **rewind**\<`T`\>(`object`): `T`
 
-Defined in: [rewind.ts:105](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/rewind.ts#L105)
+Defined in: [rewind.ts:105](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/rewind.ts#L105)
 
 Rewinds the winding order of the specified GeoJSON object to be clockwise. It is based on the D3-geo library's winding order conventions.
 
@@ -761,7 +761,7 @@ console.log(rewoundFeature);
 
 > **saveChart**\<`T`\>(`data`, `chart`, `path`, `options?`): `Promise`\<`void`\>
 
-Defined in: [saveChart.ts:53](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/saveChart.ts#L53)
+Defined in: [saveChart.ts:53](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/saveChart.ts#L53)
 
 Saves an [Observable Plot](https://github.com/observablehq/plot) chart or map as a PNG or SVG file.
 The chart function can return an SVG or HTML element directly or through a promise.
@@ -852,7 +852,7 @@ await saveChart(
 
 > **updateAnnotationsDW**(`chartId`, `annotations`, `options?`): `Promise`\<`void` \| `Response`\>
 
-Defined in: [updateAnnotationsDW.ts:84](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/updateAnnotationsDW.ts#L84)
+Defined in: [updateAnnotationsDW.ts:84](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/updateAnnotationsDW.ts#L84)
 
 Updates annotations on a Datawrapper chart. This function allows you to programmatically add, modify, or remove text and line annotations on your Datawrapper visualizations, providing precise control over highlighting specific data points or trends.
 
@@ -968,7 +968,7 @@ console.log(`Annotations updated for chart ${customApiKeyChartID} using custom A
 
 > **updateDataDW**(`chartId`, `data`, `options?`): `Promise`\<`void` \| `Response`\>
 
-Defined in: [updateDataDW.ts:126](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/updateDataDW.ts#L126)
+Defined in: [updateDataDW.ts:126](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/updateDataDW.ts#L126)
 
 Updates the data of a specified Datawrapper chart, table, or map. This function is essential for keeping your Datawrapper visualizations dynamic and up-to-date with the latest information. It supports both CSV data for standard charts and tables, and JSON data for more complex visualizations like locator maps.
 
@@ -1127,7 +1127,7 @@ If the API key is not found, if the Datawrapper API returns an error status (e.g
 
 > **updateInfoDW**(`chartId`, `metadata`, `options?`): `Promise`\<`void` \| `Response`\>
 
-Defined in: [updateInfoDW.ts:47](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/updateInfoDW.ts#L47)
+Defined in: [updateInfoDW.ts:47](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/updateInfoDW.ts#L47)
 
 Updates the title, description, and notes of a Datawrapper chart, table, or map in one API request.
 
@@ -1218,7 +1218,7 @@ console.log(response?.status);
 
 > **updateNotesDW**(`chartId`, `note`, `options?`): `Promise`\<`void` \| `Response`\>
 
-Defined in: [updateNotesDW.ts:30](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/updateNotesDW.ts#L30)
+Defined in: [updateNotesDW.ts:30](https://github.com/nshiab/journalism-dataviz/blob/v1.0.30/src/dataviz/updateNotesDW.ts#L30)
 
 Updates the notes field of a Datawrapper chart, table, or map.
 

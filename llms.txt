@@ -1,19 +1,19 @@
-# Journalism Dataviz v1.0.29
+# Journalism Dataviz v1.0.30
 
 > Useful TypeScript functions for journalism projects. This library focuses on data visualization.
 
-- [README](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.29/README.md): Installation, examples and usage.
+- [README](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.30/README.md): Installation, examples and usage.
 
 ## API
-- [getDataDW](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.29/docs/functions/getDataDW.md): getDataDW function
-- [getInfoDW](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.29/docs/functions/getInfoDW.md): getInfoDW function
-- [logBarChart](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.29/docs/functions/logBarChart.md): logBarChart function
-- [logDotChart](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.29/docs/functions/logDotChart.md): logDotChart function
-- [logLineChart](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.29/docs/functions/logLineChart.md): logLineChart function
-- [publishChartDW](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.29/docs/functions/publishChartDW.md): publishChartDW function
-- [rewind](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.29/docs/functions/rewind.md): rewind function
-- [saveChart](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.29/docs/functions/saveChart.md): saveChart function
-- [updateAnnotationsDW](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.29/docs/functions/updateAnnotationsDW.md): updateAnnotationsDW function
-- [updateDataDW](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.29/docs/functions/updateDataDW.md): updateDataDW function
-- [updateInfoDW](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.29/docs/functions/updateInfoDW.md): updateInfoDW function
-- [updateNotesDW](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.29/docs/functions/updateNotesDW.md): updateNotesDW function
+- [getDataDW](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.30/docs/functions/getDataDW.md): getDataDW function
+- [getInfoDW](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.30/docs/functions/getInfoDW.md): getInfoDW function
+- [logBarChart](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.30/docs/functions/logBarChart.md): logBarChart function
+- [logDotChart](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.30/docs/functions/logDotChart.md): logDotChart function
+- [logLineChart](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.30/docs/functions/logLineChart.md): logLineChart function
+- [publishChartDW](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.30/docs/functions/publishChartDW.md): publishChartDW function
+- [rewind](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.30/docs/functions/rewind.md): rewind function
+- [saveChart](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.30/docs/functions/saveChart.md): saveChart function
+- [updateAnnotationsDW](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.30/docs/functions/updateAnnotationsDW.md): updateAnnotationsDW function
+- [updateDataDW](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.30/docs/functions/updateDataDW.md): updateDataDW function
+- [updateInfoDW](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.30/docs/functions/updateInfoDW.md): updateInfoDW function
+- [updateNotesDW](https://raw.githubusercontent.com/nshiab/journalism-dataviz/v1.0.30/docs/functions/updateNotesDW.md): updateNotesDW function
