@@ -8,6 +8,8 @@
 
 > **getDataDW**(`chartId`, `options?`): `Promise`\<`unknown`\>
 
+Defined in: [getDataDW.ts:43](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/getDataDW.ts#L43)
+
 Gets the data of a Datawrapper chart, table, or map.
 
 Authentication is handled via an API key, which can be provided through environment variables (`DATAWRAPPER_KEY`) or explicitly in the options.

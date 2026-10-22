@@ -8,6 +8,8 @@
 
 > **rewind**\<`T`\>(`object`): `T`
 
+Defined in: [rewind.ts:105](https://github.com/nshiab/journalism-dataviz/blob/v1.0.29/src/dataviz/rewind.ts#L105)
+
 Rewinds the winding order of the specified GeoJSON object to be clockwise. It is based on the D3-geo library's winding order conventions.
 
 ## Type Parameters
